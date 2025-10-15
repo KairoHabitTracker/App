@@ -1,15 +1,16 @@
-import { Text, View } from "react-native";
+import { View, StyleSheet } from "react-native";
+import Calendar from "../components/Calendar";
+import HabitList from "../components/HabitList";
 
 export default function Index() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </View>
-  );
+    return (
+        <View style={styles.container}>
+            <Calendar />
+            <HabitList />
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: { flex: 1, padding: 24, backgroundColor: "#fff" },
+});
