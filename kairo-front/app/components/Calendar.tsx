@@ -1,13 +1,29 @@
-import { View, Text, StyleSheet } from "react-native";
+import {StyleSheet, Text, View} from "react-native";
 
-const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const days = [
+    {label: "Mon", date: 17},
+    {label: "Tue", date: 18},
+    {label: "Wed", date: 19},
+    {label: "Thu", date: 20},
+    {label: "Fri", date: 21},
+    {label: "Sat", date: 22},
+    {label: "Sun", date: 23},
+];
 
 export default function Calendar() {
     return (
         <View style={styles.calendarRow}>
             {days.map((day) => (
-                <View key={day} style={styles.dayCircle}>
-                    <Text style={styles.dayText}>{day}</Text>
+                <View
+                    key={day.label}
+                    style={[
+                        styles.dayCircle,
+                        day.label === "Thu" && styles.dayCircleBlue
+                    ]}
+                >
+                    <Text style={styles.dayText}>{day.label}</Text>
+                    <Text>{day.date}</Text>
                 </View>
             ))}
         </View>
@@ -17,16 +33,22 @@ export default function Calendar() {
 const styles = StyleSheet.create({
     calendarRow: {
         flexDirection: "row",
-        justifyContent: "space-between",
+        gap: '6', // moze zeby na kazdym innym urzadzeniu pasowalo
+        marginTop: 20,
         marginBottom: 32,
+        alignItems: "center",
+        justifyContent: "center",
     },
     dayCircle: {
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: "#e0e0e0",
+        backgroundColor: "#E8DFCA",
         justifyContent: "center",
         alignItems: "center",
     },
-    dayText: { fontWeight: "bold" },
+    dayCircleBlue: {
+        backgroundColor: "#6D94C5",
+    },
+    dayText: {fontWeight: "bold"},
 });
