@@ -1,11 +1,9 @@
 import {StyleSheet, View} from "react-native";
-import Calendar from "../components/Calendar";
 import HabitList from "../components/HabitList";
 
 export default function Index() {
     return (
         <View style={styles.container}>
-            <Calendar/>
             <HabitList/>
         </View>
     );
