@@ -1,5 +1,6 @@
 import {FlatList, StyleSheet, View} from "react-native";
 import HabitListItem from "./HabitListItem";
+import AddButton from "@/app/components/shared/AddButton";
 
 const habits = [
     {
@@ -23,42 +24,21 @@ export default function HabitList() {
                     <HabitListItem habit={item}/>
                 )}
             />
+            <View style={styles.addButton}>
+                <AddButton/>
+            </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     habitsContainer: {
-        borderRadius: 12,
+        display: "flex",
+        flexDirection: "column",
     },
-    habitItem: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignContent: 'center',
-        gap: '20',
-        backgroundColor: '#CBDCEB',
-        borderRadius: 8,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        marginVertical: 6,
-        alignItems: 'flex-start',
-        minHeight: 20,
 
-    },
-    picture: {
-        alignSelf: 'center',
-        backgroundColor: '#6D94C5',
-        height: 30,
-        width: 30,
-        borderRadius: 5,
-    },
-    text: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-    },
-    habitText: {
-        fontSize: 16,
-    },
+    addButton: {
+        alignSelf: "flex-end",
+        justifyContent: "flex-end",
+    }
 });
