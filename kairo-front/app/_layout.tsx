@@ -7,7 +7,16 @@ export default function RootLayout() {
         <TamaguiProvider config={config}>
             <Stack>
                 <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+                <Stack.Screen
+                    name="add-habit"
+                    options={{
+                        title: 'Add Habit',
+                        headerBackTitle: 'Back',
+
+                    }}
+                />
             </Stack>
+
         </TamaguiProvider>
 
     );

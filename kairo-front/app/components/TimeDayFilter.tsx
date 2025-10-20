@@ -19,6 +19,5 @@ const styles = StyleSheet.create({
         gap: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        height: 50,
     },
 });

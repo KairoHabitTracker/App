@@ -2,13 +2,20 @@ import {StyleSheet, View} from "react-native";
 import HabitList from "../components/HabitList";
 import DailyWeeklyFilter from "@/app/components/DailyWeeklyFilter";
 import TimeDayFilter from "@/app/components/TimeDayFilter";
+import {useRouter} from 'expo-router';
 
 export default function Index() {
+    const router = useRouter();
+
+
     return (
         <View style={styles.container}>
-            <DailyWeeklyFilter/>
-            <TimeDayFilter/>
-            <HabitList/>
+            <View style={styles.filters}>
+                <DailyWeeklyFilter/>
+                <TimeDayFilter/>
+            </View>
+
+            <HabitList onAdd={() => router.push('/add-habit')}/>
         </View>
     );
 }
@@ -19,5 +26,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         backgroundColor: 'white'
         // backgroundColor: "#F5EFE6"
+    },
+    filters: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 30,
     },
 });

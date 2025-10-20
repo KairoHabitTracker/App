@@ -1,7 +1,7 @@
 import Feather from '@expo/vector-icons/Feather';
 import {useEffect, useState} from "react";
 import {Image, Text, View} from "react-native";
-import {profileStyles as styles} from "../global"
+import {profileStyles as styles} from "../../global"
 
 
 // Minimal shape for user profile data; replace fetchUserProfile with a real API call later
