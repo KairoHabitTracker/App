@@ -1,14 +1,13 @@
 import Feather from '@expo/vector-icons/Feather';
-import { useEffect, useState } from "react";
-import { Image, Text, View } from "react-native";
-import { profileStyles as styles } from "../styles/global";
-
+import {useEffect, useState} from "react";
+import {Image, Text, View} from "react-native";
+import {profileStyles as styles} from "../global"
 
 
 // Minimal shape for user profile data; replace fetchUserProfile with a real API call later
 type UserProfile = {
     username: string;
-    streak: number; 
+    streak: number;
     coins: number;
     avatarUrl?: string; // optional, placeholder used if absent
     subscription?: string; // optional, user's subscription level
@@ -34,7 +33,7 @@ export default function Profile() {
     useEffect(() => {
         fetchUserProfile().then(setProfile).catch(() => {
             // placeholder if fetch fails
-            setProfile({ username: "Guest", streak: 0, coins: 0, subscription: "Free" });
+            setProfile({username: "Guest", streak: 0, coins: 0, subscription: "Free"});
         });
     }, []);
 
@@ -46,14 +45,14 @@ export default function Profile() {
         );
     }
 
-    const { username, streak, coins, avatarUrl, subscription } = profile;
+    const {username, streak, coins, avatarUrl, subscription} = profile;
 
     return (
-        
+
         <View style={styles.container}>
             <View style={[styles.header, styles.center]}>
                 {avatarUrl ? (
-                    <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+                    <Image source={{uri: avatarUrl}} style={styles.avatar}/>
                 ) : (
                     <View style={[styles.avatar, styles.avatarPlaceholder]}>
                         <Text style={styles.avatarInitials}>
@@ -95,10 +94,10 @@ export default function Profile() {
 
             <View style={styles.statsRow}>
                 <View style={styles.statCard}>
-                    <Text style={styles.statValue}><Feather name="settings" size={24} color="black" /> settings </Text>
+                    <Text style={styles.statValue}><Feather name="settings" size={24} color="black"/> settings </Text>
                 </View>
                 <View style={styles.statCard}>
-                    <Text style={styles.statValue}><Feather name="edit-2" size={24} color="black" /> Edit Profile</Text>
+                    <Text style={styles.statValue}><Feather name="edit-2" size={24} color="black"/> Edit Profile</Text>
                 </View>
             </View>
             <Text style={styles.statValue}>Jakieś wykresy tutaj, integracja z kalendarzem, consents, etc</Text>
