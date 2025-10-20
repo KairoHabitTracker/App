@@ -4,6 +4,7 @@ import HabitList from "../components/HabitList";
 export default function Index() {
     return (
         <View style={styles.container}>
+            
             <HabitList/>
         </View>
     );
@@ -13,6 +14,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 24,
-        backgroundColor: "#F5EFE6"
+        backgroundColor: 'white'
+        // backgroundColor: "#F5EFE6"
     },
 });

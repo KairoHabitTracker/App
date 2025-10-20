@@ -1,29 +1,36 @@
 import {StyleSheet, Text, View} from "react-native";
-import {Check} from '@tamagui/lucide-icons'
 import {Checkbox} from 'tamagui'
+import {Check} from '@tamagui/lucide-icons'
 
 
 type Habit = {
+    index: number;
+    image?: string;
     name: string;
     streak: number;
     done: boolean;
+    color: string;
 };
 
-
-export default function HabitListItem({habit, showCheckbox, color}: {
+export default function HabitListItem({habit, showCheckbox, color, onToggle}: {
     habit: Habit,
     showCheckbox: boolean,
-    color: string
+    color: string,
+    onToggle?: (newValue: boolean) => void;
 }) {
     return (
         <View style={[styles.habitItem, {backgroundColor: color ? color : '#ffbc6b'}]}>
-            <View style={styles.picture}></View>
+            <View style={styles.picture}>
+                <Text style={styles.emoji}>
+                    {habit.image}
+                </Text>
+            </View>
             <View style={styles.habitText}>
                 <Text style={styles.text}>{habit.name}</Text>
             </View>
             {showCheckbox && (
                 <View style={styles.checkbox}>
-                    <Checkbox size="$4" checked={habit.done}>
+                    <Checkbox size="$4" checked={habit.done} onCheckedChange={(checked) => onToggle?.(!!checked)}>
                         <Checkbox.Indicator>
                             <Check/>
                         </Checkbox.Indicator>
@@ -50,6 +57,9 @@ const styles = StyleSheet.create({
         width: 30,
         borderRadius: 5,
         marginRight: 16,
+    },
+    emoji: {
+        fontSize: 26
     },
     habitText: {
         flex: 1,
