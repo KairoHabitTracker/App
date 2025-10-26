@@ -169,7 +169,7 @@ export default function Profile() {
     const { username, streak, coins, avatarUrl, subscription } = profile;
 
     // Determine streak badge (I dunno if we keep this or not)
-    // I ain't draving a 5 svgs for this lol
+    // I ain't drawing a 5 svgs for this lol
     const streakBadge =
         streak >= 30
             ? '🔥🔥🔥'
