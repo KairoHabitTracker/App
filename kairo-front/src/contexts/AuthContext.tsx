@@ -1,34 +1,14 @@
+// Libraries
 import { router } from 'expo-router';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+
+// Api
 import { apiFetch, loginRequest, logoutAllRequest, logoutRequest } from '../lib/api';
+import { ApiProfileResponse, UserProfile } from '../lib/apiTypes';
+
+// Token Storage
 import { deleteItemAsync, getItemAsync, setItemAsync } from '../lib/secureStore';
 
-type ApiProfileInfo = {
-  id: number;
-  user_id: number;
-  name: string | null;
-  avatar_url?: string | null;
-  streak: number;
-  coins: number;
-};
-
-type ApiProfileData = {
-  id: number;
-  email: string;
-  email_verified_at?: string | null;
-  created_at?: string | null;
-  updated_at?: string | null;
-  info?: ApiProfileInfo | null;
-};
-
-type ApiProfileResponse = { data: ApiProfileData };
-
-export type UserProfile = {
-  username: string;
-  streak: number;
-  coins: number;
-  avatarUrl?: string | null;
-};
 
 type AuthContextType = {
   user: UserProfile | null;
@@ -115,10 +95,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function logout() {
     try {
-      // notify server to invalidate this token (best-effort)
+      // Send logout request to server
       await logoutRequest();
     } catch (error) {
-      // ignore server errors; still clear local session
+      // Ignore errors, clear token anyway
       console.warn('logout api error', error);
     }
     await deleteItemAsync('authToken');

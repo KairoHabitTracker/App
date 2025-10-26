@@ -1,5 +1,7 @@
-import React from 'react';
+// Libraries
 import { Image, ImageStyle, StyleProp, Text, View } from 'react-native';
+
+// Styles
 import { profileStyles, tokens } from '../../../global';
 
 type Props = {

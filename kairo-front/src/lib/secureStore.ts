@@ -1,3 +1,4 @@
+// Libraries
 import * as SecureStoreModule from 'expo-secure-store';
 import { Platform } from 'react-native';
 

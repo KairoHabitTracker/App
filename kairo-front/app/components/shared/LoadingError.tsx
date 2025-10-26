@@ -1,5 +1,7 @@
-import React from 'react';
+// Libraries
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+
+// Styles
 import { profileStyles as styles } from '../../../global';
 
 type Props = {

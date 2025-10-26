@@ -106,4 +106,3 @@ async function onSubmit(): Promise<void> {
 		</View>
 	);
 }
-

@@ -1,6 +1,9 @@
+// Libraries
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Button, Text, XStack, YStack } from 'tamagui';
+
+// Contexts
 import { useAuth } from '../src/contexts/AuthContext';
 
 export default function SettingsScreen() {

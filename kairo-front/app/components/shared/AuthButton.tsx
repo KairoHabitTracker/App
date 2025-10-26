@@ -1,5 +1,7 @@
-import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+// Libraries
+import { Text, TouchableOpacity } from 'react-native';\\
+
+// Styles
 import { profileStyles as styles } from '../../../global';
 
 type Props = {

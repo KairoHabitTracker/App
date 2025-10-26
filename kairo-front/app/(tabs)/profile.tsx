@@ -1,96 +1,46 @@
+// Libraries
 import Feather from '@expo/vector-icons/Feather';
 import { router } from 'expo-router';
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
+
+// Styles
 import { profileStyles as styles } from "../../global";
-import { deleteItemAsync, getItemAsync } from '../../src/lib/secureStore';
+
+// Api
+import { apiFetch } from '../../src/lib/api';
+import { ApiProfileResponse } from '../../src/lib/apiTypes';
+
+import { UserProfile } from '../../src/lib/types';
+
+// Token Storage
+import { deleteItemAsync } from '../../src/lib/secureStore';
+
+// Components
 import AuthButton from '../components/shared/AuthButton';
 import LoadingError from '../components/shared/LoadingError';
 import ProfileAvatar from '../components/shared/ProfileAvatar';
 import StatCard from '../components/shared/StatCard';
 
-type ApiProfileInfo = {
-    id: number;
-    user_id: number;
-    name: string | null;
-    avatar_url?: string | null;
-    streak: number;
-    coins: number;
-};
 
-type ApiProfileData = {
-    id: number;
-    email: string;
-    email_verified_at?: string | null;
-    created_at?: string | null;
-    updated_at?: string | null;
-    info?: ApiProfileInfo | null;
-};
 
-type ApiProfileResponse = {
-    data: ApiProfileData;
-};
-
-type UserProfile = {
-    username: string;
-    streak: number;
-    coins: number;
-    avatarUrl?: string | null;
-    subscription?: string;
-};
-
-// Get token from secure storage
-async function getSavedToken(): Promise<string | null> {
-    try {
-        const token = await getItemAsync('authToken');
-        return token;
-    } catch (e) {
-        console.warn("Failed to read token from SecureStore", e);
-        return null;
-    }
-}
-
-// Fetch user profile from API using token
+// Fetch user profile
 async function fetchUserProfile(): Promise<UserProfile> {
-    const token = await getSavedToken();
+    const json: ApiProfileResponse = await apiFetch('/api/profile');
 
-    if (!token) {
-        throw new Error("No auth token available");
-    }
-
-    const res = await fetch('https://kairo.iru.codes/api/profile', {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${token}`,
-        },
-    });
-
-    if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        const err = new Error(
-            `Failed to fetch profile: ${res.status} ${res.statusText} ${text}`
-        );
-        (err as any).status = res.status;
-        throw err;
-    }
-
-    const json: ApiProfileResponse = await res.json();
-
-    // Map API response into UI-friendly shape
     const info = json.data?.info;
-    const username = info?.name ?? json.data.email ?? "User";
+    const username = info?.name ?? json.data.email ?? 'User';
     const avatarUrl = info?.avatar_url ?? null;
     const streak = info?.streak ?? 0;
     const coins = info?.coins ?? 0;
+    const subscription = info?.subscription ?? "Free";
 
     return {
         username,
         avatarUrl,
         streak,
         coins,
-        // Placeholder until we have real subscription data? Or just a meme, dunno
-        subscription: "Free",
+        subscription
     };
 }
 
@@ -121,7 +71,7 @@ export default function Profile() {
                         await deleteItemAsync('authToken');
                         setError("Session error. Please log in again.");
                         setProfile(null);
-                        router.push('/login');
+                        router.replace('/login');
                     } else if (error.message === "No auth token available") {
                         setError("Not logged in. Please log in to see your profile.");
                     } else {
@@ -150,7 +100,7 @@ export default function Profile() {
                 <AuthButton
                     title="Log in"
                     onPress={() => {
-                        deleteItemAsync('authToken').then(() => router.push('/login'));
+                        deleteItemAsync('authToken').then(() => router.replace('/login'));
                     }}
                 />
             </View>
@@ -169,7 +119,7 @@ export default function Profile() {
     const { username, streak, coins, avatarUrl, subscription } = profile;
 
     // Determine streak badge (I dunno if we keep this or not)
-    // I ain't drawing a 5 svgs for this lol
+    // I ain't draving a 5 svgs for this lol
     const streakBadge =
         streak >= 30
             ? '🔥🔥🔥'
@@ -193,7 +143,7 @@ export default function Profile() {
             </View>
 
             <View style={styles.statsRow}>
-                <StatCard label="Subscription" value={subscription || 'Free'} />
+                <StatCard label="Subscription" value={subscription || "Free"} />
             </View>
 
             <View style={styles.statsRow}>
@@ -214,6 +164,7 @@ export default function Profile() {
                     value={
                         <>
                             <Feather name="edit-2" size={20} color="black" /> Edit Profile
+                            
                         </>
                     }
                     onPress={() => router.push('../profile/edit')}

@@ -1,5 +1,8 @@
+// Libraries
 import React from 'react';
 import { GestureResponderEvent, Text, TouchableOpacity, View } from 'react-native';
+
+// Styles
 import { profileStyles as styles } from '../../../global';
 
 type Props = {
