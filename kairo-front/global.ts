@@ -109,3 +109,49 @@ export const profileStyles = StyleSheet.create({
     color: tokens.colors.textSubtle,
   },
 });
+
+// Do not question this, I
+// was just really excited to work on something other
+// than Auth T___T
+export const errorStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: tokens.colors.background,
+    paddingHorizontal: tokens.spacing.lg,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: tokens.spacing.md as unknown as number,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: tokens.colors.text,
+    marginBottom: tokens.spacing.xs,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: tokens.colors.textSubtle,
+    marginBottom: tokens.spacing.lg,
+    textAlign: 'center',
+    maxWidth: 520,
+  },
+  button: {
+    backgroundColor: tokens.colors.text,
+    paddingVertical: tokens.spacing.sm,
+    paddingHorizontal: tokens.spacing.xl,
+    borderRadius: tokens.radius.md,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  smallNote: {
+    marginTop: tokens.spacing.md,
+    color: tokens.colors.textSubtle,
+    fontSize: 12,
+    textAlign: 'center',
+    maxWidth: 420,
+  },
+});
