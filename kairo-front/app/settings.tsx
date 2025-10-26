@@ -27,7 +27,7 @@ export default function SettingsScreen() {
       </YStack>
 
       <YStack style={{ marginTop: 32 }}>
-        <Button onPress={() => { logout(); router.replace('/login'); }}>
+        <Button onPress={() => { logout(); }}>
           Log out
         </Button>
 
