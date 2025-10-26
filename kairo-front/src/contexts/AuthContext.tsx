@@ -4,7 +4,10 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 // Api
 import { apiFetch, loginRequest, logoutAllRequest, logoutRequest } from '../lib/api';
-import { ApiProfileResponse, UserProfile } from '../lib/apiTypes';
+
+// Types
+import { ApiProfileResponse } from '../lib/apiTypes';
+import { UserProfile } from '../lib/types';
 
 // Token Storage
 import { deleteItemAsync, getItemAsync, setItemAsync } from '../lib/secureStore';

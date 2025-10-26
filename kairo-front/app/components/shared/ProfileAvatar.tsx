@@ -7,8 +7,8 @@ import { profileStyles, tokens } from '../../../global';
 type Props = {
 	username?: string | null;
 	avatarUrl?: string | null;
-		size?: number;
-		style?: StyleProp<ImageStyle> | StyleProp<ImageStyle>[];
+	size?: number;
+	style?: StyleProp<ImageStyle> | StyleProp<ImageStyle>[];
 };
 
 export default function ProfileAvatar({ username, avatarUrl, size, style }: Props) {
@@ -22,13 +22,14 @@ export default function ProfileAvatar({ username, avatarUrl, size, style }: Prop
 
 	if (avatarUrl) {
 			return (
-				<Image source={{ uri: avatarUrl }} style={[profileStyles.avatar, avatarStyle, ...(Array.isArray(style) ? style : [style])]} resizeMode="cover" />
+				<Image source={{ uri: avatarUrl }} style={[profileStyles.avatar, 
+					avatarStyle, ...(Array.isArray(style) ? style : [style])]} resizeMode="cover" />
 			);
 	}
 
 	const initials = (username || '?').slice(0, 1).toUpperCase();
 
-		// For fallback we render a View; style may include ImageStyle props but it's fine to spread
+		// Fallback to initials placeholder
 		return (
 			<View style={[profileStyles.avatar, profileStyles.avatarPlaceholder, avatarStyle as any]}>
 				<Text style={profileStyles.avatarInitials}>{initials}</Text>

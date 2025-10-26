@@ -70,7 +70,7 @@ export async function registerRequest(email: string, password: string, device_na
 export async function logoutRequest() {
   // Invalidate current token on the server
   const res = await apiFetch('/api/auth/logout', {
-    method: 'GET',
+    method: 'DELETE',
   });
   return res;
 }
@@ -78,7 +78,7 @@ export async function logoutRequest() {
 export async function logoutAllRequest() {
   // Invalidate all sessions for this user on the server
   const res = await apiFetch('/api/auth/logout-all', {
-    method: 'GET',
+    method: 'DELETE',
   });
   return res;
 }

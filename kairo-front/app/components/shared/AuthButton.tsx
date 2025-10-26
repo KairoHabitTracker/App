@@ -1,5 +1,5 @@
 // Libraries
-import { Text, TouchableOpacity } from 'react-native';\\
+import { Text, TouchableOpacity } from 'react-native';
 
 // Styles
 import { profileStyles as styles } from '../../../global';
