@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { apiFetch, loginRequest } from '../lib/api';
+import { apiFetch, loginRequest, logoutAllRequest, logoutRequest } from '../lib/api';
 import { deleteItemAsync, getItemAsync, setItemAsync } from '../lib/secureStore';
 
 type ApiProfileInfo = {
@@ -36,6 +36,8 @@ type AuthContextType = {
   loading: boolean;
   login: (email: string, password: string, device_name?: string) => Promise<void>;
   logout: () => Promise<void>;
+  logoutAll: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
