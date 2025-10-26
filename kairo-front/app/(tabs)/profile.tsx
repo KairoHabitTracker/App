@@ -208,13 +208,16 @@ export default function Profile() {
                             <Feather name="settings" size={20} color="black" /> settings
                         </>
                     }
+                    onPress={() => router.push('../settings')}
                 />
                 <StatCard
                     value={
                         <>
                             <Feather name="edit-2" size={20} color="black" /> Edit Profile
+                            
                         </>
                     }
+                    onPress={() => router.push('../profile/edit')}
                 />
             </View>
 

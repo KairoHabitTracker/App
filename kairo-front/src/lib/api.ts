@@ -66,3 +66,19 @@ export async function registerRequest(email: string, password: string, device_na
 
   return response;
 }
+
+export async function logoutRequest() {
+  // Invalidate current token on the server
+  const res = await apiFetch('/api/auth/logout', {
+    method: 'GET',
+  });
+  return res;
+}
+
+export async function logoutAllRequest() {
+  // Invalidate all sessions for this user on the server
+  const res = await apiFetch('/api/auth/logout-all', {
+    method: 'GET',
+  });
+  return res;
+}
