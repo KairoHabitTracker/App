@@ -58,6 +58,5 @@ export default function SettingsScreen() {
         Go Back
       </Button>
     </YStack>
-    
   );
 }
