@@ -214,7 +214,6 @@ export default function Profile() {
                     value={
                         <>
                             <Feather name="edit-2" size={20} color="black" /> Edit Profile
-                            
                         </>
                     }
                     onPress={() => router.push('../profile/edit')}
