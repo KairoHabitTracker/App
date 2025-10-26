@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function fetchProfile() {
     try {
-      const json: ApiProfileResponse = await apiFetch('/api/profile');
+      const json = await apiFetch<ApiProfileResponse>('/api/profile');
       const info = json.data?.info;
       const username = info?.name ?? json.data?.email ?? 'User';
       const avatarUrl = info?.avatar_url ?? null;
@@ -46,9 +46,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const coins = info?.coins ?? 0;
 
       setUser({ username, avatarUrl, streak, coins });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // If 401, clear token and redirect to login
-      if (error?.status === 401) {
+      if (typeof error === 'object' && error !== null && 'status' in error && (error as { status?: number }).status === 401) {
         await deleteItemAsync('authToken');
         setToken(null);
         setUser(null);
@@ -83,8 +83,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function login(email: string, password: string, device_name = 'mobile') {
     setLoading(true);
     try {
-      const response: any = await loginRequest(email, password, device_name);
-      const tokenFromServer = response?.token;
+  const response = await loginRequest(email, password, device_name);
+  const tokenFromServer = response?.token ?? response?.data?.token;
       if (!tokenFromServer) throw new Error('No token in response');
       await setItemAsync('authToken', tokenFromServer);
       setToken(tokenFromServer);

@@ -17,38 +17,47 @@ async function onSubmit(): Promise<void> {
     setError(null);
     setLoading(true);
 
-    try {
-        const response: any = await registerRequest(email, password, 'mobile');
+	try {
+		const response = await registerRequest(email, password, 'mobile');
 
-        const token = response?.token ?? response?.data?.token;
+	const token = response?.token ?? response.data?.token;
 		if (token) {
 			// Reminder to give devices actual names
-			await login(email, password, 'mobile');
 			// After login, go to requested redirect or home
 			if (redirect) router.replace(redirect as any);
 			else router.replace('/');
 		} else {
             // backend may require email verification: show informative message and redirect to login
-            router.replace(
-                `/login?showVerify=1&email=${encodeURIComponent(email)}&redirect=${encodeURIComponent(
-                    redirect ?? '/'
-                )}`
-            );
+            // router.replace(
+            //     `/login?showVerify=1&email=${encodeURIComponent(email)}&redirect=${encodeURIComponent(
+            //         redirect ?? '/'
+            //     )}`
+            // );
         }
-    } catch (error: any) {
-        // If apiFetch throws, it sets error.body to parsed response when possible
-        console.error('Register error', error);
-
-        const body = error?.body;
-        if (body?.errors) {
-            // Flatten messages from validation errors for readability
-            const messages = Object.values(body.errors).flat().join(' ');
-            setError(messages);
-        } else if (body?.message) {
-            setError(body.message);
-        } else {
-            setError(error?.message || 'Registration failed');
-        }
+	} catch (error: unknown) {
+		// If apiFetch throws, it sets error.body to parsed response when possible
+		console.error('Register error', error);
+		const body = (error as { body?: unknown }).body;
+		if (body && typeof body === 'object' && 'errors' in (body as Record<string, unknown>)) {
+			const errs = (body as Record<string, unknown>)['errors'] as unknown;
+			if (errs && typeof errs === 'object') {
+				// try to flatten if it's a Record<string, string[]>
+				try {
+					const messages = Object.values(errs as Record<string, string[]>).flat().join(' ');
+					setError(messages);
+				} catch {
+					setError('Registration failed');
+				}
+			} else {
+				setError('Registration failed');
+			}
+		} else if (body && typeof body === 'object' && 'message' in (body as Record<string, unknown>)) {
+			setError(String((body as Record<string, unknown>)['message']));
+		} else if (typeof (error as { message?: unknown }).message === 'string') {
+			setError((error as { message?: string }).message ?? 'Registration failed');
+		} else {
+			setError('Registration failed');
+		}
     } finally {
         setLoading(false);
     }

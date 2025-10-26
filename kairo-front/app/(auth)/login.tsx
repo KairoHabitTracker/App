@@ -20,12 +20,24 @@ export default function LoginScreen() {
 				// Redirect to requested page or home
 				if (redirect) router.replace(redirect as any);
 				else router.replace('/');
-			} catch (error: any) {
-			console.error('Login error', error);
-			const body = error?.body;
-			if (body?.errors) setError(Object.values(body.errors).flat().join(' '));
-			else if (body?.message) setError(body.message);
-			else setError(error?.message || 'Login failed');
+			} catch (error: unknown) {
+				console.error('Login error', error);
+				const body = (error as { body?: unknown }).body;
+				if (body && typeof body === 'object' && 'errors' in (body as Record<string, unknown>)) {
+					const errors = (body as Record<string, unknown>)['errors'] as unknown;
+					try {
+						const messages = Object.values(errors as Record<string, string[]>).flat().join(' ');
+						setError(messages);
+					} catch {
+						setError('Login failed');
+					}
+				} else if (body && typeof body === 'object' && 'message' in (body as Record<string, unknown>)) {
+					setError(String((body as Record<string, unknown>)['message']));
+				} else if (typeof (error as { message?: unknown }).message === 'string') {
+					setError((error as { message?: string }).message ?? 'Login failed');
+				} else {
+					setError('Login failed');
+				}
 		} finally {
 			setLoading(false);
 		}

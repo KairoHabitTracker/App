@@ -19,3 +19,27 @@ export type ApiProfileData = {
 };
 
 export type ApiProfileResponse = { data: ApiProfileData };
+
+// Authentication responses
+export type LoginResponse = {
+  token?: string;
+  data?: { token?: string } | null;
+  // Allow other shape fields from backend as optional
+  [key: string]: unknown;
+};
+
+export type RegisterResponse = {
+  token?: string;
+  data?: { token?: string } | null;
+  // Backend may return message/errors
+  message?: string;
+  errors?: Record<string, string[]>
+  [key: string]: unknown;
+};
+
+// Generic API error type
+export type ApiError = {
+  message?: string;
+  status?: number;
+  body?: unknown;
+};
