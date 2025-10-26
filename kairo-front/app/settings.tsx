@@ -52,7 +52,6 @@ export default function SettingsScreen() {
             </XStack>
           </YStack>
         </YStack>
-        
       ) : null}
       <Text style={{ marginTop: 32, color: 'black', fontSize: 40 }}>Placeholder - only logout works</Text>
       <Button onPress={() => router.push('../profile')} style={{ marginTop: 24 }}>
