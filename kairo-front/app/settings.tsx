@@ -46,7 +46,7 @@ export default function SettingsScreen() {
 
             <XStack style={{ marginTop: 16, flexDirection: 'row', justifyContent: 'flex-end', gap: 8 }}>
               <Button onPress={() => setConfirmOpen(false)} variant="outlined">Cancel</Button>
-              <Button onPress={async () => { setConfirmOpen(false); await logoutAll(); router.replace('/login'); }} style={{ backgroundColor: '#e53935', color: '#fff' }}>
+              <Button onPress={async () => { setConfirmOpen(false); await logoutAll(); }} style={{ backgroundColor: '#e53935', color: '#fff' }}>
                 Confirm
               </Button>
             </XStack>
