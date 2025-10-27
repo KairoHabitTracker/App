@@ -1,27 +1,26 @@
 // Libraries
-import Feather from '@expo/vector-icons/Feather';
-import { router } from 'expo-router';
-import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import {router} from 'expo-router';
+import {useEffect, useState} from "react";
+import {Text, TouchableOpacity, View} from "react-native";
 
 // Styles
-import { profileStyles as styles } from "../../global";
+import {profileStyles as styles} from "../../global";
 
 // Api
-import { apiFetch } from '../../src/lib/api';
-import { ApiProfileResponse } from '../../src/lib/apiTypes';
+import {apiFetch} from '../../src/lib/api';
+import {ApiProfileResponse} from '../../src/lib/apiTypes';
 
-import { UserProfile } from '../../src/lib/types';
+import {UserProfile} from '../../src/lib/types';
 
 // Token Storage
-import { deleteItemAsync } from '../../src/lib/secureStore';
+import {deleteItemAsync} from '../../src/lib/secureStore';
 
 // Components
 import AuthButton from '../components/shared/AuthButton';
 import LoadingError from '../components/shared/LoadingError';
 import ProfileAvatar from '../components/shared/ProfileAvatar';
 import StatCard from '../components/shared/StatCard';
-
+import {Feather} from "@expo/vector-icons";
 
 
 // Fetch user profile
@@ -89,7 +88,7 @@ export default function Profile() {
     }, []);
 
     if (loading) {
-        return <LoadingError loading />;
+        return <LoadingError loading/>;
     }
 
     // If there's an error, we also prompt a re-login (just like invalid token case above)
@@ -116,7 +115,7 @@ export default function Profile() {
         );
     }
 
-    const { username, streak, coins, avatarUrl, subscription } = profile;
+    const {username, streak, coins, avatarUrl, subscription} = profile;
 
     // Determine streak badge (I dunno if we keep this or not)
     // I ain't draving a 5 svgs for this lol
@@ -124,51 +123,52 @@ export default function Profile() {
         streak >= 30
             ? '🔥🔥🔥'
             : streak >= 14
-            ? '🔥🔥'
-            : streak >= 7
-            ? '🔥'
-            : streak === 1
-            ? '⏳'
-            : streak === 0
-            ? '💀'
-            : streak < 0
-            ? 'WAIT, HOW??'
-            : '';
+                ? '🔥🔥'
+                : streak >= 7
+                    ? '🔥'
+                    : streak === 1
+                        ? '⏳'
+                        : streak === 0
+                            ? '💀'
+                            : streak < 0
+                                ? 'WAIT, HOW??'
+                                : '';
 
     return (
         <View style={styles.container}>
             <View style={[styles.header, styles.center]}>
-                <ProfileAvatar username={username} avatarUrl={avatarUrl} />
+                <ProfileAvatar username={username} avatarUrl={avatarUrl}/>
                 <Text style={styles.username}>{username}</Text>
             </View>
 
             <View style={styles.statsRow}>
-                <StatCard label="Subscription" value={subscription || "Free"} />
+                <StatCard label="Subscription" value={subscription || "Free"}/>
             </View>
 
             <View style={styles.statsRow}>
-                <StatCard label="Current Streak" value={`${streak}${streakBadge}`} />
-                <StatCard label="Coins" value={`${coins}🪙`} />
+                <StatCard label="Current Streak" value={`${streak}${streakBadge}`}/>
+                <StatCard label="Coins" value={`${coins}🪙`}/>
             </View>
 
             <View style={styles.statsRow}>
-                <StatCard
-                    value={
-                        <>
-                            <Feather name="settings" size={20} color="black" /> settings
-                        </>
-                    }
+                <TouchableOpacity
+                    style={styles.statCard}
                     onPress={() => router.push('../settings')}
-                />
-                <StatCard
-                    value={
-                        <>
-                            <Feather name="edit-2" size={20} color="black" /> Edit Profile
-                            
-                        </>
-                    }
+                >
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                        <Feather name="settings" size={20} color="black"/>
+                        <Text style={styles.statValue}>Settings</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.statCard}
                     onPress={() => router.push('../profile/edit')}
-                />
+                >
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                        <Feather name="edit-2" size={20} color="black"/>
+                        <Text style={styles.statValue}>Edit Profile</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
 
             {/* Placeholder reminder for future stats */}
