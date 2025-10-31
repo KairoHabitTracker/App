@@ -41,3 +41,12 @@ app-example
 # generated native folders
 /ios
 /android
+
+# IDEs and editors
+# .vscode/
+# .idea/
+# brought back cause I didn't realise in the moment it was actually useful to have consistent extensions and settings across the team lol
+
+# However like, why do we have two lock files
+# I swear to god if that was the reason for tamagui mismatch, am gonna kill you and then myself
+package-lock.json
