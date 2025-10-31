@@ -20,17 +20,15 @@ export default function RootLayout() {
                                       title: 'Edit profile',
                                       headerBackTitle: 'Profile',
                                   }}/>
-                  <Stack>
-                <Stack.Screen
-                    name="add-habit"
-                    options={{
-                        title: 'Add Habit',
-                        headerBackTitle: 'Back',
+                    <Stack.Screen
+                        name="add-habit"
+                        options={{
+                            title: 'Add Habit',
+                            headerBackTitle: 'Back',
 
-                    }}
-                />
+                        }}
+                    />
             </Stack>
-                </Stack>
             </AuthProvider>
         </TamaguiProvider>
 
