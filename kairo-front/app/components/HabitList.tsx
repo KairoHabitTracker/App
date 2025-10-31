@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import HabitListItem from "./HabitListItem";
 import AddButton from "@/app/components/shared/AddButton";
 
-export default function HabitList() {
+export default function HabitList({onAdd}: any) {
 
     const [habits, setHabits] = useState([
         {
@@ -57,7 +57,7 @@ export default function HabitList() {
 
             </ScrollView>
             <View style={styles.addButton}>
-                <AddButton/>
+                <AddButton onPress={onAdd}/>
             </View>
         </View>
     );
