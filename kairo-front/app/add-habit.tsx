@@ -1,11 +1,27 @@
-import {ScrollView, Text, View} from 'react-native';
+import {
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import {useAuth} from "@/src/contexts/AuthContext";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Habit} from "@/app/types/Habit";
+import AddButton from "@/app/components/shared/AddButton";
+import {useRouter} from "expo-router";
 
 export default function AddHabit() {
     const {token} = useAuth();
+    const router = useRouter();
+
     const [habits, setHabits] = useState<Habit[]>([]);
+    const [text, onChangeText] = useState<string>('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (token) {
@@ -15,11 +31,9 @@ export default function AddHabit() {
         }
     }, [token]);
 
-    useEffect(() => {
-        console.log('Habits state updated:', habits);
-    }, [habits]);
 
     const getPredefinedHabits = async () => {
+        setLoading(true);
         try {
             const response = await fetch('https://kairo.iru.codes/api/habits', {
                 headers: {
@@ -34,37 +48,131 @@ export default function AddHabit() {
         } catch (error) {
             console.error(error);
             return [];
+        } finally {
+            setLoading(false);
         }
     }
+
+    const filteredHabits = useMemo(() => {
+        const q = text.trim().toLowerCase();
+        if (!q) return habits;
+        return habits.filter(h => (
+            h.name.toLowerCase().includes(q)
+        ));
+    }, [habits, text]);
+
+    const onAdd = () => {
+        // navigate to a "create" screen and pass the typed name (optional)
+        if (text.trim()) {
+            router.push(`/habit/new?name=${encodeURIComponent(text.trim())}`);
+        } else {
+            router.push('/habit/new');
+        }
+    };
+
     return (
-        <ScrollView>
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', margin: 10}}>
-                <View>
-                    <Text>ikona</Text>
-                </View>
-                <View>
-                    <Text>Nazwa</Text>
-                </View>
-                <View style={{display: 'flex', flexDirection: 'row', gap: 2, flexWrap: 'wrap'}}>
-                    {habits.map(habit => (
-                        <View key={habit.id} style={{backgroundColor: habit.hex_color, padding: 6, borderRadius: 20}}>
-                            <View style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                flexDirection: 'row'
-                            }}>
-                                <Text>{habit.emoji}</Text>
-                                <Text>{habit.name}</Text>
-                            </View>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
+            <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+                <View style={styles.inputCard}>
+                    <TextInput
+                        onChangeText={onChangeText}
+                        value={text}
+                        maxLength={40}
+                        placeholder="Search or create a habit"
+                        placeholderTextColor="#9CA3AF"
+                        style={styles.input}
+                        returnKeyType="done"
+                    />
+                    {filteredHabits.length === 0 && !loading && (
+                        <View>
+                            <AddButton onPress={onAdd}/>
                         </View>
+
+                    )}
+                </View>
+
+                <View style={styles.sectionHeaderRow}>
+                    <Text style={styles.sectionHeader}>Suggestions</Text>
+                    {loading && <ActivityIndicator size="small" color="#6B7280"/>}
+                </View>
+
+                <View style={styles.suggestionsWrap}>
+                    {filteredHabits.length === 0 && !loading && (
+                        <Text style={styles.emptyText}>Not on the list? Create a new habit above.</Text>
+
+                    )}
+
+                    {filteredHabits.map(habit => (
+                        <TouchableOpacity
+                            key={habit.id}
+                            onPress={() => router.push('/habit/${habit.id}')}
+                            activeOpacity={0.8}
+                            style={[styles.suggestion, {backgroundColor: habit.hex_color || '#eee'}]}
+                        >
+                            <View style={styles.suggestionRow}>
+                                <Text style={styles.emoji}>{habit.emoji}</Text>
+                                <Text style={styles.habitName}>{habit.name}</Text>
+                            </View>
+                        </TouchableOpacity>
                     ))}
                 </View>
-                <View>
-                    <Text>Powiadomienia?</Text>
-                </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </KeyboardAvoidingView>
 
     );
 }
+
+const styles = StyleSheet.create({
+    flex: {flex: 1},
+    container: {padding: 16, alignItems: 'center'},
+    inputCard: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        backgroundColor: '#fff',
+        padding: 12,
+        borderRadius: 12,
+        marginBottom: 12,
+        // shadow
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 1},
+        shadowOpacity: 0.08,
+        shadowRadius: 6,
+        elevation: 3,
+    },
+    input: {
+        fontSize: 16,
+        padding: 8,
+    },
+    sectionHeaderRow: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    sectionHeader: {fontSize: 12, color: '#374151', fontWeight: '600'},
+    suggestionsWrap: {
+        width: '100%',
+        display: 'flex',
+        gap: 8,
+    },
+    suggestion: {
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        borderRadius: 999,
+        // shadow
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+        elevation: 2,
+        marginBottom: 8,
+    },
+    suggestionRow: {flexDirection: 'row', alignItems: 'center'},
+    emoji: {fontSize: 20, marginRight: 10},
+    habitName: {fontSize: 16, color: '#111827'},
+    emptyText: {color: '#6B7280', fontStyle: 'italic', padding: 12},
+
+});
