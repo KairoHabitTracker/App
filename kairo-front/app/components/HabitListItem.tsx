@@ -1,42 +1,31 @@
 import {StyleSheet, Text, View} from "react-native";
-import {Checkbox} from 'tamagui'
-import {Check} from '@tamagui/lucide-icons'
-
-
-type Habit = {
-    index: number;
-    image?: string;
-    name: string;
-    streak: number;
-    done: boolean;
-    color: string;
-};
+import type {UserHabit} from '@/app/types/UserHabit';
 
 export default function HabitListItem({habit, showCheckbox, color, onToggle}: {
-    habit: Habit,
+    habit: UserHabit,
     showCheckbox: boolean,
     color: string,
     onToggle?: (newValue: boolean) => void;
 }) {
     return (
         <View style={[styles.habitItem, {backgroundColor: color ? color : '#ffbc6b'}]}>
-            <View style={styles.picture}>
-                <Text style={styles.emoji}>
-                    {habit.image}
-                </Text>
-            </View>
+            {/*<View style={styles.picture}>*/}
+            {/*    <Text style={styles.emoji}>*/}
+            {/*        {habit.image}*/}
+            {/*    </Text>*/}
+            {/*</View>*/}
             <View style={styles.habitText}>
-                <Text style={styles.text}>{habit.name}</Text>
+                <Text style={styles.text}>{habit.habit_id}</Text>
             </View>
-            {showCheckbox && (
-                <View style={styles.checkbox}>
-                    <Checkbox size="$4" checked={habit.done} onCheckedChange={(checked) => onToggle?.(!!checked)}>
-                        <Checkbox.Indicator>
-                            <Check/>
-                        </Checkbox.Indicator>
-                    </Checkbox>
-                </View>
-            )}
+            {/*{showCheckbox && (*/}
+            {/*    <View style={styles.checkbox}>*/}
+            {/*        <Checkbox size="$4" checked={habit.done} onCheckedChange={(checked) => onToggle?.(!!checked)}>*/}
+            {/*            <Checkbox.Indicator>*/}
+            {/*                <Check/>*/}
+            {/*            </Checkbox.Indicator>*/}
+            {/*        </Checkbox>*/}
+            {/*    </View>*/}
+            {/*)}*/}
         </View>
     );
 }
