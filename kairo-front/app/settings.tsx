@@ -114,7 +114,7 @@ export default function SettingsScreen() {
 
           <YStack style={{ width: 320, padding: 16, backgroundColor: '#ffffff', borderRadius: 12, elevation: 2 }}>
             <Text style={{ fontWeight: '700', fontSize: 16 }}>Confirm log out from all devices</Text>
-            <Text style={{ marginTop: 8 }}>This will sign you out of every device where you're logged in. Are you sure?</Text>
+            <Text style={{ marginTop: 8 }}>{`This will sign you out of every device where you're logged in. Are you sure?`}</Text>
 
             <XStack style={{ marginTop: 16, flexDirection: 'row', justifyContent: 'flex-end', gap: 8 }}>
               <Button onPress={() => setConfirmOpen(false)} variant="outlined">Cancel</Button>

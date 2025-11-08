@@ -68,7 +68,7 @@ export default function LoginScreen() {
 			</TouchableOpacity>
 
 			<TouchableOpacity onPress={() => router.push(`/register?redirect=${encodeURIComponent(redirect ?? '/')}`)}>
-				<Text style={styles.subtle}>Don't have an account? Register</Text>
+				<Text style={styles.subtle}>{`Don't have an account? Register`}</Text>
 			</TouchableOpacity>
 		</View>
 	);
