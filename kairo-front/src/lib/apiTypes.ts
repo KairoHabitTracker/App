@@ -1,7 +1,7 @@
 // Shared API response types for profile endpoints
 export type ApiProfileInfo = {
   id: number;
-  user_id: number;
+  user_id: string;
   name: string | null;
   avatar_url?: string | null;
   streak: number;
@@ -10,7 +10,7 @@ export type ApiProfileInfo = {
 };
 
 export type ApiProfileData = {
-  id: number;
+  id: string;
   email: string;
   email_verified_at?: string | null;
   created_at?: string | null;
