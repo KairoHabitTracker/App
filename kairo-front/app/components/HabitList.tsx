@@ -1,8 +1,8 @@
 import {ScrollView, StyleSheet, Text, View} from "react-native";
 import {useEffect, useState} from 'react';
 import HabitListItem from "./HabitListItem";
-import AddButton from "@/app/components/shared/AddButton";
-import type {UserHabit} from '@/app/types/UserHabit';
+import AddButton from "@/src/components/AddButton";
+import type {UserHabit} from '@/src/types/UserHabit';
 import {useAuth} from "@/src/contexts/AuthContext";
 
 

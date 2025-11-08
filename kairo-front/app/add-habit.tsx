@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 import {useAuth} from "@/src/contexts/AuthContext";
 import {useEffect, useMemo, useState} from "react";
-import {Habit} from "@/app/types/Habit";
-import AddButton from "@/app/components/shared/AddButton";
+import {Habit} from "@/src/types/Habit";
+import AddButton from "@/src/components/AddButton";
 import {useRouter} from "expo-router";
 
 export default function AddHabit() {
