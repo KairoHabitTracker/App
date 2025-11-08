@@ -4,7 +4,7 @@ import DailyWeeklyFilter from "@/app/components/DailyWeeklyFilter";
 import TimeDayFilter from "@/app/components/TimeDayFilter";
 import {useRouter} from 'expo-router';
 
-export default function Index() {
+export default function Home() {
     const router = useRouter();
 
 
