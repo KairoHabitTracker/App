@@ -1,3 +1,4 @@
+import { getDeviceNameAsync } from 'expo-device';
 import type { ApiError, LoginResponse, RegisterResponse } from './apiTypes';
 import { getItemAsync } from './secureStore';
 
@@ -27,6 +28,33 @@ function mergeHeaders(custom?: HeadersInit): Record<string, string> {
 }
 
 // Fetch wrapper that adds token when possible
+// Internal runtime ApiError implementation. We keep the exported `ApiError` type
+// in `apiTypes.ts` but throw instances of this class so callers can rely on
+// `.status`, `.body` and `.message` being present.
+class ApiFetchError extends Error implements ApiError {
+  status?: number;
+  body?: unknown;
+  code?: string | number;
+
+  constructor(message: string, status?: number, body?: unknown, code?: string | number) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.body = body;
+    this.code = code;
+    // maintain proper prototype chain
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+
+  toJSON() {
+    return { name: this.name, message: this.message, status: this.status, body: this.body, code: this.code };
+  }
+}
+
+export function isApiError(e: unknown): e is ApiError {
+  return !!e && typeof e === 'object' && ('status' in (e as object) || 'body' in (e as object) || 'message' in (e as object));
+}
+
 export async function apiFetch<Token = unknown>(path: string, options: FetchOptions = {}): Promise<Token> {
   const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
   const { skipAuth, headers: customHeaders, ...rest } = options;
@@ -39,12 +67,19 @@ export async function apiFetch<Token = unknown>(path: string, options: FetchOpti
       const token = await getItemAsync('authToken');
       if (token) headers.Authorization = `Bearer ${token}`;
     } catch (error) {
-      // Ignore; caller will handle unauthorized
+      // Couldn't read token - don't crash here; callers will handle auth failures.
       console.warn('Failed to read token from secureStore', error);
     }
   }
 
-  const response = await fetch(url, { headers, ...rest });
+  let response: Response;
+  try {
+    response = await fetch(url, { headers, ...rest });
+  } catch (err: any) {
+    // Network error / CORS / DNS etc. Normalize into ApiFetchError
+    const msg = err?.message ?? 'Network request failed';
+    throw new ApiFetchError(msg, undefined, null);
+  }
 
   const contentType = response.headers.get('content-type') || '';
   let body: unknown = null;
@@ -62,32 +97,65 @@ export async function apiFetch<Token = unknown>(path: string, options: FetchOpti
     }
   }
 
+  // Normalize non-OK responses into ApiFetchError with helpful message/body
   if (!response.ok) {
-    const error = new Error(`API error ${response.status}`) as Error & ApiError;
-    error.status = response.status;
-    error.body = body;
-    throw error;
+    // Prefer message from JSON body if present
+    let message = `API error ${response.status}`;
+    if (body && typeof body === 'object') {
+      const b = body as Record<string, unknown>;
+      if (typeof b.message === 'string') message = b.message;
+      else if (typeof b.error === 'string') message = b.error;
+    } else if (typeof body === 'string' && body.length) {
+      message = body;
+    } else if (response.statusText) {
+      message = response.statusText;
+    }
+
+    throw new ApiFetchError(message, response.status, body);
   }
 
+  // Success: return parsed body (may be an object or text). Caller may expect
+  // a `{ data: ... }` shape depending on endpoint; keep returning the parsed body.
   return body as Token;
 }
 
 // Authentication API calls (For the future we can use react-native-device-info to get an actual device name)
-export async function loginRequest(email: string, password: string, device_name = 'mobile'): Promise<LoginResponse> {
+export async function loginRequest(email: string, password: string, device_name?: string): Promise<LoginResponse> {
+  let deviceName = device_name;
+  if (!deviceName) {
+    try {
+      // Use Expo's device API (works in the managed workflow) and fall back to 'mobile'
+      const name = await getDeviceNameAsync();
+      deviceName = typeof name === 'string' && name.length ? name : 'mobile';
+    } catch {
+      deviceName = 'mobile';
+    }
+  }
+
   const response = await apiFetch('/api/auth/login', {
     method: 'POST',
     skipAuth: true,
-    body: JSON.stringify({ email, password, device_name }),
+    body: JSON.stringify({ email, password, device_name: deviceName }),
   });
 
   return response as LoginResponse;
 }
 
-export async function registerRequest(email: string, password: string, device_name = 'mobile'): Promise<RegisterResponse> {
+export async function registerRequest(email: string, password: string, device_name?: string): Promise<RegisterResponse> {
+  let deviceName = device_name;
+  if (!deviceName) {
+    try {
+      const name = await getDeviceNameAsync();
+      deviceName = typeof name === 'string' && name.length ? name : 'mobile';
+    } catch {
+      deviceName = 'mobile';
+    }
+  }
+
   const response = await apiFetch('/api/auth/register', {
     method: 'POST',
     skipAuth: true,
-    body: JSON.stringify({ email, password, device_name }),
+    body: JSON.stringify({ email, password, device_name: deviceName }),
   });
 
   return response as RegisterResponse;

@@ -18,6 +18,7 @@ type AuthContextType = {
   token: string | null;
   loading: boolean;
   login: (email: string, password: string, device_name?: string) => Promise<void>;
+  loginWithToken: (token: string, redirect?: string) => Promise<void>;
   logout: () => Promise<void>;
   logoutAll: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -96,6 +97,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  async function loginWithToken(tokenFromServer: string, redirect?: string) {
+    setLoading(true);
+    try {
+      await setItemAsync('authToken', tokenFromServer);
+      setToken(tokenFromServer);
+      // Fetch profile after saving token
+      await fetchProfile();
+      router.replace((redirect ?? '/') as any);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function logout() {
     try {
       // Send logout request to server
@@ -136,6 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     token,
     loading,
     login,
+    loginWithToken,
     logout,
     logoutAll,
     refreshProfile,
