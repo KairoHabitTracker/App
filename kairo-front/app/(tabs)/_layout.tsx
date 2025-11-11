@@ -15,7 +15,7 @@ export default function TabLayout() {
             tabBarStyle: {backgroundColor: '#54beff'},
         }}>
             <Tabs.Screen
-                name="index"
+                name="home"
                 options={{
                     title: 'Home',
                     tabBarIcon: () => <Ionicons size={28} name="home" color={"white"}/>,

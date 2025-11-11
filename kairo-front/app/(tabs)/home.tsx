@@ -1,10 +1,10 @@
 import {StyleSheet, View} from "react-native";
-import HabitList from "../components/HabitList";
+import HabitList from "@/app/components/HabitList";
 import DailyWeeklyFilter from "@/app/components/DailyWeeklyFilter";
 import TimeDayFilter from "@/app/components/TimeDayFilter";
 import {useRouter} from 'expo-router';
 
-export default function Index() {
+export default function Home() {
     const router = useRouter();
 
 

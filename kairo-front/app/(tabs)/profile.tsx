@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 
 // Styles
-import {profileStyles as styles} from "../../global";
+import {profileStyles as styles} from "@/global";
 
 // Api
 import {apiFetch} from '@/src/lib/api';
@@ -16,10 +16,10 @@ import {UserProfile} from '@/src/lib/types';
 import {deleteItemAsync} from '@/src/lib/secureStore';
 
 // Components
-import AuthButton from '../components/shared/AuthButton';
-import LoadingError from '../components/shared/LoadingError';
-import ProfileAvatar from '../components/shared/ProfileAvatar';
-import StatCard from '../components/shared/StatCard';
+import AuthButton from '@/src/components/AuthButton';
+import LoadingError from '@/src/components/LoadingError';
+import ProfileAvatar from '@/src/components/ProfileAvatar';
+import StatCard from '@/src/components/StatCard';
 import {Feather} from "@expo/vector-icons";
 
 
