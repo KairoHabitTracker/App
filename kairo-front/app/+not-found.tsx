@@ -10,7 +10,6 @@ export default function NotFoundScreen() {
                 <Image source={require('../assets/kairo/errors/kairo_404.png')} style={{ width: 200, height: 200, marginBottom: tokens.spacing.sm, borderRadius: 100 }} />
                 <Text style={styles.title}>You're a little lost</Text>
                 <Text style={styles.subtitle}>We couldn't find the page you're looking for.</Text>
-
                         <Link href="/" style={styles.button}>
                             <Text style={styles.buttonText}>Take me home</Text>
                         </Link>
