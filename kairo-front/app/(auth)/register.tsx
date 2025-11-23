@@ -1,9 +1,9 @@
-import { router, useLocalSearchParams as useSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { profileStyles as styles } from '@/global';
-import { useAuth } from '@/src/contexts/AuthContext';
-import { registerRequest } from '@/src/lib/api';
+import {router, useLocalSearchParams as useSearchParams} from 'expo-router';
+import {useState} from 'react';
+import {Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {profileStyles as styles} from '@/global';
+import {useAuth} from '@/src/contexts/AuthContext';
+import {registerRequest} from '@/src/types/api';
 
 export default function RegisterScreen() {
     const { redirect } = useSearchParams() as { redirect?: string };

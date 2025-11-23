@@ -1,6 +1,6 @@
-import { getDeviceNameAsync } from 'expo-device';
-import type { ApiError, LoginResponse, RegisterResponse } from './apiTypes';
-import { getItemAsync } from './secureStore';
+import {getDeviceNameAsync} from 'expo-device'; //"expo-device" has no exported member named getDeviceNameAsyn
+import type {ApiError, LoginResponse, RegisterResponse} from './apiTypes';
+import {getItemAsync} from '../lib/secureStore';
 
 export const API_BASE = 'https://kairo.iru.codes';
 
