@@ -21,7 +21,7 @@ export default function RootLayout() {
                                       headerBackTitle: 'Profile',
                                   }}/>
                     <Stack.Screen
-                        name="add-habit"
+                        name="habit"
                         options={{
                             title: 'Add Habit',
                             headerBackTitle: 'Back',

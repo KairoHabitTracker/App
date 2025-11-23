@@ -1,16 +1,16 @@
 // Libraries
-import { router } from 'expo-router';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import {router} from 'expo-router';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 
 // Api
-import { apiFetch, loginRequest, logoutAllRequest, logoutRequest } from '../lib/api';
+import {apiFetch, loginRequest, logoutAllRequest, logoutRequest} from '@/src/types/api';
 
 // Types
-import { ApiProfileResponse } from '../lib/apiTypes';
-import { UserProfile } from '../lib/types';
+import {ApiProfileResponse} from '@/src/types/apiTypes';
+import {UserProfile} from '@/src/types/types';
 
 // Token Storage
-import { deleteItemAsync, getItemAsync, setItemAsync } from '../lib/secureStore';
+import {deleteItemAsync, getItemAsync, setItemAsync} from '@/src/lib/secureStore';
 
 
 type AuthContextType = {

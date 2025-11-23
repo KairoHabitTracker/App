@@ -63,9 +63,8 @@ export default function AddHabit() {
     }, [habits, text]);
 
     const onAdd = () => {
-        // navigate to a "create" screen and pass the typed name (optional)
         if (text.trim()) {
-            router.push(`/habit/new?name=${encodeURIComponent(text.trim())}`);
+            router.push(`/habit/`);
         } else {
             router.push('/habit/new');
         }

@@ -7,10 +7,10 @@ import {Text, TouchableOpacity, View} from "react-native";
 import {profileStyles as styles} from "@/global";
 
 // Api
-import {apiFetch} from '@/src/lib/api';
-import {ApiProfileResponse} from '@/src/lib/apiTypes';
+import {apiFetch} from '@/src/types/api';
+import {ApiProfileResponse} from '@/src/types/apiTypes';
 
-import {UserProfile} from '@/src/lib/types';
+import {UserProfile} from '@/src/types/types';
 
 // Token Storage
 import {deleteItemAsync} from '@/src/lib/secureStore';
