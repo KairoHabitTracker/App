@@ -91,7 +91,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(tokenFromServer);
       // Fetch profile after saving token
       await fetchProfile();
-      router.replace('/');
+      // After successful login/profile fetch, navigate to the home tab.
+      router.replace('/home');
     } finally {
       setLoading(false);
     }
@@ -104,7 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(tokenFromServer);
       // Fetch profile after saving token
       await fetchProfile();
-      router.replace((redirect ?? '/') as any);
+      router.replace((redirect ?? '/home') as any);
     } finally {
       setLoading(false);
     }

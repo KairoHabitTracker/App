@@ -1,8 +1,8 @@
+import { profileStyles as styles } from '@/global';
+import { useAuth } from '@/src/contexts/AuthContext';
 import { router, useLocalSearchParams as useSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { profileStyles as styles } from '@/global';
-import { useAuth } from '@/src/contexts/AuthContext';
 
 export default function LoginScreen() {
     const { login } = useAuth();
@@ -19,7 +19,7 @@ export default function LoginScreen() {
             await login(email, password, 'mobile');
             // Redirect to requested page or home
             if (redirect) router.replace(redirect as any);
-            else router.replace('/');
+            else router.replace('/home');
         } catch (error: unknown) {
             console.error('Login error', error);
             const body = (error as { body?: unknown }).body;
@@ -67,7 +67,7 @@ export default function LoginScreen() {
                 <Text style={styles.statValue}>{loading ? 'Logging in...' : 'Log in'}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push(`/register?redirect=${encodeURIComponent(redirect ?? '/')}`)}>
+            <TouchableOpacity onPress={() => router.push(`/register?redirect=${encodeURIComponent(redirect ?? '/home')}`)}>
                 <Text style={styles.subtle}>Don't have an account? Register</Text>
             </TouchableOpacity>
         </View>

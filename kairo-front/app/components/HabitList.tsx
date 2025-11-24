@@ -1,9 +1,10 @@
-import {ScrollView, StyleSheet, Text, View} from "react-native";
-import {useEffect, useState} from 'react';
-import HabitListItem from "./HabitListItem";
 import AddButton from "@/src/components/AddButton";
-import type {UserHabit} from '@/src/types/UserHabit';
-import {useAuth} from "@/src/contexts/AuthContext";
+import { useAuth } from "@/src/contexts/AuthContext";
+import { API_BASE } from '@/src/lib/api';
+import type { UserHabit } from '@/src/types/UserHabit';
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import HabitListItem from "./HabitListItem";
 
 
 export default function HabitList({onAdd}: any) {
@@ -33,7 +34,7 @@ export default function HabitList({onAdd}: any) {
 
     const getHabits = async () => {
         try {
-            const response = await fetch('https://kairo.iru.codes/api/habits/user', {
+            const response = await fetch(`${API_BASE}/api/habits/user`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',

@@ -1,9 +1,9 @@
-import { router, useLocalSearchParams as useSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { profileStyles as styles } from '@/global';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { registerRequest } from '@/src/lib/api';
+import { router, useLocalSearchParams as useSearchParams } from 'expo-router';
+import { useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function RegisterScreen() {
     const { redirect } = useSearchParams() as { redirect?: string };
@@ -25,7 +25,7 @@ export default function RegisterScreen() {
                 // Reminder to give devices actual names
                 // After login, go to requested redirect or home
                 if (redirect) router.replace(redirect as any);
-                else router.replace('/');
+                else router.replace('/home');
             } else {
                 // backend may require email verification: show informative message and redirect to login
                 // router.replace(
@@ -107,8 +107,8 @@ export default function RegisterScreen() {
 
             <TouchableOpacity
                 onPress={() =>
-                    router.push(`/login?redirect=${encodeURIComponent(redirect ?? '/')}`)
-                }
+                        router.push(`/login?redirect=${encodeURIComponent(redirect ?? '/home')}`)
+                    }
             >
                 <Text style={styles.subtle}>Already have an account? Log in</Text>
             </TouchableOpacity>

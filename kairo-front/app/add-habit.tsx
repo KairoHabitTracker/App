@@ -1,3 +1,9 @@
+import AddButton from "@/src/components/AddButton";
+import { useAuth } from "@/src/contexts/AuthContext";
+import { API_BASE } from '@/src/lib/api';
+import { Habit } from "@/src/types/Habit";
+import { useRouter } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
 import {
     ActivityIndicator,
     KeyboardAvoidingView,
@@ -9,11 +15,6 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {useAuth} from "@/src/contexts/AuthContext";
-import {useEffect, useMemo, useState} from "react";
-import {Habit} from "@/src/types/Habit";
-import AddButton from "@/src/components/AddButton";
-import {useRouter} from "expo-router";
 
 export default function AddHabit() {
     const {token} = useAuth();
@@ -35,7 +36,7 @@ export default function AddHabit() {
     const getPredefinedHabits = async () => {
         setLoading(true);
         try {
-            const response = await fetch('https://kairo.iru.codes/api/habits', {
+            const response = await fetch(`${API_BASE}/api/habits`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',

@@ -1,8 +1,8 @@
-import { getDeviceNameAsync } from 'expo-device';
+import * as Device from 'expo-device';
 import type { ApiError, LoginResponse, RegisterResponse } from './apiTypes';
 import { getItemAsync } from './secureStore';
 
-export const API_BASE = 'https://kairo.iru.codes';
+export const API_BASE = 'https://kairo.yuri.rocks';
 
 type FetchOptions = RequestInit & { skipAuth?: boolean };
 
@@ -125,7 +125,7 @@ export async function loginRequest(email: string, password: string, device_name?
   if (!deviceName) {
     try {
       // Use Expo's device API (works in the managed workflow) and fall back to 'mobile'
-      const name = await getDeviceNameAsync();
+      const name = Device.deviceName;
       deviceName = typeof name === 'string' && name.length ? name : 'mobile';
     } catch {
       deviceName = 'mobile';
@@ -145,7 +145,7 @@ export async function registerRequest(email: string, password: string, device_na
   let deviceName = device_name;
   if (!deviceName) {
     try {
-      const name = await getDeviceNameAsync();
+      const name = Device.deviceName;
       deviceName = typeof name === 'string' && name.length ? name : 'mobile';
     } catch {
       deviceName = 'mobile';
