@@ -3,7 +3,7 @@ import {router} from 'expo-router';
 import React, {createContext, useContext, useEffect, useState} from 'react';
 
 // Api
-import {apiFetch, loginRequest, logoutAllRequest, logoutRequest} from '@/src/types/api';
+import {apiFetch, loginRequest, logoutAllRequest, logoutRequest} from '@/src/lib/api';
 
 // Types
 import {ApiProfileResponse} from '@/src/types/apiTypes';
