@@ -71,7 +71,7 @@ export default function HabitDetail() {
 
     if (!habit) {
         return (
-            <View style={sharedStyles.loadingContainer}>
+            <View style={sharedStyles.basicContainer}>
                 <Text style={sharedStyles.errorText}>Habit not found</Text>
             </View>
         );
