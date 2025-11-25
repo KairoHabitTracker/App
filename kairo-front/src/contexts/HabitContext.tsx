@@ -12,6 +12,23 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
     const [habits, setHabits] = useState<Habit[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [userHabits, setUserHabits] = useState(null);
+
+        const fetchUser = async () => {
+            if (!token) return;
+
+            const res = await fetch(`${API_BASE}/api/habits/user`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const json = await res.json();
+            setUserHabits(json.data);
+        };
+
+
 
     const fetchHabits = async () => {
         if (!token) return;
@@ -48,6 +65,12 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
         }
     }, [token]);
 
+useEffect(() => {
+    if (token) {
+        fetchUser();
+    }
+}, [token]);
+
     const refreshHabits = async () => {
         await fetchHabits();
     };
@@ -57,7 +80,7 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <HabitsContext.Provider value={{ habits, loading, error, refreshHabits, getHabitById }}>
+        <HabitsContext.Provider value={{ habits, loading, error, refreshHabits, getHabitById, userHabits }}>
             {children}
         </HabitsContext.Provider>
     );

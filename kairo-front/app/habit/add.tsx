@@ -15,25 +15,35 @@ import {
 import {searchHabitStyles, sharedFonts} from "@/global";
 
 export default function Add() {
-    const {habits, loading} = useHabits();
+    const {habits, loading, userHabits} = useHabits();
     const router = useRouter();
 
     const [text, onChangeText] = useState<string>('');
 
+
+    const userHabitNames = useMemo(
+        () => new Set((userHabits ?? []).map(h => h.habit?.name.trim().toLowerCase())),
+        [userHabits]
+    );
+
+    const filteredSuggestions = useMemo(
+        () => habits.filter(
+            h => !userHabitNames.has(h.name.trim().toLowerCase())
+        ),
+        [habits, userHabitNames]
+    );
+
     const filteredHabits = useMemo(() => {
         const q = text.trim().toLowerCase();
-        if (!q) return habits;
-        return habits.filter(h => (
+        if (!q) return filteredSuggestions;
+        return filteredSuggestions.filter(h => (
             h.name.toLowerCase().includes(q)
         ));
-    }, [habits, text]);
+    }, [text, filteredSuggestions]);
+
 
     const onAdd = () => {
-        if (text.trim()) {
-            router.push(`/habit/`);
-        } else {
-            router.push('/habit/new');
-        }
+        router.push({ pathname: '/habit/new', params: { gotName: text } });
     };
 
     return (
