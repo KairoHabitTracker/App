@@ -3,9 +3,13 @@ import {Stack} from 'expo-router';
 import {AuthProvider} from '@/src/contexts/AuthContext';
 import {config} from '@/tamagui.config';
 import {HabitsProvider} from "@/src/contexts/HabitContext";
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+
 
 export default function RootLayout() {
     return (
+        <GestureHandlerRootView>
+
         <TamaguiProvider config={config}>
             <AuthProvider>
                 <HabitsProvider>
@@ -26,5 +30,7 @@ export default function RootLayout() {
                 </HabitsProvider>
             </AuthProvider>
         </TamaguiProvider>
+        </GestureHandlerRootView>
+
     );
 }

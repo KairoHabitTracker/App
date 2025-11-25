@@ -10,7 +10,9 @@ module.exports = function (api) {
           components: ['tamagui', '@tamagui/core', '@tamagui/web'],
           logTimings: true,
           disableExtraction: false
-        }
+        },
+        'react-native-worklets/plugin',
+        'react-native-reanimated/plugin',
       ]
     ]
   }
