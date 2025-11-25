@@ -15,7 +15,7 @@ export default function Home() {
                 <TimeDayFilter/>
             </View>
 
-            <HabitList onAdd={() => router.push('/add-habit')}/>
+            <HabitList onAdd={() => router.push('/habit/add')}/>
         </View>
     );
 }
