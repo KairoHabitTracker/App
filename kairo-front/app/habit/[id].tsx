@@ -4,7 +4,7 @@ import {useLocalSearchParams, useRouter} from 'expo-router';
 import {useAuth} from '@/src/contexts/AuthContext';
 import {useHabits} from '@/src/contexts/HabitContext';
 import {API_BASE} from '@/src/lib/api';
-import {oneHabitStyles, sharedStyles} from "@/global";
+import {oneHabitStyles, sharedFonts, sharedStyles} from "@/global";
 import HabitCard from '@/src/components/habit/HabitCard';
 import DaySelector from '@/src/components/habit/DaySelector';
 import DateTimePickerGroup from '@/src/components/habit/DateTimePickerGroup';
@@ -93,7 +93,7 @@ export default function HabitDetail() {
                     {submitting ? (
                         <ActivityIndicator color="#fff" />
                     ) : (
-                        <Text style={oneHabitStyles.submitText}>Add to My Habits</Text>
+                        <Text style={sharedFonts.mediumWhiteText}>Add to My Habits</Text>
                     )}
                 </TouchableOpacity>
             </View>

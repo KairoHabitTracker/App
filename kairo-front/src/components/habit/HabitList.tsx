@@ -5,8 +5,8 @@ import type {UserHabit} from '@/src/types/UserHabit';
 import {useEffect, useState} from 'react';
 import {RefreshControl, ScrollView, Text, View} from "react-native";
 import HabitListItem from "./HabitListItem";
-import ProgressCard from "@/app/components/ProgressCard";
-import {sharedFonts, sharedStyles} from "@/global";
+import ProgressCard from "@/src/components/habit/ProgressCard";
+import {errorStyles, sharedFonts, sharedStyles} from "@/global";
 
 export default function HabitList({ onAdd }: any) {
     const { token } = useAuth();
@@ -140,8 +140,8 @@ export default function HabitList({ onAdd }: any) {
                 {habits.length === 0 && (
                     <View style={[sharedStyles.center, {paddingVertical: 60}]}>
                         <Text style={sharedFonts.bigEmoji}>👀</Text>
-                        <Text style={[sharedFonts.emptyTitle, { marginBottom: 8} ]}>No habits yet</Text>
-                        <Text style={[sharedFonts.emptyText, {paddingHorizontal: 32}]}>
+                        <Text style={[errorStyles.title, { marginBottom: 8} ]}>No habits yet</Text>
+                        <Text style={[errorStyles.subtitle, {paddingHorizontal: 32}]}>
                             Tap the + button below to add your first habit
                         </Text>
                     </View>

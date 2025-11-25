@@ -5,7 +5,7 @@ import {Calendar, Clock} from '@tamagui/lucide-icons';
 import PickerButton from '@/src/components/PickerButton';
 import PickerModal from './PickerModal';
 import {formatDateDisplay} from '@/src/hooks/useDateTimePickers';
-import {oneHabitStyles} from '@/global'
+import {oneHabitStyles, sharedFonts} from '@/global'
 
 interface DateTimePickerGroupProps {
     notificationTime: string;
@@ -36,10 +36,10 @@ interface DateTimePickerGroupProps {
 export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
     return (
         <>
-            <Text style={oneHabitStyles.sectionTitle}>Schedule & Reminders</Text>
+            <Text style={[sharedFonts.mediumText, {marginBottom: 20,}]}>Schedule & Reminders</Text>
 
             <View style={oneHabitStyles.inputGroup}>
-                <Text style={oneHabitStyles.label}>Notification Time</Text>
+                <Text style={[sharedFonts.smallText, {marginBottom: 8}]}>Notification Time</Text>
                 <PickerButton
                     icon={Clock}
                     value={props.notificationTime}
@@ -49,7 +49,7 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
             </View>
 
             <View style={oneHabitStyles.inputGroup}>
-                <Text style={oneHabitStyles.label}>Start Date</Text>
+                <Text style={[sharedFonts.smallText, {marginBottom: 8}]}>Start Date</Text>
                 <PickerButton
                     icon={Calendar}
                     value={props.startDate ? formatDateDisplay(props.startDate) : ''}
@@ -59,7 +59,7 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
             </View>
 
             <View style={oneHabitStyles.inputGroup}>
-                <Text style={oneHabitStyles.label}>End Date</Text>
+                <Text style={[sharedFonts.smallText, {marginBottom: 8}]}>End Date</Text>
                 <PickerButton
                     icon={Calendar}
                     value={props.endDate ? formatDateDisplay(props.endDate) : ''}

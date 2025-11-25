@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import {Habit} from '@/src/types/Habit';
-import {oneHabitStyles} from "@/global";
+import {oneHabitStyles, sharedFonts, sharedStyles} from "@/global";
 
 interface HabitCardProps {
     habit: Habit;
@@ -11,28 +11,15 @@ export default function HabitCard({ habit }: HabitCardProps) {
     return (
         <View style={oneHabitStyles.card}>
             <View style={[oneHabitStyles.circle, { backgroundColor: habit.hex_color || '#eee' }]}>
-                <Text style={oneHabitStyles.emoji}>{habit.emoji}</Text>
+                <Text style={sharedFonts.biggerEmoji}>{habit.emoji}</Text>
             </View>
 
-            <View style={oneHabitStyles.content}>
-                <Text style={oneHabitStyles.name}>{habit.name}</Text>
-                <View style={oneHabitStyles.categoryBadge}>
+            <View style={{ flex: 1 }}>
+                <Text style={[sharedFonts.bigText,{marginBottom: 8,}]}>{habit.name}</Text>
+                <View style={sharedStyles.categoryBadge}>
                     <Text style={oneHabitStyles.categoryText}>{habit.category}</Text>
                 </View>
             </View>
         </View>
-    );    return (
-        <View style={oneHabitStyles.card}>
-            <View style={[oneHabitStyles.circle, { backgroundColor: habit.hex_color || '#eee' }]}>
-                <Text style={oneHabitStyles.emoji}>{habit.emoji}</Text>
-            </View>
-
-            <View style={oneHabitStyles.content}>
-                <Text style={oneHabitStyles.name}>{habit.name}</Text>
-                <View style={oneHabitStyles.categoryBadge}>
-                    <Text style={oneHabitStyles.categoryText}>{habit.category}</Text>
-                </View>
-            </View>
-        </View>
-    )
+    );
 }

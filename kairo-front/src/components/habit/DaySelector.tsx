@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
-import {oneHabitStyles} from "@/global";
+import {oneHabitStyles, sharedFonts} from "@/global";
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 const DAY_LABELS = {
@@ -29,11 +29,12 @@ export default function DaySelector({ selectedDays, onToggleDay }: DaySelectorPr
                         onPress={() => onToggleDay(day)}
                         style={[
                             oneHabitStyles.dayButton,
-                            selectedDays.includes(day) && oneHabitStyles.dayButtonActive
+                            selectedDays.includes(day) && oneHabitStyles.dayButtonActive //maybe change the color accordingly?
                         ]}
                     >
                         <Text style={[
-                            oneHabitStyles.dayText,
+                            sharedFonts.smallSubtleText,
+                            {fontWeight: '600'},
                             selectedDays.includes(day) && oneHabitStyles.dayTextActive
                         ]}>
                             {DAY_LABELS[day]}

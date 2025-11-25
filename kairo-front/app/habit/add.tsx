@@ -12,7 +12,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {searchHabitStyles} from "@/global";
+import {searchHabitStyles, sharedFonts} from "@/global";
 
 export default function Add() {
     const {habits, loading} = useHabits();
@@ -57,13 +57,13 @@ export default function Add() {
                 </View>
 
                 <View style={searchHabitStyles.sectionHeaderRow}>
-                    <Text style={searchHabitStyles.sectionHeader}>Suggestions</Text>
+                    <Text style={sharedFonts.smallSubtleText}>Suggestions</Text>
                     {loading && <ActivityIndicator size="small" color="#6B7280"/>}
                 </View>
 
                 <View style={searchHabitStyles.suggestionsWrap}>
                     {filteredHabits.length === 0 && !loading && (
-                        <Text style={searchHabitStyles.emptyText}>Not on the list? Create a new habit above.</Text>
+                        <Text style={[sharedFonts.smallSubtleText, {fontStyle: 'italic'}]}>Not on the list? Create a new habit above.</Text>
                     )}
 
                     {filteredHabits.map(habit => (
@@ -74,8 +74,8 @@ export default function Add() {
                             style={[searchHabitStyles.suggestion, {backgroundColor: habit.hex_color || '#eee'}]}
                         >
                             <View style={searchHabitStyles.suggestionRow}>
-                                <Text style={searchHabitStyles.emoji}>{habit.emoji}</Text>
-                                <Text style={searchHabitStyles.habitName}>{habit.name}</Text>
+                                <Text style={[sharedFonts.smallEmoji, {marginRight: 10}]}>{habit.emoji}</Text>
+                                <Text style={sharedFonts.smallText}>{habit.name}</Text>
                             </View>
                         </TouchableOpacity>
                     ))}

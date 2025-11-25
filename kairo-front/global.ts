@@ -82,6 +82,13 @@ export const sharedStyles = StyleSheet.create({
     bottom: 24,
     right: 24,
   },
+  categoryBadge: {
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
 })
 
 export const sharedFonts = StyleSheet.create({
@@ -93,14 +100,22 @@ export const sharedFonts = StyleSheet.create({
     fontSize: 32,
     fontWeight: '700',
     color: tokens.colors.text,
-    marginBottom: 4,
+  },
+  bigText: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: tokens.colors.text,
   },
   mediumText:{
     fontSize: 16,
     color: tokens.colors.text,
     fontWeight: '600',
   },
-
+  smallText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: tokens.colors.text,
+  },
   mediumSubtleText:{
     fontSize: 16,
     color: tokens.colors.textSubtle,
@@ -127,23 +142,17 @@ export const sharedFonts = StyleSheet.create({
     color: 'white',
   },
 
-  emptyTitle: { // for when theres nothing to show
-    fontSize: 20,
-    fontWeight: '700',
-    color: tokens.colors.cardShadow,
-    marginBottom: 8,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: tokens.colors.textSubtle,
-    textAlign: 'center',
-  },
   bigEmoji: {
     fontSize: 64,
   },
+  biggerEmoji: {
+    fontSize: 48,
+  },
   mediumEmoji: {
     fontSize: 24,
-  }
+  },
+  smallEmoji: {fontSize: 20},
+
 })
 
 // Profile-specific styles (can be reused or extended elsewhere)
@@ -282,21 +291,7 @@ export const oneHabitStyles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 16,
   },
-  emoji: { fontSize: 40 },
-  content: { flex: 1 },
-  name: { //maybe we could set something for our custom fonts
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 8,
-  },
-  categoryBadge: { // maybe a component if we will be reusing it
-    backgroundColor: '#F3F4F6',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
-  },
+
   categoryText: {
     fontSize: 12,
     fontWeight: '600',
@@ -313,21 +308,10 @@ export const oneHabitStyles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
-  sectionTitle: { //font
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 20,
-  },
   inputGroup: {
     marginBottom: 10,
   },
-  label: { //font
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 8,
-  },
+
   daysGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -348,16 +332,11 @@ export const oneHabitStyles = StyleSheet.create({
     backgroundColor: '#3B82F6',
     borderColor: '#3B82F6',
   },
-  dayText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#6B7280',
-  },
   dayTextActive: {
     color: '#fff',
   },
   submitButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: tokens.colors.buttonColor,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -365,11 +344,6 @@ export const oneHabitStyles = StyleSheet.create({
   },
   submitButtonDisabled: {
     opacity: 0.6,
-  },
-  submitText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
   },
 });
 
@@ -404,7 +378,6 @@ export const searchHabitStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
-  sectionHeader: {fontSize: 12, color: '#374151', fontWeight: '600'},
   suggestionsWrap: {
     width: '100%',
     display: 'flex',
@@ -422,9 +395,6 @@ export const searchHabitStyles = StyleSheet.create({
     marginBottom: 8,
   },
   suggestionRow: {flexDirection: 'row', alignItems: 'center'},
-  emoji: {fontSize: 20, marginRight: 10},
-  habitName: {fontSize: 16, color: '#111827'},
-  emptyText: {color: '#6B7280', fontStyle: 'italic', padding: 12},
 });
 
 
