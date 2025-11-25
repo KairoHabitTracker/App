@@ -289,7 +289,6 @@ export const oneHabitStyles = StyleSheet.create({
     borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
   },
 
   categoryText: {

@@ -4,7 +4,7 @@ import {useLocalSearchParams, useRouter} from 'expo-router';
 import {useAuth} from '@/src/contexts/AuthContext';
 import {useHabits} from '@/src/contexts/HabitContext';
 import {API_BASE} from '@/src/lib/api';
-import {oneHabitStyles, sharedFonts, sharedStyles} from "@/global";
+import {errorStyles, oneHabitStyles, sharedFonts, sharedStyles} from "@/global";
 import HabitCard from '@/src/components/habit/HabitCard';
 import DaySelector from '@/src/components/habit/DaySelector';
 import DateTimePickerGroup from '@/src/components/habit/DateTimePickerGroup';
@@ -71,8 +71,8 @@ export default function HabitDetail() {
 
     if (!habit) {
         return (
-            <View style={sharedStyles.basicContainer}>
-                <Text style={sharedStyles.errorText}>Habit not found</Text>
+            <View style={errorStyles.container}>
+                <Text style={errorStyles.subtitle}>Habit not found</Text>
             </View>
         );
     }

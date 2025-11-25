@@ -27,11 +27,11 @@ export default function HabitListItem({
                 return Math.abs(gestureState.dx) > 10;
             },
             onPanResponderMove: (_, gestureState) => {
-                if (!isCompleted && gestureState.dx < 0) {
-                    // Swipe left to complete
+                if (isCompleted && gestureState.dx < 0) {
+                    // Swipe left to uncomplete
                     translateX.setValue(gestureState.dx);
-                } else if (isCompleted && gestureState.dx > 0) {
-                    // Swipe right to uncomplete
+                } else if (!isCompleted && gestureState.dx > 0) {
+                    // Swipe right to complete
                     translateX.setValue(gestureState.dx);
                 }
             },

@@ -10,7 +10,7 @@ interface HabitCardProps {
 export default function HabitCard({ habit }: HabitCardProps) {
     return (
         <View style={oneHabitStyles.card}>
-            <View style={[oneHabitStyles.circle, { backgroundColor: habit.hex_color || '#eee' }]}>
+            <View style={[oneHabitStyles.circle, { backgroundColor: habit.hex_color || '#eee' ,marginRight: 16, }]}>
                 <Text style={sharedFonts.biggerEmoji}>{habit.emoji}</Text>
             </View>
 
