@@ -126,7 +126,7 @@ export default function SettingsScreen() {
                 </YStack>
             ) : null}
 
-            <Button onPress={() => router.push('../profile')} style={{ marginTop: 24 }} accessibilityLabel="Go back to profile">
+            <Button onPress={() => router.push('../profile')} style={{ marginTop: 24, marginBottom: 24 }} accessibilityLabel="Go back to profile">
                 Go Back
             </Button>
         </ScrollView>

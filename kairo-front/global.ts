@@ -11,6 +11,9 @@ export const tokens = {
     cardBackground: "#ffffff",
     cardShadow: "#000000",
     statText: "#111827",
+    tabBar:'#54beff',
+    tabBarInactiveTintColor: '#B8E6FF',
+    buttonColor: '#6366F1',
   },
   radius: {
     md: 12,
@@ -41,6 +44,107 @@ export const tokens = {
     valueFontWeight: "700",
   }
 } as const;
+
+
+
+export const sharedStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: tokens.colors.background,
+    paddingHorizontal: tokens.spacing.lg,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: tokens.spacing.md,
+  },
+  basicContainer: {
+    flex: 1,
+    backgroundColor: tokens.colors.cardBackground,
+  },
+  input: {
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: '#111827',
+  },
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 100,
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+  },
+})
+
+export const sharedFonts = StyleSheet.create({
+  errorText: {
+    color: '#EF4444',
+    fontSize: 16,
+  },
+  headerText: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: tokens.colors.text,
+    marginBottom: 4,
+  },
+  mediumText:{
+    fontSize: 16,
+    color: tokens.colors.text,
+    fontWeight: '600',
+  },
+
+  mediumSubtleText:{
+    fontSize: 16,
+    color: tokens.colors.textSubtle,
+    fontWeight: '500',
+  },
+  smallSubtleText:{
+    fontSize: 14,
+    color: tokens.colors.textSubtle,
+  },
+  upperCaseSubtleText:{
+    fontSize: 16,
+    color: tokens.colors.textSubtle,
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  mediumWhiteText:{
+    fontSize: 16,
+    color: 'white',
+    fontWeight: '600',
+  },
+  smallWhiteText:{
+    fontSize: 14,
+    color: 'white',
+  },
+
+  emptyTitle: { // for when theres nothing to show
+    fontSize: 20,
+    fontWeight: '700',
+    color: tokens.colors.cardShadow,
+    marginBottom: 8,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: tokens.colors.textSubtle,
+    textAlign: 'center',
+  },
+  bigEmoji: {
+    fontSize: 64,
+  },
+  mediumEmoji: {
+    fontSize: 24,
+  }
+})
 
 // Profile-specific styles (can be reused or extended elsewhere)
 export const profileStyles = StyleSheet.create({
@@ -160,7 +264,7 @@ export const errorStyles = StyleSheet.create({
 
 export const oneHabitStyles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: tokens.colors.cardBackground,
     borderRadius: 16,
     padding: 16,
     flexDirection: 'row',
@@ -270,37 +374,6 @@ export const oneHabitStyles = StyleSheet.create({
 });
 
 
-
-export const sharedStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: tokens.colors.background,
-    paddingHorizontal: tokens.spacing.lg,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: tokens.spacing.md as unknown as number,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    color: '#EF4444',
-    fontSize: 16,
-  },
-  input: {
-    backgroundColor: '#F9FAFB',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    color: '#111827',
-  },
-})
-
-
 export const searchHabitStyles = StyleSheet.create({
   flex: {flex: 1},
   container: {padding: 16, alignItems: 'center'},
@@ -354,3 +427,108 @@ export const searchHabitStyles = StyleSheet.create({
   emptyText: {color: '#6B7280', fontStyle: 'italic', padding: 12},
 });
 
+
+
+export const progressCard = StyleSheet.create({
+  progressCard: {
+    backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  progressHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  progressPercent: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#3B82F6',
+  },
+  progressBarBg: {
+    height: 8,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  progressBarFill: {
+    height: '100%',
+    backgroundColor: '#3B82F6',
+    borderRadius: 4,
+  },
+});
+
+export const progressCardStyles = StyleSheet.create({
+  container: {
+    marginBottom: 12,
+    position: 'relative',
+  },
+  actionBg: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    borderRadius: 16,
+  },
+  actionBgComplete: {
+    backgroundColor: '#10B981',
+    justifyContent: 'flex-start',
+    paddingLeft: 24,
+  },
+  actionBgUndo: {
+    backgroundColor: '#EF4444',
+    justifyContent: 'flex-end',
+    paddingRight: 24,
+  },
+  habitCard: {
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  habitContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  emojiContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  checkmark: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+})
+
+export const homeScreenStyles = StyleSheet.create({
+  header: {
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 16,
+    backgroundColor: 'white',
+  },
+})

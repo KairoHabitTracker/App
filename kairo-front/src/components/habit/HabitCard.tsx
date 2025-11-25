@@ -21,5 +21,18 @@ export default function HabitCard({ habit }: HabitCardProps) {
                 </View>
             </View>
         </View>
-    );
+    );    return (
+        <View style={oneHabitStyles.card}>
+            <View style={[oneHabitStyles.circle, { backgroundColor: habit.hex_color || '#eee' }]}>
+                <Text style={oneHabitStyles.emoji}>{habit.emoji}</Text>
+            </View>
+
+            <View style={oneHabitStyles.content}>
+                <Text style={oneHabitStyles.name}>{habit.name}</Text>
+                <View style={oneHabitStyles.categoryBadge}>
+                    <Text style={oneHabitStyles.categoryText}>{habit.category}</Text>
+                </View>
+            </View>
+        </View>
+    )
 }
