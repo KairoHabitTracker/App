@@ -22,7 +22,7 @@ export default function Add() {
 
 
     const userHabitNames = useMemo(
-        () => new Set((userHabits ?? []).map(h => h.habit?.name.trim().toLowerCase())),
+        () => new Set((userHabits ?? []).map((uh: any) => uh.habit?.name?.trim().toLowerCase())),
         [userHabits]
     );
 
@@ -43,7 +43,7 @@ export default function Add() {
 
 
     const onAdd = () => {
-        router.push({ pathname: '/habit/new', params: { gotName: text } });
+        router.push({pathname: '/habit/new', params: {gotName: text}});
     };
 
     return (
@@ -73,7 +73,8 @@ export default function Add() {
 
                 <View style={searchHabitStyles.suggestionsWrap}>
                     {filteredHabits.length === 0 && !loading && (
-                        <Text style={[sharedFonts.smallSubtleText, {fontStyle: 'italic'}]}>Not on the list? Create a new habit above.</Text>
+                        <Text style={[sharedFonts.smallSubtleText, {fontStyle: 'italic'}]}>Not on the list? Create a new
+                            habit above.</Text>
                     )}
 
                     {filteredHabits.map(habit => (

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {useRouter} from 'expo-router';
+import {useLocalSearchParams, useRouter} from 'expo-router';
 import {useAuth} from '@/src/contexts/AuthContext';
 import {API_BASE} from '@/src/lib/api';
 import {useDateTimePickers} from '@/src/hooks/useDateTimePickers';
@@ -10,11 +10,15 @@ import CategoryPicker from "@/src/components/habit/CategoryPicker";
 import EmojiPicker from "@/src/components/habit/EmojiPicker";
 import ColorPickerModal from "@/src/components/habit/ColorPickerModal";
 
-export default function NewHabitDetail({gotName}: string) {
+
+export default function NewHabitDetail() {
     const {token} = useAuth();
     const router = useRouter();
 
-    const [name, setName] = useState(gotName);
+    const params = useLocalSearchParams<{ gotName?: string }>();
+    const initialName = params.gotName ?? ''
+
+    const [name, setName] = useState<string>(initialName);
     const [emoji, setEmoji] = useState('🙉');
     const [hexColor, setHexColor] = useState('#f11f9d');
     const [category, setCategory] = useState('other');
@@ -81,7 +85,7 @@ export default function NewHabitDetail({gotName}: string) {
             });
 
             Alert.alert('Success', 'Custom habit created and added to your routine!', [
-                {text: 'OK', onPress: () => router.back()}
+                {text: 'OK', onPress: () => router.replace('/home')}
             ]);
         } catch (error) {
             console.error(error);

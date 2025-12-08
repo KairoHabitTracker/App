@@ -6,4 +6,5 @@ export type HabitsContextType = {
     error: string | null;
     refreshHabits: () => Promise<void>;
     getHabitById: (id: string | number) => Habit | undefined;
+    userHabits: Habit[];
 };

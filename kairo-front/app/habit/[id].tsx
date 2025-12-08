@@ -11,9 +11,9 @@ import DateTimePickerGroup from '@/src/components/habit/DateTimePickerGroup';
 import {useDateTimePickers} from '@/src/hooks/useDateTimePickers';
 
 export default function HabitDetail() {
-    const { id } = useLocalSearchParams() as { id: string };
-    const { token } = useAuth();
-    const { getHabitById } = useHabits();
+    const {id} = useLocalSearchParams() as { id: string };
+    const {token} = useAuth();
+    const {getHabitById} = useHabits();
     const router = useRouter();
     const habit = getHabitById(id);
 
@@ -59,7 +59,7 @@ export default function HabitDetail() {
             await response.json();
 
             Alert.alert('Success', 'Habit added to your routine!', [
-                { text: 'OK', onPress: () => router.back() }
+                {text: 'OK', onPress: () => router.replace('/home')}
             ]);
         } catch (error) {
             console.error(error);
@@ -79,10 +79,10 @@ export default function HabitDetail() {
 
     return (
         <ScrollView contentContainerStyle={sharedStyles.container}>
-            <HabitCard habit={habit} />
+            <HabitCard habit={habit}/>
 
             <View style={oneHabitStyles.formSection}>
-                <DaySelector selectedDays={selectedDays} onToggleDay={toggleDay} />
+                <DaySelector selectedDays={selectedDays} onToggleDay={toggleDay}/>
                 <DateTimePickerGroup {...pickerState} />
 
                 <TouchableOpacity
@@ -91,7 +91,7 @@ export default function HabitDetail() {
                     disabled={submitting}
                 >
                     {submitting ? (
-                        <ActivityIndicator color="#fff" />
+                        <ActivityIndicator color="#fff"/>
                     ) : (
                         <Text style={sharedFonts.mediumWhiteText}>Add to My Habits</Text>
                     )}
