@@ -2,21 +2,25 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import {useAuth} from './AuthContext';
 import {API_BASE} from '@/src/lib/api';
 import {Habit} from '@/src/types/Habit';
+import {UserHabit} from '@/src/types/UserHabit';
 import {HabitsContextType} from "@/src/types/habitContextType";
 
 
 const HabitsContext = createContext<HabitsContextType | undefined>(undefined);
 
-export function HabitsProvider({ children }: { children: React.ReactNode }) {
-    const { token } = useAuth();
-    const [habits, setHabits] = useState<Habit[]>([]);
+export function HabitsProvider({children}: { children: React.ReactNode }) {
+    const {token} = useAuth();
+    const [habits, setHabits] = useState<Habit[]>([]); // Katalog
+    const [userHabits, setUserHabits] = useState<UserHabit[]>([]); // Lista nawyków użytkownika
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [userHabits, setUserHabits] = useState(null);
 
-        const fetchUser = async () => {
-            if (!token) return;
 
+    // --- POBIERANIE LISTY NAWYKÓW UŻYTKOWNIKA (Dla HabitList) ---
+    const fetchUserHabits = async () => {
+        if (!token) return;
+
+        try {
             const res = await fetch(`${API_BASE}/api/habits/user`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -25,11 +29,14 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
             });
 
             const json = await res.json();
-            setUserHabits(json.data);
-        };
+            setUserHabits(Array.isArray(json.data) ? json.data : []);
+        } catch (err) {
+            console.error('Error fetching user habits list:', err);
+            setUserHabits([]);
+        }
+    };
 
-
-
+    // --- POBIERANIE predefined NAWYKÓW ---
     const fetchHabits = async () => {
         if (!token) return;
 
@@ -43,10 +50,6 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
                 },
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-
             const json = await response.json();
             const data = json.data;
             setHabits(Array.isArray(data) ? data : []);
@@ -59,37 +62,46 @@ export function HabitsProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+
+    // --- ŁADUJĄCE DANE ---
     useEffect(() => {
         if (token) {
             fetchHabits();
+            fetchUserHabits();
         }
     }, [token]);
 
-useEffect(() => {
-    if (token) {
-        fetchUser();
-    }
-}, [token]);
-
     const refreshHabits = async () => {
         await fetchHabits();
+        await fetchUserHabits();
     };
 
     const getHabitById = (id: string | number) => {
         return habits.find(h => h.id === Number(id));
     };
 
+    const getUserHabitById = (userHabitId: string | number) => {
+        return userHabits.find(uh => uh.id === Number(userHabitId));
+    };
+
     return (
-        <HabitsContext.Provider value={{ habits, loading, error, refreshHabits, getHabitById, userHabits }}>
+        <HabitsContext.Provider
+            value={{
+                habits,
+                loading,
+                error,
+                refreshHabits,
+                getHabitById,
+                userHabits,
+                fetchUserHabits,
+                getUserHabitById
+            }}
+        >
             {children}
         </HabitsContext.Provider>
     );
 }
 
 export function useHabits() {
-    const context = useContext(HabitsContext);
-    if (context === undefined) {
-        throw new Error('useHabits must be used within a HabitsProvider');
-    }
-    return context;
+    return useContext(HabitsContext);
 }

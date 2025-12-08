@@ -1,7 +1,6 @@
 import {useCallback, useState} from 'react';
 import {Platform} from 'react-native';
 
-// Helper functions
 function pad(n: number) {
     return n < 10 ? `0${n}` : `${n}`;
 }
@@ -17,7 +16,13 @@ function formatDateISO(d: Date) {
 export function formatDateDisplay(dateStr: string) {
     if (!dateStr) return 'Select date';
     const d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return d.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+}
+
+interface InitializationParams {
+    notificationTime?: string | null;
+    startDate?: string | null;
+    endDate?: string | null;
 }
 
 export function useDateTimePickers() {
@@ -35,7 +40,9 @@ export function useDateTimePickers() {
 
     const openTimePicker = useCallback(() => {
         if (notificationTime) {
-            setTempTime(new Date(`1970-01-01T${notificationTime}:00`));
+            setTempTime(new Date(`2025-01-01T${notificationTime}:00`));
+        } else {
+            setTempTime(new Date());
         }
         setShowTimePicker(true);
     }, [notificationTime]);
@@ -59,6 +66,8 @@ export function useDateTimePickers() {
     const openStartDatePicker = useCallback(() => {
         if (startDate) {
             setTempStartDate(new Date(startDate));
+        } else {
+            setTempStartDate(new Date());
         }
         setShowStartDatePicker(true);
     }, [startDate]);
@@ -82,6 +91,8 @@ export function useDateTimePickers() {
     const openEndDatePicker = useCallback(() => {
         if (endDate) {
             setTempEndDate(new Date(endDate));
+        } else {
+            setTempEndDate(new Date());
         }
         setShowEndDatePicker(true);
     }, [endDate]);
@@ -102,7 +113,39 @@ export function useDateTimePickers() {
         setShowEndDatePicker(false);
     }, [tempEndDate]);
 
+
+    const initialize = useCallback((params: InitializationParams) => {
+        // czas powiadomienia
+        const initialTimeStr = params.notificationTime || '';
+        setNotificationTime(initialTimeStr);
+        if (initialTimeStr) {
+            setTempTime(new Date(`2025-01-01T${initialTimeStr}:00`));
+        } else {
+            setTempTime(new Date());
+        }
+
+        // data rozpoczęcia
+        const initialStartDateStr = params.startDate || '';
+        setStartDate(initialStartDateStr);
+        if (initialStartDateStr) {
+            setTempStartDate(new Date(initialStartDateStr));
+        } else {
+            setTempStartDate(new Date());
+        }
+
+        // data zakończenia
+        const initialEndDateStr = params.endDate || '';
+        setEndDate(initialEndDateStr);
+        if (initialEndDateStr) {
+            setTempEndDate(new Date(initialEndDateStr));
+        } else {
+            setTempEndDate(new Date());
+        }
+    }, []);
+
+
     return {
+        // Czas
         notificationTime,
         showTimePicker,
         tempTime,
@@ -111,6 +154,7 @@ export function useDateTimePickers() {
         confirmTime,
         closeTimePicker: () => setShowTimePicker(false),
 
+        // Data rozpoczęcia
         startDate,
         showStartDatePicker,
         tempStartDate,
@@ -119,6 +163,7 @@ export function useDateTimePickers() {
         confirmStartDate,
         closeStartDatePicker: () => setShowStartDatePicker(false),
 
+        // Data zakończenia
         endDate,
         showEndDatePicker,
         tempEndDate,
@@ -126,5 +171,7 @@ export function useDateTimePickers() {
         onEndDateChange,
         confirmEndDate,
         closeEndDatePicker: () => setShowEndDatePicker(false),
+
+        initialize,
     };
 }

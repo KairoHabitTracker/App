@@ -8,8 +8,8 @@ import HabitListItem from "./HabitListItem";
 import ProgressCard from "@/src/components/habit/ProgressCard";
 import {errorStyles, sharedFonts, sharedStyles} from "@/global";
 
-export default function HabitList({ onAdd }: any) {
-    const { token } = useAuth();
+export default function HabitList({onAdd, onEditHabit}: any) {
+    const {token} = useAuth();
     const [habits, setHabits] = useState<UserHabit[]>([]);
     const [refreshing, setRefreshing] = useState(false);
 
@@ -79,7 +79,7 @@ export default function HabitList({ onAdd }: any) {
 
     const uncompleteHabit = async (habitId: number) => {
         try {
-            await fetch(`${API_BASE}/api/habits/user/${habitId}/complete`, {
+            await fetch(`${API_BASE}/api/habits/user/${habitId}/uncomplete`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -93,13 +93,12 @@ export default function HabitList({ onAdd }: any) {
     };
 
 
-
     return (
         <View style={sharedStyles.basicContainer}>
             <ScrollView
                 contentContainerStyle={sharedStyles.scrollContent}
                 refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
                 }
             >
                 {habits.length > 0 && (
@@ -108,7 +107,7 @@ export default function HabitList({ onAdd }: any) {
 
                 {toBeCompleted.length > 0 && (
                     <View style={{marginBottom: 24}}>
-                        <Text style={[sharedFonts.upperCaseSubtleText, { marginBottom: 12,marginLeft: 4} ]}>
+                        <Text style={[sharedFonts.upperCaseSubtleText, {marginBottom: 12, marginLeft: 4}]}>
                             To Complete ({toBeCompleted.length})
                         </Text>
                         {toBeCompleted.map(habit => (
@@ -116,6 +115,7 @@ export default function HabitList({ onAdd }: any) {
                                 key={habit.id}
                                 userHabit={habit}
                                 onComplete={() => completeHabit(habit.id)}
+                                onEditHabit={() => onEditHabit(habit.id)}
                             />
                         ))}
                     </View>
@@ -123,7 +123,7 @@ export default function HabitList({ onAdd }: any) {
 
                 {completedToday.length > 0 && (
                     <View style={{marginBottom: 24}}>
-                        <Text style={[sharedFonts.upperCaseSubtleText, { marginBottom: 12,marginLeft: 4} ]}>
+                        <Text style={[sharedFonts.upperCaseSubtleText, {marginBottom: 12, marginLeft: 4}]}>
                             Completed ({completedToday.length})
                         </Text>
                         {completedToday.map(habit => (
@@ -140,7 +140,7 @@ export default function HabitList({ onAdd }: any) {
                 {habits.length === 0 && (
                     <View style={[sharedStyles.center, {paddingVertical: 60}]}>
                         <Text style={sharedFonts.bigEmoji}>👀</Text>
-                        <Text style={[errorStyles.title, { marginBottom: 8} ]}>No habits yet</Text>
+                        <Text style={[errorStyles.title, {marginBottom: 8}]}>No habits yet</Text>
                         <Text style={[errorStyles.subtitle, {paddingHorizontal: 32}]}>
                             Tap the + button below to add your first habit
                         </Text>
@@ -149,7 +149,7 @@ export default function HabitList({ onAdd }: any) {
             </ScrollView>
 
             <View style={sharedStyles.addButton}>
-                <AddButton onPress={onAdd} />
+                <AddButton onPress={onAdd}/>
             </View>
         </View>
     );

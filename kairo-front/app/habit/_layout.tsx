@@ -6,7 +6,7 @@ export default function HabitLayout() {
     return (
         <Stack>
             <Stack.Screen
-                name="add"
+                name="add/index"
                 options={{
                     title: 'Add Habit',
                     presentation: 'card',
@@ -33,9 +33,15 @@ export default function HabitLayout() {
                 }}
             />
             <Stack.Screen
-                name="[id]"
+                name="add/[habitId]"
                 options={{
                     title: 'Habit Details',
+                }}
+            />
+            <Stack.Screen
+                name="edit/[userHabitId]"
+                options={{
+                    title: 'Edit Habit Notifications',
                 }}
             />
         </Stack>
