@@ -1,9 +1,10 @@
 // Libraries
+import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 // Api
-import { apiFetch, loginRequest, logoutAllRequest, logoutRequest } from '../lib/api';
+import { apiFetch, loginRequest, logoutAllRequest, logoutRequest, verifyEmail } from '../lib/api';
 
 // Types
 import { ApiProfileResponse } from '../lib/apiTypes';
@@ -59,6 +60,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  // Process verification links (either initial link or incoming url events)
+  async function processVerificationUrl(url: string | null) {
+    if (!url) return;
+    try {
+      const parsed = Linking.parse(url);
+      const path = parsed.path;
+      if (!path) return;
+      const parts = path.split('/').filter(Boolean);
+      // find "verify" segment
+      const verifyIdx = parts.findIndex((p) => p === 'verify');
+      if (verifyIdx === -1) return;
+      const id = parts[verifyIdx + 1];
+      const hash = parts[verifyIdx + 2];
+      if (!id || !hash) return;
+
+      const currentToken = token ?? (await getItemAsync('authToken'));
+      if (currentToken) {
+        try {
+          await verifyEmail(id, hash);
+          await fetchProfile();
+          // navigate to a result screen
+          router.replace({ pathname: '/verify-result', params: { status: 'success' } } as any);
+        } catch (err: any) {
+          if (err?.status === 403) {
+            router.replace({ pathname: '/verify-result', params: { status: 'invalid' } } as any);
+          } else if (err?.status === 401) {
+            // save pending and navigate to login
+            await setItemAsync('pendingVerificationUrl', url);
+            router.replace('/login');
+          } else {
+            router.replace({ pathname: '/verify-result', params: { status: 'error', message: String(err?.message ?? 'Unknown error') } } as any);
+          }
+        }
+      } else {
+        // Not authenticated: store the link and send user to login
+        await setItemAsync('pendingVerificationUrl', url);
+        router.replace('/login');
+      }
+    } catch (err) {
+      console.warn('Failed to process verification URL', err);
+    }
+  }
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -73,6 +117,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // Already handled inside fetchProfile
           }
         }
+        // Check initial linking URL when app starts
+        try {
+          const initialUrl = await Linking.getInitialURL();
+          if (initialUrl) await processVerificationUrl(initialUrl);
+        } catch (e) {
+          // ignore
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -80,6 +131,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => { mounted = false; };
   }, []);
+
+  // Listen for incoming links while app is running
+  useEffect(() => {
+    const subscription = Linking.addEventListener('url', (ev) => {
+      processVerificationUrl(ev.url);
+    });
+    return () => {
+      try {
+        subscription.remove();
+      } catch {}
+    };
+  }, [token]);
 
   async function login(email: string, password: string, device_name = 'mobile') {
     setLoading(true);
@@ -105,6 +168,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(tokenFromServer);
       // Fetch profile after saving token
       await fetchProfile();
+      // If there is a pending verification URL (from link clicked when unauthenticated), process it now
+      try {
+        const pending = await getItemAsync('pendingVerificationUrl');
+        if (pending) {
+          await deleteItemAsync('pendingVerificationUrl');
+          await processVerificationUrl(pending);
+          return;
+        }
+      } catch (e) {
+        // ignore
+      }
+
       router.replace((redirect ?? '/home') as any);
     } finally {
       setLoading(false);

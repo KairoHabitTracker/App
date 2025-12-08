@@ -1,13 +1,13 @@
 import { profileStyles as styles } from '@/global';
 import { useAuth } from '@/src/contexts/AuthContext';
-import { registerRequest } from '@/src/lib/api';
+import { registerRequest, sendVerificationNotification } from '@/src/lib/api';
 import { router, useLocalSearchParams as useSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function RegisterScreen() {
     const { redirect } = useSearchParams() as { redirect?: string };
-    const { login } = useAuth(); // Use login() to store token if backend returns one
+    const { loginWithToken } = useAuth(); // save token and fetch profile when backend returns one
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -22,17 +22,27 @@ export default function RegisterScreen() {
 
             const token = response?.token ?? response.data?.token;
             if (token) {
-                // Reminder to give devices actual names
-                // After login, go to requested redirect or home
-                if (redirect) router.replace(redirect as any);
-                else router.replace('/home');
+                // Save token, fetch profile and navigate
+                await loginWithToken(token, redirect);
+                // Trigger verification email (server will use the token stored in secure store)
+                try {
+                    await sendVerificationNotification();
+                    // navigate to a friendly 'verification sent' screen
+                    router.replace({ pathname: '/verify-sent', params: { email: encodeURIComponent(email) } } as any);
+                    return;
+                } catch (err) {
+                    // Non-fatal: still show verification-sent screen but include note
+                    console.warn('Failed to send verification notification', err);
+                    router.replace({ pathname: '/verify-sent', params: { email: encodeURIComponent(email), note: encodeURIComponent('Failed to send verification email, please try resend from login.') } } as any);
+                    return;
+                }
             } else {
-                // backend may require email verification: show informative message and redirect to login
-                // router.replace(
-                //     `/login?showVerify=1&email=${encodeURIComponent(email)}&redirect=${encodeURIComponent(
-                //         redirect ?? '/'
-                //     )}`
-                // );
+                // Backend did not return a token. Navigate to login and instruct user to check email.
+                router.replace(
+                    `/login?showVerify=1&email=${encodeURIComponent(email)}&redirect=${encodeURIComponent(
+                        redirect ?? '/'
+                    )}`
+                );
             }
         } catch (error: unknown) {
             // If apiFetch throws, it sets error.body to parsed response when possible

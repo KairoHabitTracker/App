@@ -176,3 +176,17 @@ export async function logoutAllRequest() {
   });
   return res;
 }
+
+// Email verification helpers
+export async function sendVerificationNotification(): Promise<{ message?: string } | null> {
+  return apiFetch('/api/email/verification-notification', {
+    method: 'POST',
+  });
+}
+
+export async function verifyEmail(id: string, hash: string): Promise<{ message?: string } | null> {
+  const path = `/api/email/verify/${encodeURIComponent(id)}/${encodeURIComponent(hash)}`;
+  return apiFetch(path, {
+    method: 'GET',
+  });
+}

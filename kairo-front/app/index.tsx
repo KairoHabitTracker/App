@@ -26,9 +26,9 @@ export default function Index() {
         };
     }, [router]);
 
-    return (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <ActivityIndicator/>
-        </View>
+    return React.createElement(
+        View,
+        { style: { flex: 1, justifyContent: 'center', alignItems: 'center' } },
+        React.createElement(ActivityIndicator, null)
     );
 }
