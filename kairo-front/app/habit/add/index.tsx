@@ -1,5 +1,5 @@
 import AddButton from "@/src/components/AddButton";
-import {useHabits} from "@/src/contexts/HabitContext";
+import {useHabits} from "@/src/contexts/HabitsContext";
 import {useRouter} from "expo-router";
 import {useMemo, useState} from "react";
 import {
@@ -43,7 +43,7 @@ export default function Add() {
 
 
     const onAdd = () => {
-        router.push({pathname: '/habit/new', params: {gotName: text}});
+        router.push({pathname: '/habit/add/new', params: {gotName: text}});
     };
 
     return (
@@ -80,7 +80,7 @@ export default function Add() {
                     {filteredHabits.map(habit => (
                         <TouchableOpacity
                             key={habit.id}
-                            onPress={() => router.push(`/habit/${habit.id}`)}
+                            onPress={() => router.push(`/habit/add/${habit.id}`)}
                             activeOpacity={0.8}
                             style={[searchHabitStyles.suggestion, {backgroundColor: habit.hex_color || '#eee'}]}
                         >
