@@ -1,16 +1,22 @@
 import AddButton from "@/src/components/AddButton";
-import {useAuth} from "@/src/contexts/AuthContext";
-import {API_BASE} from '@/src/lib/api';
-import type {UserHabit} from '@/src/types/UserHabit';
-import {useEffect, useState} from 'react';
+import {useMemo, useState} from 'react';
 import {RefreshControl, ScrollView, Text, View} from "react-native";
 import HabitListItem from "./HabitListItem";
 import ProgressCard from "@/src/components/habit/ProgressCard";
 import {errorStyles, sharedFonts, sharedStyles} from "@/global";
+import {useHabits} from "@/src/contexts/HabitsContext";
+
 
 export default function HabitList({onAdd, onEditHabit}: any) {
-    const {token} = useAuth();
-    const [habits, setHabits] = useState<UserHabit[]>([]);
+
+    const {
+        userHabits,         // lista nawyków użytkownika
+        fetchUserHabits,    // odświeżanie listy
+        completeHabit,
+        uncompleteHabit,
+        loading,
+    } = useHabits();
+
     const [refreshing, setRefreshing] = useState(false);
 
     const isToday = (dateString: string | null) => {
@@ -24,74 +30,21 @@ export default function HabitList({onAdd, onEditHabit}: any) {
         );
     };
 
-    const completedToday = habits.filter(habit => isToday(habit.last_completed_at));
-    const toBeCompleted = habits.filter(habit => !isToday(habit.last_completed_at));
+    const completedToday = useMemo(() => {
+        return userHabits.filter(habit => isToday(habit.last_completed_at));
+    }, [userHabits]);
 
-    useEffect(() => {
-        if (token) {
-            loadHabits();
-        }
-    }, [token]);
-
-    const loadHabits = async () => {
-        const data = await getHabits();
-        setHabits(data);
-    };
+    const toBeCompleted = useMemo(() => {
+        return userHabits.filter(habit => !isToday(habit.last_completed_at));
+    }, [userHabits]);
 
     const onRefresh = async () => {
         setRefreshing(true);
-        await loadHabits();
+        await fetchUserHabits();
         setRefreshing(false);
     };
 
-    const getHabits = async () => {
-        try {
-            const response = await fetch(`${API_BASE}/api/habits/user`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            const json = await response.json();
-            const data = json.data;
-            return Array.isArray(data) ? data : [];
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
-    };
-
-    const completeHabit = async (habitId: number) => {
-        try {
-            await fetch(`${API_BASE}/api/habits/user/${habitId}/complete`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            await loadHabits();
-        } catch (error) {
-            console.error('Error completing habit:', error);
-        }
-    };
-
-    const uncompleteHabit = async (habitId: number) => {
-        try {
-            await fetch(`${API_BASE}/api/habits/user/${habitId}/uncomplete`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            await loadHabits();
-        } catch (error) {
-            console.error('Error uncompleting habit:', error);
-        }
-    };
-
+    const habitsToDisplay = userHabits;
 
     return (
         <View style={sharedStyles.basicContainer}>
@@ -101,8 +54,13 @@ export default function HabitList({onAdd, onEditHabit}: any) {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
                 }
             >
-                {habits.length > 0 && (
-                    <ProgressCard habits={habits} completedToday={completedToday}/>
+                {habitsToDisplay.length === 0 && loading && (
+                    <Text style={[sharedFonts.mediumText, {textAlign: 'center', marginTop: 50}]}>Loading
+                        habits...</Text>
+                )}
+
+                {habitsToDisplay.length > 0 && (
+                    <ProgressCard habits={habitsToDisplay} completedToday={completedToday}/>
                 )}
 
                 {toBeCompleted.length > 0 && (
@@ -137,7 +95,7 @@ export default function HabitList({onAdd, onEditHabit}: any) {
                     </View>
                 )}
 
-                {habits.length === 0 && (
+                {habitsToDisplay.length === 0 && !loading && (
                     <View style={[sharedStyles.center, {paddingVertical: 60}]}>
                         <Text style={sharedFonts.bigEmoji}>👀</Text>
                         <Text style={[errorStyles.title, {marginBottom: 8}]}>No habits yet</Text>

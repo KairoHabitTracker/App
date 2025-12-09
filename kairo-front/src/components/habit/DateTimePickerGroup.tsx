@@ -6,32 +6,7 @@ import PickerButton from '@/src/components/PickerButton';
 import PickerModal from './PickerModal';
 import {formatDateDisplay} from '@/src/hooks/useDateTimePickers';
 import {oneHabitStyles, sharedFonts} from '@/global'
-
-interface DateTimePickerGroupProps {
-    notificationTime: string;
-    showTimePicker: boolean;
-    tempTime: Date;
-    onTimeChange: (event: any, selected?: Date) => void;
-    openTimePicker: () => void;
-    confirmTime: () => void;
-    closeTimePicker: () => void;
-
-    startDate: string;
-    showStartDatePicker: boolean;
-    tempStartDate: Date;
-    onStartDateChange: (event: any, selected?: Date) => void;
-    openStartDatePicker: () => void;
-    confirmStartDate: () => void;
-    closeStartDatePicker: () => void;
-
-    endDate: string;
-    showEndDatePicker: boolean;
-    tempEndDate: Date;
-    onEndDateChange: (event: any, selected?: Date) => void;
-    openEndDatePicker: () => void;
-    confirmEndDate: () => void;
-    closeEndDatePicker: () => void;
-}
+import {DateTimePickerGroupProps} from "@/src/types/DateTimePickerGroupProps";
 
 export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
     return (
@@ -68,8 +43,7 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
                 />
             </View>
 
-
-            {/*kocham ios <333  daj znac czy dziala na androidzie bo tutaj zabawa zeby to ladnie wygladalo*/}
+            
             {Platform.OS === 'ios' ? (
                 <>
                     <PickerModal
@@ -84,7 +58,7 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
                             is24Hour
                             display="spinner"
                             onChange={props.onTimeChange}
-                            style={{ height: 200 }}
+                            style={{height: 200}}
                         />
                     </PickerModal>
 
@@ -99,7 +73,7 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
                             mode="date"
                             display="spinner"
                             onChange={props.onStartDateChange}
-                            style={{ height: 200 }}
+                            style={{height: 200}}
                         />
                     </PickerModal>
 
@@ -114,7 +88,7 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
                             mode="date"
                             display="spinner"
                             onChange={props.onEndDateChange}
-                            style={{ height: 200 }}
+                            style={{height: 200}}
                         />
                     </PickerModal>
                 </>

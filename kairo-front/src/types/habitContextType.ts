@@ -1,13 +1,15 @@
 import {Habit} from "@/src/types/Habit";
 import {UserHabit} from "@/src/types/UserHabit";
 
-export type HabitsContextType = {
+export interface HabitsContextType {
     habits: Habit[];
+    userHabits: UserHabit[];
     loading: boolean;
     error: string | null;
     refreshHabits: () => Promise<void>;
-    getHabitById: (id: string | number) => Habit | undefined;
-    userHabits: UserHabit[];
     fetchUserHabits: () => Promise<void>;
+    getHabitById: (id: string | number) => Habit | undefined;
     getUserHabitById: (userHabitId: string | number) => UserHabit | undefined;
-};
+    completeHabit: (habitId: number) => Promise<void>;
+    uncompleteHabit: (habitId: number) => Promise<void>;
+}
