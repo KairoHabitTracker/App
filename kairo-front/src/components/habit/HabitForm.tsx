@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {useRouter} from 'expo-router';
-import {useAuth} from '@/src/contexts/AuthContext';
-import {useHabits} from '@/src/contexts/HabitContext';
-import {API_BASE} from '@/src/lib/api';
+import {useHabits} from '@/src/contexts/HabitsContext';
 import {errorStyles, oneHabitStyles, sharedFonts, sharedStyles} from "@/global";
 import HabitCard from '@/src/components/habit/HabitCard';
 import DaySelector from '@/src/components/habit/DaySelector';
@@ -18,8 +16,7 @@ interface HabitFormProps {
 }
 
 export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) {
-    const {token} = useAuth();
-    const {getHabitById, getUserHabitById, refreshHabits} = useHabits();
+    const {getHabitById, getUserHabitById, addHabit, editHabit} = useHabits();
     const router = useRouter();
 
     const [loadingInitialData, setLoadingInitialData] = useState(true);
@@ -68,31 +65,20 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
 
         setSubmitting(true);
         try {
-            const apiMethod = mode === 'edit' ? 'PUT' : 'POST';
-            const apiEndpoint = mode === 'edit'
-                ? `${API_BASE}/api/habits/user/${userHabitId}`
-                : `${API_BASE}/api/habits/user`;
-
             const payload = {
-                // ADD - wymagane jest ID nawyku
                 ...(mode === 'add' && {habit_id: parseInt(habitId!)}),
 
                 notification_time: pickerState.notificationTime || null,
-                days_of_week: selectedDays.length > 0 ? selectedDays : null,
+                days_of_week: selectedDays,
                 start_date: pickerState.startDate || null,
                 end_date: pickerState.endDate || null
             };
 
-            const response = await fetch(apiEndpoint, {
-                method: apiMethod,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload)
-            });
-
-            refreshHabits();
+            if (mode === 'edit') {
+                await editHabit(userHabitId!, payload);
+            } else {
+                await addHabit(payload);
+            }
 
             const successMessage = mode === 'edit' ? 'Habit updated successfully!' : 'Habit added to your routine!';
             Alert.alert('Success', successMessage, [

@@ -116,6 +116,44 @@ export function HabitsProvider({children}: { children: React.ReactNode }) {
         await Promise.all([fetchHabits(), fetchUserHabits()]);
     }, [fetchHabits, fetchUserHabits]);
 
+    const addHabit = useCallback(async (payload: any) => {
+        if (!token) throw new Error('User not authenticated.');
+
+        const response = await fetch(`${API_BASE}/api/habits/user`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({message: `Server error: ${response.status}`}));
+            throw new Error(errorData.message || `API error with status: ${response.status}`);
+        }
+        await refreshHabits();
+    }, [token, refreshHabits]);
+
+
+    const editHabit = useCallback(async (userHabitId: string, payload: any) => {
+        if (!token) throw new Error('User not authenticated.');
+
+        const response = await fetch(`${API_BASE}/api/habits/user/${userHabitId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({message: `Server error: ${response.status}`}));
+            throw new Error(errorData.message || `API error with status: ${response.status}`);
+        }
+        await refreshHabits();
+    }, [token, refreshHabits]);
 
     // --- ŁADOWANIE POCZĄTKOWE ---
     useEffect(() => {
@@ -145,6 +183,8 @@ export function HabitsProvider({children}: { children: React.ReactNode }) {
         getUserHabitById,
         completeHabit,
         uncompleteHabit,
+        addHabit,
+        editHabit
         // isRefreshing: false,
     };
 

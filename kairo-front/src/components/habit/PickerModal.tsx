@@ -10,13 +10,7 @@ interface PickerModalProps {
     title?: string;
 }
 
-export default function PickerModal({
-                                        visible,
-                                        onClose,
-                                        onConfirm,
-                                        children,
-                                        title = 'Select'
-                                    }: PickerModalProps) {
+export default function PickerModal({visible, onClose, onConfirm, children, title = 'Select'}: PickerModalProps) {
     return (
         <Modal
             visible={visible}
@@ -26,7 +20,8 @@ export default function PickerModal({
         >
             <TouchableWithoutFeedback onPress={onClose}>
                 <View style={styles.overlay}>
-                    <TouchableWithoutFeedback onPress={() => {}}>
+                    <TouchableWithoutFeedback onPress={() => {
+                    }}>
                         <View style={styles.content}>
                             <View style={styles.header}>
                                 <TouchableOpacity onPress={onClose}>

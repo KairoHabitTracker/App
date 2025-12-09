@@ -12,4 +12,6 @@ export interface HabitsContextType {
     getUserHabitById: (userHabitId: string | number) => UserHabit | undefined;
     completeHabit: (habitId: number) => Promise<void>;
     uncompleteHabit: (habitId: number) => Promise<void>;
+    addHabit: (payload: any) => Promise<void>;
+    editHabit: (userHabitId: string, payload: any) => Promise<void>;
 }

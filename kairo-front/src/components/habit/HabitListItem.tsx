@@ -3,7 +3,6 @@ import {UserHabit} from "@/src/types/UserHabit";
 import {useRef} from "react";
 import {Check, RotateCcw} from "@tamagui/lucide-icons";
 import {progressCardStyles, sharedFonts} from "@/global";
-import {useNavigation} from "expo-router";
 
 interface HabitListItemProps {
     userHabit: UserHabit;
@@ -21,7 +20,6 @@ export default function HabitListItem({
                                           onEditHabit
                                       }: HabitListItemProps) {
     const {habit} = userHabit;
-    const navigation = useNavigation<any>();
     const translateX = useRef(new Animated.Value(0)).current;
     const SWIPE_THRESHOLD = 80;
 
