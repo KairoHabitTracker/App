@@ -42,6 +42,26 @@ export default function HabitLayout() {
                 name="edit/[userHabitId]"
                 options={{
                     title: 'Edit Habit Notifications',
+                    headerLeft: () => (
+                        <Pressable
+                            onPress={() => router.back()}
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 4,
+                                paddingRight: 8
+                            }}
+                            hitSlop={8}
+                        >
+                            <ChevronLeft size={24}/>
+                            <Text
+                                style={{
+                                    fontSize: 17,
+                                    fontWeight: '500',
+                                }}
+                            >Back</Text>
+                        </Pressable>
+                    ),
                 }}
             />
         </Stack>
