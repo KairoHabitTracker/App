@@ -98,6 +98,7 @@ export default function NewHabitDetail() {
     if (showEmojiPicker) {
         return (
             <EmojiPicker
+                showEmoji={showEmojiPicker}
                 setEmoji={setEmoji}
                 setShowEmoji={setShowEmojiPicker}
             />
