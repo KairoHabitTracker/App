@@ -1,12 +1,23 @@
-import { profileStyles as styles } from '@/global';
-import { useAuth } from '@/src/contexts/AuthContext';
-import { router, useLocalSearchParams as useSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {useAuth} from '@/src/contexts/AuthContext';
+import {router, useLocalSearchParams as useSearchParams} from 'expo-router';
+import {useState} from 'react';
+import {
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import {ScrollView} from "tamagui";
+import {AlertCircle, Lock, Mail} from "@tamagui/lucide-icons";
+import {profileStyles, sharedFonts, sharedStyles} from "@/global";
 
 export default function LoginScreen() {
-    const { login } = useAuth();
-    const { redirect } = useSearchParams() as { redirect?: string };
+    const {login} = useAuth();
+    const {redirect} = useSearchParams() as { redirect?: string };
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -44,32 +55,211 @@ export default function LoginScreen() {
     }
 
     return (
-        <View style={[styles.container, styles.center]}>
-            <Text style={styles.username}>Log in</Text>
-            {error ? <Text style={styles.subtle}>{error}</Text> : null}
-            <TextInput
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                style={{ width: '100%', padding: 12, marginVertical: 8, backgroundColor: '#fff', borderRadius: 8 }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
-            <TextInput
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                style={{ width: '100%', padding: 12, marginVertical: 8, backgroundColor: '#fff', borderRadius: 8 }}
-                secureTextEntry
-            />
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.container}
+        >
+            <ScrollView
+                keyboardShouldPersistTaps="handled"
+            >
+                <View style={[sharedStyles.basicContainer, {marginTop: 64}]}>
+                    <View style={profileStyles.container}>
+                        <View style={styles.header}>
+                            <Text style={sharedFonts.headerText}>Welcome Back</Text>
+                            <Text style={sharedFonts.mediumSubtleText}>Sign in to continue tracking your habits</Text>
+                        </View>
 
-            <TouchableOpacity onPress={onSubmit} disabled={loading} style={{ marginTop: 12 }}>
-                <Text style={styles.statValue}>{loading ? 'Logging in...' : 'Log in'}</Text>
-            </TouchableOpacity>
+                        {error && (
+                            <View style={styles.errorContainer}>
+                                <AlertCircle size={20} color="#DC2626"/>
+                                <Text style={styles.errorText}>{error}</Text>
+                            </View>
+                        )}
 
-            <TouchableOpacity onPress={() => router.push(`/register?redirect=${encodeURIComponent(redirect ?? '/home')}`)}>
-                <Text style={styles.subtle}>Don't have an account? Register</Text>
-            </TouchableOpacity>
-        </View>
+                        <View style={styles.form}>
+                            <View style={styles.inputGroup}>
+                                <Text style={styles.label}>Email</Text>
+                                <View style={styles.inputContainer}>
+                                    <Mail size={20} color="#6B7280" style={styles.inputIcon}/>
+                                    <TextInput
+                                        placeholder="your@email.com"
+                                        placeholderTextColor="#9CA3AF"
+                                        value={email}
+                                        onChangeText={setEmail}
+                                        style={styles.input}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={styles.inputGroup}>
+                                <Text style={styles.label}>Password</Text>
+                                <View style={styles.inputContainer}>
+                                    <Lock size={20} color="#6B7280" style={styles.inputIcon}/>
+                                    <TextInput
+                                        placeholder="••••••••"
+                                        placeholderTextColor="#9CA3AF"
+                                        value={password}
+                                        onChangeText={setPassword}
+                                        style={styles.input}
+                                        secureTextEntry
+                                    />
+                                </View>
+                            </View>
+
+                            <TouchableOpacity
+                                onPress={onSubmit}
+                                disabled={loading || !email || !password}
+                                style={[
+                                    styles.submitButton,
+                                    (loading || !email || !password) && styles.submitButtonDisabled
+                                ]}
+                            >
+                                {loading ? (
+                                    <ActivityIndicator color="white"/>
+                                ) : (
+                                    <Text style={styles.submitButtonText}>Log In</Text>
+                                )}
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.footer}>
+                            <Text style={styles.footerText}>Don't have an account? </Text>
+                            <TouchableOpacity
+                                onPress={() => router.push(`/register?redirect=${encodeURIComponent(redirect ?? '/home')}`)}
+                            >
+                                <Text style={styles.footerLink}>Sign Up</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#F9FAFB',
+    },
+    scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        padding: 24,
+    },
+    content: {
+        width: '100%',
+        maxWidth: 400,
+        alignSelf: 'center',
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 32,
+    },
+    logo: {
+        fontSize: 64,
+        marginBottom: 16,
+    },
+    title: {
+        fontSize: 32,
+        fontWeight: '700',
+        color: '#111827',
+        marginBottom: 8,
+    },
+    subtitle: {
+        fontSize: 16,
+        color: '#6B7280',
+        textAlign: 'center',
+    },
+    errorContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FEE2E2',
+        borderWidth: 1,
+        borderColor: '#FCA5A5',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 24,
+        gap: 12,
+    },
+    errorText: {
+        flex: 1,
+        fontSize: 15,
+        color: '#DC2626',
+        fontWeight: '500',
+    },
+    form: {
+        marginBottom: 24,
+    },
+    inputGroup: {
+        marginBottom: 20,
+    },
+    label: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#374151',
+        marginBottom: 8,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 1},
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+    },
+    inputIcon: {
+        marginRight: 12,
+    },
+    input: {
+        flex: 1,
+        paddingVertical: 14,
+        fontSize: 16,
+        color: '#111827',
+    },
+    submitButton: {
+        backgroundColor: '#3B82F6',
+        borderRadius: 12,
+        paddingVertical: 16,
+        alignItems: 'center',
+        marginTop: 8,
+        shadowColor: '#3B82F6',
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    submitButtonDisabled: {
+        backgroundColor: '#9CA3AF',
+        shadowOpacity: 0,
+    },
+    submitButtonText: {
+        color: 'white',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    footerText: {
+        fontSize: 15,
+        color: '#6B7280',
+    },
+    footerLink: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#3B82F6',
+    },
+});
