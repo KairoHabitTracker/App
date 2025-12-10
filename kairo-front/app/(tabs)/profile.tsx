@@ -172,9 +172,9 @@ export default function Profile() {
             </View>
 
             {/* Placeholder reminder for future stats */}
-            <Text style={styles.statValue}>
-                Jakieś wykresy tutaj, integracja z kalendarzem, consents, etc
-            </Text>
+            {/*<Text style={styles.statValue}>*/}
+            {/*    Jakieś wykresy tutaj, integracja z kalendarzem, consents, etc*/}
+            {/*</Text>*/}
         </View>
     );
 }
