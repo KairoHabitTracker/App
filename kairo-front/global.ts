@@ -88,6 +88,27 @@ export const sharedStyles = StyleSheet.create({
         borderRadius: 12,
         alignSelf: 'flex-start',
     },
+    headerShadow: {
+        // --- Cienie dla iOS ---
+        shadowColor: '#000', // Kolor cienia (iOS)
+        shadowOffset: {
+            width: 0,
+            height: 2
+        }, // Przesunięcie cienia (iOS)
+        shadowOpacity: 0.25, // Przezroczystość cienia (iOS)
+        shadowRadius: 3.84, // Rozmycie cienia (iOS)
+
+        // --- Cienie dla Androida ---
+        elevation: 5, // Głębokość cienia (Android)
+
+        // --- Styl kontenera (przeniesiony z Pana/Pani kodu) ---
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        // WAŻNE: Na Androidzie do prawidłowego działania elevation, kontener musi mieć tło (np. backgroundColor: 'white')
+        backgroundColor: 'white',
+    },
 })
 
 export const sharedFonts = StyleSheet.create({
