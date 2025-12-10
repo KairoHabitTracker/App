@@ -1,6 +1,6 @@
 import * as Device from 'expo-device';
-import type { ApiError, LoginResponse, RegisterResponse } from './apiTypes';
-import { getItemAsync } from './secureStore';
+import type {ApiError, LoginResponse, RegisterResponse} from '@/src/types/apiTypes';
+import {getItemAsync} from './secureStore';
 
 export const API_BASE = 'https://kairo.yuri.rocks';
 
