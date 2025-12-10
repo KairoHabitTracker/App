@@ -4,7 +4,8 @@ import {useAuth} from '@/src/contexts/AuthContext';
 import {PersonStanding, Send, UserPlus, Users} from '@tamagui/lucide-icons';
 import {useFriends} from "@/src/hooks/useFriends";
 import {FriendInvitation} from "@/src/types/friends/FriendInvitation";
-import {friendStyles} from "@/global";
+import {friendStyles, homeScreenStyles, sharedFonts, sharedStyles} from "@/global";
+import SharedButton from "@/src/components/SharedButton";
 
 
 export default function FriendsScreen() {
@@ -32,10 +33,8 @@ export default function FriendsScreen() {
     }, [loadData]);
 
     const handleSendInvitation = () => {
-        sendInvitation(invite, () => {
-            setInvite('');
-            setShowInviteModal(false);
-        });
+        setInvite('');
+        setShowInviteModal(false);
     };
 
 
@@ -48,21 +47,25 @@ export default function FriendsScreen() {
     }
 
     return (
-        <View style={friendStyles.container}>
-            <View style={friendStyles.header}>
+        <View style={[sharedStyles.basicContainer, {marginTop: 64}]}>
+            <View style={[homeScreenStyles.header, sharedStyles.headerShadow, {
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: 'space-between',
+                alignItems: 'center',
+            }]}>
                 <View>
-                    <Text style={friendStyles.headerTitle}>Friends</Text>
-                    <Text style={friendStyles.headerSubtitle}>
+                    <Text style={[sharedFonts.headerText, {marginBottom: 4}]}>Friends</Text>
+                    <Text style={[sharedFonts.mediumSubtleText, {marginBottom: 4}]}>
                         {friends.length} {friends.length === 1 ? 'friend' : 'friends'}
                     </Text>
                 </View>
-                <TouchableOpacity
-                    style={friendStyles.inviteButton}
+
+                <SharedButton
+                    title="Invite"
                     onPress={() => setShowInviteModal(!showInviteModal)}
-                >
-                    <UserPlus size={20} color="white"/>
-                    <Text style={friendStyles.inviteButtonText}>Invite</Text>
-                </TouchableOpacity>
+                    icon={<UserPlus size={20} color="white"/>}
+                />
             </View>
 
             {showInviteModal && (
@@ -79,7 +82,9 @@ export default function FriendsScreen() {
                         />
                         <TouchableOpacity
                             style={friendStyles.sendButton}
-                            onPress={sendInvitation(invite, handleSendInvitation)}
+                            onPress={() => {
+                                sendInvitation(invite, handleSendInvitation)
+                            }}
                             disabled={isSending}
                         >
                             {isSending ? (
@@ -92,9 +97,7 @@ export default function FriendsScreen() {
                 </View>
             )}
 
-            <ScrollView
-                contentContainerStyle={friendStyles.scrollContent}
-            >
+            <ScrollView>
                 {invitations.length > 0 && (
                     <View style={friendStyles.section}>
                         <View style={friendStyles.sectionHeader}>
@@ -172,19 +175,19 @@ export default function FriendsScreen() {
                         ))}
                     </View>
                 ) : (
-                    <View style={friendStyles.emptyState}>
-                        <Text style={friendStyles.emptyEmoji}>😢</Text>
-                        <Text style={friendStyles.emptyTitle}>No friends yet</Text>
-                        <Text style={friendStyles.emptyText}>
+                    <View style={[sharedStyles.container, {backgroundColor: 'white'}]}>
+                        <Text style={[sharedFonts.bigEmoji, {marginBottom: 16}]}>😢</Text>
+                        <Text style={[sharedFonts.bigText, {marginBottom: 8}]}>No friends yet</Text>
+                        <Text style={[sharedFonts.mediumSubtleText, {textAlign: 'center', marginBottom: 24,}]}>
                             Invite your friends to start tracking habits together!
                         </Text>
-                        <TouchableOpacity
-                            style={friendStyles.emptyButton}
-                            onPress={() => setShowInviteModal(true)}
-                        >
-                            <UserPlus size={20} color="white"/>
-                            <Text style={friendStyles.emptyButtonText}>Invite Friends</Text>
-                        </TouchableOpacity>
+
+                        <SharedButton title={"Invite Friends"} onPress={() => setShowInviteModal(true)}
+                                      icon={<UserPlus size={20} color="white"/>} style={{
+                            paddingHorizontal: 24,
+                            paddingVertical: 14,
+                            borderRadius: 12
+                        }}/>
                     </View>
                 )}
             </ScrollView>
