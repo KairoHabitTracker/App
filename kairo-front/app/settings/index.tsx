@@ -1,7 +1,7 @@
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Button, Text, XStack, YStack } from 'tamagui';
-import { useAuth } from '@/src/contexts/AuthContext';
+import {useRouter} from 'expo-router';
+import {useState} from 'react';
+import {Button, ScrollView, Text, XStack, YStack} from 'tamagui';
+import {useAuth} from '@/src/contexts/AuthContext';
 
 export default function SettingsScreen() {
     const { logout, logoutAll, user } = useAuth();
@@ -9,7 +9,7 @@ export default function SettingsScreen() {
     const [confirmOpen, setConfirmOpen] = useState(false);
 
     return (
-        <YStack style={{ padding: 16, flex: 1, backgroundColor: '#ffffff' }}>
+        <ScrollView style={{ padding: 16, flex: 1, backgroundColor: '#ffffff' }}>
             <Text style={{ fontSize: 24, fontWeight: '700' }}>Settings</Text>
 
             {/* Account */}
@@ -126,9 +126,9 @@ export default function SettingsScreen() {
                 </YStack>
             ) : null}
 
-            <Button onPress={() => router.push('../profile')} style={{ marginTop: 24 }} accessibilityLabel="Go back to profile">
+            <Button onPress={() => router.push('../profile')} style={{ marginTop: 24, marginBottom: 24 }} accessibilityLabel="Go back to profile">
                 Go Back
             </Button>
-        </YStack>
+        </ScrollView>
     );
 }

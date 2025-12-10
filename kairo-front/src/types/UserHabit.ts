@@ -1,3 +1,5 @@
+import {Habit} from "@/src/types/Habit";
+
 export type UserHabit = {
     id: number;
     user_id: number;
@@ -10,4 +12,5 @@ export type UserHabit = {
     last_completed_at: string | null;
     created_at: string | null;
     updated_at: string | null;
+    habit: Habit
 };
