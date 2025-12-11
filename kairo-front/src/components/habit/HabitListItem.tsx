@@ -25,9 +25,15 @@ export default function HabitListItem({
 
     const panResponder = useRef(
         PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+
+            // 2. Modyfikujemy, aby PanResponder przejmował kontrolę
+            //    również, jeśli chcemy rozpocząć ruch (dla swipe'a)
             onMoveShouldSetPanResponder: (_, gestureState) => {
+                // Przejmij kontrolę, jeśli jest już ruch
                 return Math.abs(gestureState.dx) > 10;
             },
+
             onPanResponderMove: (_, gestureState) => {
                 if (isCompleted && gestureState.dx < 0) {
                     // Swipe left to uncomplete (tylko dla ukończonych)
@@ -41,7 +47,7 @@ export default function HabitListItem({
                 const isClick = Math.abs(gestureState.dx) < 5 && Math.abs(gestureState.dy) < 5;
 
                 if (isClick) {
-                    // Wywołaj funkcję przekazaną z góry, przekazując ID powiązania użytkownika (userHabit.id)
+                    // To jest teraz czyste kliknięcie / tapnięcie
                     onEditHabit?.(userHabit.id);
 
                     // Zawsze zresetuj po kliknięciu
