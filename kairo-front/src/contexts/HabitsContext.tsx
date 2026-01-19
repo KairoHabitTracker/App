@@ -1,10 +1,10 @@
 import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
 import {useAuth} from './AuthContext';
 import {API_BASE} from '@/src/lib/api';
-import {Habit} from '@/src/types/Habit';
-import {UserHabit} from '@/src/types/UserHabit';
+import {Habit} from '@/src/types/habits/Habit';
+import {UserHabit} from '@/src/types/habits/UserHabit';
 import {HabitsContextType} from "@/src/types/habitContextType";
-
+import {useLocalNotifications} from '@/src/hooks/useLocalNotifications';
 
 const HabitsContext = createContext<HabitsContextType | undefined>(undefined);
 
@@ -15,9 +15,10 @@ export function HabitsProvider({children}: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    //  funkcję do planowania
+    const {scheduleHabitReminders} = useLocalNotifications();
 
     // --- POBIERANIE LISTY NAWYKÓW UŻYTKOWNIKA (Dla HabitList) ---
-    // zmiana na usecallback aby zapobiec niepotrzebnemu tworzeniu funkcji w każdym renderze
     const fetchUserHabits = useCallback(async () => {
         if (!token) return;
 
@@ -32,13 +33,19 @@ export function HabitsProvider({children}: { children: React.ReactNode }) {
             if (!res.ok) throw new Error(`Błąd API: ${res.status}`);
 
             const json = await res.json();
-            setUserHabits(Array.isArray(json.data) ? json.data : []);
+            const data = Array.isArray(json.data) ? json.data : [];
+
+            setUserHabits(data);
+
+            // Ustawiamy powiadomienia na telefonie na podstawie pobranych danych
+            await scheduleHabitReminders(data);
+
         } catch (err: any) {
             console.error('Error fetching user habits list:', err);
             setError(err.message || 'Nie udało się załadować nawyków użytkownika');
             setUserHabits([]);
         }
-    }, [token]);
+    }, [token, scheduleHabitReminders]);
 
     // --- POBIERANIE predefined NAWYKÓW ---
     const fetchHabits = useCallback(async () => {
@@ -185,7 +192,6 @@ export function HabitsProvider({children}: { children: React.ReactNode }) {
         uncompleteHabit,
         addHabit,
         editHabit
-        // isRefreshing: false,
     };
 
     return (
