@@ -11,7 +11,6 @@ import {DateTimePickerGroupProps} from "@/src/types/DateTimePickerGroupProps";
 export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
     return (
         <>
-            <Text style={[sharedFonts.mediumText, {marginBottom: 20,}]}>Schedule & Reminders</Text>
 
             <View style={oneHabitStyles.inputGroup}>
                 <Text style={[sharedFonts.smallText, {marginBottom: 8}]}>Notification Time</Text>

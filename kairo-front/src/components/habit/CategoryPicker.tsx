@@ -1,52 +1,41 @@
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import React from "react";
+import {CATEGORY_DATA} from "@/src/const/categories";
 
-const CATEGORIES = [
-    {value: 'health', label: 'Health'},
-    {value: 'sport', label: 'Sport'},
-    {value: 'work', label: 'Work'},
-    {value: 'chores', label: 'Chores'},
-    {value: 'commitments', label: 'Commitments'},
-    {value: 'physical_wellbeing', label: 'Physical Wellbeing'},
-    {value: 'mental_wellbeing', label: 'Mental Wellbeing'},
-    {value: 'social', label: 'Social'},
-    {value: 'financial', label: 'Financial'},
-    {value: 'hobbies', label: 'Hobbies'},
-    {value: 'learning', label: 'Learning'},
-    {value: 'productivity', label: 'Productivity'},
-    {value: 'bad_habit', label: 'Bad Habit'},
-    {value: 'other', label: 'Other'}
-];
+interface CategoryPickerProps {
+    category: string;
+    onCategorySelect: (category: string, color: string) => void;
+}
 
-export default function CategoryPicker({category, setCategory}: {
-    category: string,
-    setCategory: (category: string) => void
-}) {
+export default function CategoryPicker({category, onCategorySelect}: CategoryPickerProps) {
     return (
         <View style={styles.inputGroup}>
-            <Text style={styles.label}>Category</Text>
+            <Text style={styles.label}>Category *</Text>
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.categoriesScroll}
             >
-                {CATEGORIES.map((cat) => (
-                    <TouchableOpacity
-                        key={cat.value}
-                        style={[
-                            styles.categoryChip,
-                            category === cat.value && styles.categoryChipActive
-                        ]}
-                        onPress={() => setCategory(cat.value)}
-                    >
-                        <Text style={[
-                            styles.categoryChipText,
-                            category === cat.value && styles.categoryChipTextActive
-                        ]}>
-                            {cat.label}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
+                {CATEGORY_DATA.map((cat) => {
+                    const isActive = category === cat.value;
+                    return (
+                        <TouchableOpacity
+                            key={cat.value}
+                            style={[
+                                styles.categoryChip,
+                                isActive && {backgroundColor: cat.color}
+                            ]}
+                            onPress={() => onCategorySelect(cat.value, cat.color)}
+                        >
+                            <Text style={[
+                                styles.categoryChipText,
+                                isActive && styles.categoryChipTextActive
+                            ]}>
+                                {cat.label}
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                })}
             </ScrollView>
         </View>
     );
