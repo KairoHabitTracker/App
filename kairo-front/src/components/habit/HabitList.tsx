@@ -1,6 +1,7 @@
 import AddButton from "@/src/components/AddButton";
 import {useMemo, useState} from 'react';
-import {RefreshControl, ScrollView, Text, View} from "react-native";
+import {RefreshControl, Text, View} from "react-native";
+import {ScrollView} from 'react-native-gesture-handler';
 import HabitListItem from "./HabitListItem";
 import ProgressCard from "@/src/components/habit/ProgressCard";
 import {errorStyles, sharedFonts, sharedStyles} from "@/global";

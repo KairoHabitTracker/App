@@ -1,8 +1,8 @@
-import {Animated, PanResponder, Text, View} from "react-native";
-import {UserHabit} from "@/src/types/UserHabit";
-import {useRef} from "react";
-import {Check, RotateCcw} from "@tamagui/lucide-icons";
-import {progressCardStyles, sharedFonts} from "@/global";
+import React from 'react';
+import {Alert, Pressable, StyleSheet, Text, View} from "react-native";
+import {Check, Flame, RotateCcw} from "@tamagui/lucide-icons";
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import {UserHabit} from "@/src/types/habits/UserHabit";
 
 interface HabitListItemProps {
     userHabit: UserHabit;
@@ -19,141 +19,173 @@ export default function HabitListItem({
                                           onUncomplete,
                                           onEditHabit
                                       }: HabitListItemProps) {
-    const {habit} = userHabit;
-    const translateX = useRef(new Animated.Value(0)).current;
-    const SWIPE_THRESHOLD = 80;
 
-    const panResponder = useRef(
-        PanResponder.create({
-            onMoveShouldSetPanResponder: (_, gestureState) => {
-                return Math.abs(gestureState.dx) > 10;
-            },
-            onPanResponderMove: (_, gestureState) => {
-                if (isCompleted && gestureState.dx < 0) {
-                    // Swipe left to uncomplete (tylko dla ukończonych)
-                    translateX.setValue(gestureState.dx);
-                } else if (!isCompleted && gestureState.dx > 0) {
-                    // Swipe right to complete (tylko dla nieukończonych)
-                    translateX.setValue(gestureState.dx);
-                }
-            },
-            onPanResponderRelease: (_, gestureState) => {
-                const isClick = Math.abs(gestureState.dx) < 5 && Math.abs(gestureState.dy) < 5;
+    if (!userHabit || !userHabit.habit) {
+        return null;
+    }
 
-                if (isClick) {
-                    // Wywołaj funkcję przekazaną z góry, przekazując ID powiązania użytkownika (userHabit.id)
-                    onEditHabit?.(userHabit.id);
+    const {habit, streak} = userHabit;
 
-                    // Zawsze zresetuj po kliknięciu
-                    Animated.spring(translateX, {
-                        toValue: 0,
-                        useNativeDriver: true,
-                        friction: 7,
-                        tension: 100,
-                    }).start();
-                    return;
-                }
-                if (isCompleted && gestureState.dx < -SWIPE_THRESHOLD) {
-                    // Uncomplete: przesunięcie w lewo > threshold
-                    Animated.timing(translateX, {
-                        toValue: -200, // Przesuń poza ekran w lewo
-                        duration: 200,
-                        useNativeDriver: true,
-                    }).start(() => {
-                        // toValue: -200 (wizualnie "usuwa" element)
-                        onUncomplete?.();
-                    });
-                } else if (!isCompleted && gestureState.dx > SWIPE_THRESHOLD) {
-                    // Complete: przesunięcie w prawo > threshold
-                    Animated.timing(translateX, {
-                        toValue: 200, // Przesuń poza ekran w prawo
-                        duration: 200,
-                        useNativeDriver: true,
-                    }).start(() => {
-                        onComplete?.();
-                    });
-                } else {
-                    // Bounce back jeśli threshold nie osiągnięty
-                    Animated.spring(translateX, {
-                        toValue: 0,
-                        useNativeDriver: true,
-                        friction: 7,
-                        tension: 100,
-                    }).start();
-                }
-            },
-        })
-    ).current;
+    const formatCategory = (cat: string) => {
+        return cat.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    };
+
+    const renderLeftActions = () => {
+        return (
+            <View style={styles.leftActionContainer}>
+                <Check size={24} color="white"/>
+                <Text style={styles.actionText}>Complete</Text>
+            </View>
+        );
+    };
+
+    const renderRightActions = () => {
+        return (
+            <View style={styles.rightActionContainer}>
+                <Text style={styles.actionText}>Undo</Text>
+                <RotateCcw size={24} color="white"/>
+            </View>
+        );
+    };
+
+    const handleOpen = (direction: 'left' | 'right') => {
+        // TEST - zobacz czy w ogóle to się wywołuje
+        Alert.alert('Swipe!', `Direction: ${direction}`);
+
+        if (direction === 'left' && !isCompleted) {
+            onComplete?.();
+        } else if (direction === 'right' && isCompleted) {
+            onUncomplete?.();
+        }
+    };
 
     return (
-        <View style={progressCardStyles.container}>
-
-            {!isCompleted && (
-                <View style={[progressCardStyles.actionBg, progressCardStyles.actionBgComplete]}>
-                    <Check size={24} color="white"/>
-                    <Text style={[sharedFonts.mediumText, {color: 'white'}]}>Complete</Text>
-                </View>
-            )}
-            {isCompleted && (
-                <View style={[progressCardStyles.actionBg, progressCardStyles.actionBgUndo]}>
-                    <Text style={[sharedFonts.mediumWhiteText]}>Undo</Text>
-                    <RotateCcw size={24} color="white"/>
-                </View>
-            )}
-
-            {/* Swipeable Card */}
-            <Animated.View
-                style={[
-                    progressCardStyles.habitCard,
-                    {
-                        backgroundColor: habit.hex_color || '#3B82F6',
-                        transform: [{translateX}],
-                    }
-                ]}
-                {...panResponder.panHandlers}
+        <View style={styles.container}>
+            <Swipeable
+                friction={2}
+                leftThreshold={40}
+                rightThreshold={40}
+                renderLeftActions={!isCompleted ? renderLeftActions : undefined}
+                renderRightActions={isCompleted ? renderRightActions : undefined}
+                onSwipeableOpen={handleOpen}
             >
-                <View>
-                    {/*<Pressable*/}
-                    {/*    style={{flexDirection: 'row', alignItems: 'center', flex: 1}}*/}
-                    {/*>*/}
-                    <View style={progressCardStyles.emojiContainer}>
-                        <Text style={sharedFonts.mediumEmoji}>{habit.emoji}</Text>
-                    </View>
-                    <View style={[progressCardStyles.actionBg, {
-                        justifyContent: 'space-between',
-                        paddingLeft: 55
-                    }]}>
-                        <View>
-                            <Text style={sharedFonts.mediumWhiteText}>{habit.name}</Text>
-                            {habit.category && (
-                                <Text
-                                    style={[sharedFonts.smallWhiteText, {textTransform: 'capitalize'}]}>{habit.category}</Text>
-                            )}
+                <Pressable
+                    onPress={() => onEditHabit?.(userHabit.id)}
+                    style={[
+                        styles.habitCard,
+                        {
+                            backgroundColor: habit.hex_color || '#3B82F6',
+                            opacity: isCompleted ? 0.9 : 1
+                        }
+                    ]}
+                >
+                    <View style={styles.cardContent}>
+                        <View style={styles.leftSection}>
+                            <View style={styles.emojiContainer}>
+                                <Text style={styles.emoji}>{habit.emoji}</Text>
+                            </View>
+
+                            <View style={styles.textContainer}>
+                                <Text style={styles.habitName} numberOfLines={1}>{habit.name}</Text>
+                                {habit.category && (
+                                    <View style={styles.categoryBadge}>
+                                        <Text style={styles.categoryText}>
+                                            {formatCategory(habit.category)}
+                                        </Text>
+                                    </View>
+                                )}
+                            </View>
                         </View>
 
-                        {isCompleted && (
-                            <>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    gap: 4
-                                }}>
-                                    <Text style={sharedFonts.smallWhiteText}>Completed</Text>
-                                    <View style={progressCardStyles.checkmark}>
-                                        <Check size={20} color="white"/>
-                                    </View>
+                        <View style={styles.rightSection}>
+                            <View style={styles.streakContainer}>
+                                <Flame size={14} color="white" fill={streak > 0 ? "white" : "transparent"}/>
+                                <Text style={styles.streakText}>{streak}</Text>
+                            </View>
+
+                            {isCompleted && (
+                                <View style={styles.checkmarkCircle}>
+                                    <Check size={16} color={habit.hex_color || '#3B82F6'}/>
                                 </View>
-
-                            </>
-
-                        )}
+                            )}
+                        </View>
                     </View>
-
-                    {/*</Pressable>*/}
-                </View>
-            </Animated.View>
+                </Pressable>
+            </Swipeable>
         </View>
     );
 }
 
+const styles = StyleSheet.create({
+    container: {
+        marginBottom: 12,
+        height: 80,
+        marginHorizontal: 16,
+    },
+    leftActionContainer: {
+        width: 100,
+        backgroundColor: '#10B981',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 16,
+        marginRight: 8,
+        gap: 4,
+    },
+    rightActionContainer: {
+        width: 100,
+        backgroundColor: '#F59E0B',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 16,
+        marginLeft: 8,
+        gap: 4,
+    },
+    actionText: {
+        color: 'white',
+        fontWeight: '600',
+        fontSize: 14,
+    },
+    habitCard: {
+        height: 80,
+        borderRadius: 16,
+        backgroundColor: '#3B82F6',
+        justifyContent: 'center',
+        shadowColor: "#000",
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.15,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    cardContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        height: '100%',
+    },
+    leftSection: {flexDirection: 'row', alignItems: 'center', flex: 1},
+    emojiContainer: {
+        width: 48, height: 48, borderRadius: 14,
+        backgroundColor: 'rgba(255,255,255,0.25)',
+        justifyContent: 'center', alignItems: 'center', marginRight: 12,
+    },
+    emoji: {fontSize: 24},
+    textContainer: {justifyContent: 'center', flex: 1},
+    habitName: {color: 'white', fontSize: 17, fontWeight: '700', marginBottom: 4},
+    categoryBadge: {
+        backgroundColor: 'rgba(0,0,0,0.2)', paddingHorizontal: 8, paddingVertical: 3,
+        borderRadius: 6, alignSelf: 'flex-start',
+    },
+    categoryText: {color: 'rgba(255,255,255,0.9)', fontSize: 12, fontWeight: '600'},
+    rightSection: {alignItems: 'flex-end', justifyContent: 'center', gap: 8},
+    streakContainer: {
+        flexDirection: 'row', alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, gap: 4,
+    },
+    streakText: {color: 'white', fontWeight: '700', fontSize: 13},
+    checkmarkCircle: {
+        width: 24, height: 24, borderRadius: 12, backgroundColor: 'white',
+        justifyContent: 'center', alignItems: 'center',
+    }
+});
