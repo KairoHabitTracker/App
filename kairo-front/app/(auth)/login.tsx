@@ -1,13 +1,14 @@
-import { profileStyles as styles } from '@/global';
-import { useAuth } from '@/src/contexts/AuthContext';
-import { router, useLocalSearchParams as useSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {profileStyles as styles} from '@/global';
+import {useAuth} from '@/src/contexts/AuthContext';
+import {router, useLocalSearchParams as useSearchParams} from 'expo-router';
+import {useState} from 'react';
+import {Text, TextInput, TouchableOpacity, View} from 'react-native';
 
 export default function LoginScreen() {
     const { login } = useAuth();
-    const { redirect } = useSearchParams() as { redirect?: string };
-    const [email, setEmail] = useState('');
+    const params = useSearchParams() as { redirect?: string, email?: string };
+
+    const [email, setEmail] = useState(params.email || '');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -17,27 +18,25 @@ export default function LoginScreen() {
         setLoading(true);
         try {
             await login(email, password, 'mobile');
-            // Redirect to requested page or home
-            if (redirect) router.replace(redirect as any);
+            if (params.redirect) router.replace(params.redirect as any);
             else router.replace('/home');
-        } catch (error: unknown) {
-            console.error('Login error', error);
-            const body = (error as { body?: unknown }).body;
-            if (body && typeof body === 'object' && 'errors' in (body as Record<string, unknown>)) {
-                const errors = (body as Record<string, unknown>)['errors'] as unknown;
+        } catch (err: any) {
+            let message = 'Login failed. Please try again.';
+
+            if (err?.body?.errors) {
                 try {
-                    const messages = Object.values(errors as Record<string, string[]>).flat().join(' ');
-                    setError(messages);
+                    const allErrors = Object.values(err.body.errors).flat();
+                    message = allErrors.join('\n');
                 } catch {
-                    setError('Login failed');
+                    message = 'Validation error occurred.';
                 }
-            } else if (body && typeof body === 'object' && 'message' in (body as Record<string, unknown>)) {
-                setError(String((body as Record<string, unknown>)['message']));
-            } else if (typeof (error as { message?: unknown }).message === 'string') {
-                setError((error as { message?: string }).message ?? 'Login failed');
-            } else {
-                setError('Login failed');
+            } else if (err?.body?.message) {
+                message = err.body.message;
+            } else if (err?.message) {
+                message = err.message;
             }
+
+            setError(message);
         } finally {
             setLoading(false);
         }
@@ -46,7 +45,13 @@ export default function LoginScreen() {
     return (
         <View style={[styles.container, styles.center]}>
             <Text style={styles.username}>Log in</Text>
-            {error ? <Text style={styles.subtle}>{error}</Text> : null}
+
+            {error ? (
+                <Text style={[styles.subtle, {color: '#ef4444', marginBottom: 15, textAlign: 'center'}]}>
+                    {error}
+                </Text>
+            ) : null}
+
             <TextInput
                 placeholder="Email"
                 value={email}
@@ -67,8 +72,9 @@ export default function LoginScreen() {
                 <Text style={styles.statValue}>{loading ? 'Logging in...' : 'Log in'}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push(`/register?redirect=${encodeURIComponent(redirect ?? '/home')}`)}>
-                <Text style={styles.subtle}>Don't have an account? Register</Text>
+            <TouchableOpacity
+                onPress={() => router.push(`/register?redirect=${encodeURIComponent(params.redirect ?? '/home')}`)}>
+                <Text style={styles.subtle}>Don&#39;t have an account? Register</Text>
             </TouchableOpacity>
         </View>
     );
