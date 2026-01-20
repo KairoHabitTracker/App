@@ -776,4 +776,20 @@ export const homeScreenStyles = StyleSheet.create({
         paddingBottom: 16,
         backgroundColor: 'white',
     },
+    streakContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFF7ED',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#FFEDD5',
+        gap: 6
+    },
+    streakText: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#B45309',
+    }
 })

@@ -1,5 +1,15 @@
 import React, {useState} from 'react';
-import {ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {useAuth} from '@/src/contexts/AuthContext';
 import {API_BASE} from '@/src/lib/api';
@@ -22,18 +32,34 @@ export default function NewHabitDetail() {
     const [emoji, setEmoji] = useState('🙉');
     const [hexColor, setHexColor] = useState('#f11f9d');
     const [category, setCategory] = useState('other');
+
     const [selectedDays, setSelectedDays] = useState<string[]>([]);
+    const [enableNotifications, setEnableNotifications] = useState(false);
+
     const [submitting, setSubmitting] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
 
     const pickerState = useDateTimePickers();
 
+    const handleCategorySelect = (newCategory: string, newColor: string) => {
+        setCategory(newCategory);
+        setHexColor(newColor);
+    };
+
     const toggleDay = (day: string) => {
         if (selectedDays.includes(day)) {
             setSelectedDays(selectedDays.filter(d => d !== day));
         } else {
             setSelectedDays([...selectedDays, day]);
+        }
+    };
+
+    const toggleAllDays = () => {
+        if (selectedDays.length === 7) {
+            setSelectedDays([]);
+        } else {
+            setSelectedDays(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']);
         }
     };
 
@@ -117,6 +143,12 @@ export default function NewHabitDetail() {
                 </View>
 
                 <View style={styles.formSection}>
+
+                    <CategoryPicker
+                        category={category}
+                        onCategorySelect={handleCategorySelect}
+                    />
+
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Habit Name *</Text>
                         <TextInput
@@ -151,12 +183,39 @@ export default function NewHabitDetail() {
                         </View>
                     </View>
 
-                    <CategoryPicker category={category} setCategory={setCategory}/>
-                    <DaySelector selectedDays={selectedDays} onToggleDay={toggleDay}/>
-                    <DateTimePickerGroup {...pickerState} />
+                    <DaySelector
+                        selectedDays={selectedDays}
+                        onToggleDay={toggleDay}
+                        onToggleAll={toggleAllDays}
+                        activeColor={hexColor}
+                    />
+
+                    <View style={styles.reminderHeader}>
+                        <Text style={styles.label}>Reminders & Dates</Text>
+                        <Switch
+                            value={enableNotifications}
+                            onValueChange={setEnableNotifications}
+                            trackColor={{false: '#E5E7EB', true: hexColor + '80'}}
+                            thumbColor={enableNotifications ? hexColor : '#f4f3f4'}
+                        />
+                    </View>
+
+
+                    {enableNotifications && (
+                        <View style={styles.remindersContainer}>
+                            <Text style={styles.helperText}>
+                                We&#39;ll send you notifications on selected days.
+                            </Text>
+                            <DateTimePickerGroup {...pickerState} />
+                        </View>
+                    )}
 
                     <TouchableOpacity
-                        style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
+                        style={[
+                            styles.submitButton,
+                            {backgroundColor: hexColor},
+                            submitting && styles.submitButtonDisabled
+                        ]}
                         onPress={handleSubmit}
                         disabled={submitting}
                     >
@@ -354,4 +413,13 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#3B82F6',
     },
+
+    reminderHeader: {
+        flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10,
+        paddingTop: 10, borderTopWidth: 1, borderTopColor: '#F3F4F6'
+    },
+    remindersContainer: {marginBottom: 20},
+    helperText: {fontSize: 13, color: '#6B7280', marginBottom: 12},
+
+
 });
