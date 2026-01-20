@@ -1,8 +1,9 @@
-import React from 'react';
-import {Alert, Pressable, StyleSheet, Text, View} from "react-native";
+import React, {useRef} from 'react';
+import {Pressable, Text, View} from "react-native";
 import {Check, Flame, RotateCcw} from "@tamagui/lucide-icons";
-import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Swipeable, {SwipeableMethods} from 'react-native-gesture-handler/ReanimatedSwipeable';
 import {UserHabit} from "@/src/types/habits/UserHabit";
+import {HabitListItemStyles} from '@/global';
 
 interface HabitListItemProps {
     userHabit: UserHabit;
@@ -25,6 +26,7 @@ export default function HabitListItem({
     }
 
     const {habit, streak} = userHabit;
+    const swipeableRef = useRef<SwipeableMethods>(null);
 
     const formatCategory = (cat: string) => {
         return cat.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -32,36 +34,48 @@ export default function HabitListItem({
 
     const renderLeftActions = () => {
         return (
-            <View style={styles.leftActionContainer}>
+            <View style={HabitListItemStyles.leftActionContainer}>
                 <Check size={24} color="white"/>
-                <Text style={styles.actionText}>Complete</Text>
+                <Text style={HabitListItemStyles.actionText}>Complete</Text>
             </View>
         );
     };
 
     const renderRightActions = () => {
         return (
-            <View style={styles.rightActionContainer}>
-                <Text style={styles.actionText}>Undo</Text>
+            <View style={HabitListItemStyles.rightActionContainer}>
+                <Text style={HabitListItemStyles.actionText}>Undo</Text>
                 <RotateCcw size={24} color="white"/>
             </View>
         );
     };
 
     const handleOpen = (direction: 'left' | 'right') => {
-        // TEST - zobacz czy w ogóle to się wywołuje
-        Alert.alert('Swipe!', `Direction: ${direction}`);
+        console.log('=== SWIPE OPEN ===');
+        console.log('Direction:', direction);
+        console.log('isCompleted:', isCompleted);
 
-        if (direction === 'left' && !isCompleted) {
-            onComplete?.();
-        } else if (direction === 'right' && isCompleted) {
-            onUncomplete?.();
-        }
+        // Zamknij swipeable
+        swipeableRef.current?.close();
+
+        // Wykonaj akcję
+        setTimeout(() => {
+            if (direction === 'right' && !isCompleted) {
+                console.log('Calling onComplete!');
+                onComplete?.();
+            } else if (direction === 'left' && isCompleted) {
+                console.log('Calling onUncomplete!');
+                onUncomplete?.();
+            } else {
+                console.log('NO ACTION - conditions not met');
+            }
+        }, 100);
     };
 
     return (
-        <View style={styles.container}>
+        <View style={HabitListItemStyles.container}>
             <Swipeable
+                ref={swipeableRef}
                 friction={2}
                 leftThreshold={40}
                 rightThreshold={40}
@@ -72,24 +86,24 @@ export default function HabitListItem({
                 <Pressable
                     onPress={() => onEditHabit?.(userHabit.id)}
                     style={[
-                        styles.habitCard,
+                        HabitListItemStyles.habitCard,
                         {
                             backgroundColor: habit.hex_color || '#3B82F6',
                             opacity: isCompleted ? 0.9 : 1
                         }
                     ]}
                 >
-                    <View style={styles.cardContent}>
-                        <View style={styles.leftSection}>
-                            <View style={styles.emojiContainer}>
-                                <Text style={styles.emoji}>{habit.emoji}</Text>
+                    <View style={HabitListItemStyles.cardContent}>
+                        <View style={HabitListItemStyles.leftSection}>
+                            <View style={HabitListItemStyles.emojiContainer}>
+                                <Text style={HabitListItemStyles.emoji}>{habit.emoji}</Text>
                             </View>
 
-                            <View style={styles.textContainer}>
-                                <Text style={styles.habitName} numberOfLines={1}>{habit.name}</Text>
+                            <View style={HabitListItemStyles.textContainer}>
+                                <Text style={HabitListItemStyles.habitName} numberOfLines={1}>{habit.name}</Text>
                                 {habit.category && (
-                                    <View style={styles.categoryBadge}>
-                                        <Text style={styles.categoryText}>
+                                    <View style={HabitListItemStyles.categoryBadge}>
+                                        <Text style={HabitListItemStyles.categoryText}>
                                             {formatCategory(habit.category)}
                                         </Text>
                                     </View>
@@ -97,14 +111,14 @@ export default function HabitListItem({
                             </View>
                         </View>
 
-                        <View style={styles.rightSection}>
-                            <View style={styles.streakContainer}>
+                        <View style={HabitListItemStyles.rightSection}>
+                            <View style={HabitListItemStyles.streakContainer}>
                                 <Flame size={14} color="white" fill={streak > 0 ? "white" : "transparent"}/>
-                                <Text style={styles.streakText}>{streak}</Text>
+                                <Text style={HabitListItemStyles.streakText}>{streak}</Text>
                             </View>
 
                             {isCompleted && (
-                                <View style={styles.checkmarkCircle}>
+                                <View style={HabitListItemStyles.checkmarkCircle}>
                                     <Check size={16} color={habit.hex_color || '#3B82F6'}/>
                                 </View>
                             )}
@@ -116,76 +130,3 @@ export default function HabitListItem({
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        marginBottom: 12,
-        height: 80,
-        marginHorizontal: 16,
-    },
-    leftActionContainer: {
-        width: 100,
-        backgroundColor: '#10B981',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 16,
-        marginRight: 8,
-        gap: 4,
-    },
-    rightActionContainer: {
-        width: 100,
-        backgroundColor: '#F59E0B',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 16,
-        marginLeft: 8,
-        gap: 4,
-    },
-    actionText: {
-        color: 'white',
-        fontWeight: '600',
-        fontSize: 14,
-    },
-    habitCard: {
-        height: 80,
-        borderRadius: 16,
-        backgroundColor: '#3B82F6',
-        justifyContent: 'center',
-        shadowColor: "#000",
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.15,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-    cardContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        height: '100%',
-    },
-    leftSection: {flexDirection: 'row', alignItems: 'center', flex: 1},
-    emojiContainer: {
-        width: 48, height: 48, borderRadius: 14,
-        backgroundColor: 'rgba(255,255,255,0.25)',
-        justifyContent: 'center', alignItems: 'center', marginRight: 12,
-    },
-    emoji: {fontSize: 24},
-    textContainer: {justifyContent: 'center', flex: 1},
-    habitName: {color: 'white', fontSize: 17, fontWeight: '700', marginBottom: 4},
-    categoryBadge: {
-        backgroundColor: 'rgba(0,0,0,0.2)', paddingHorizontal: 8, paddingVertical: 3,
-        borderRadius: 6, alignSelf: 'flex-start',
-    },
-    categoryText: {color: 'rgba(255,255,255,0.9)', fontSize: 12, fontWeight: '600'},
-    rightSection: {alignItems: 'flex-end', justifyContent: 'center', gap: 8},
-    streakContainer: {
-        flexDirection: 'row', alignItems: 'center',
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, gap: 4,
-    },
-    streakText: {color: 'white', fontWeight: '700', fontSize: 13},
-    checkmarkCircle: {
-        width: 24, height: 24, borderRadius: 12, backgroundColor: 'white',
-        justifyContent: 'center', alignItems: 'center',
-    }
-});
