@@ -769,6 +769,92 @@ export const progressCardStyles = StyleSheet.create({
     },
 })
 
+export const editProfileStyles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: tokens.colors.cardBackground,
+        paddingHorizontal: tokens.spacing.lg,
+        paddingVertical: tokens.spacing.lg,
+    },
+    heading: {
+        fontSize: 28,
+        fontWeight: '700',
+        color: tokens.colors.text,
+        marginBottom: tokens.spacing.lg,
+    },
+    section: {
+        marginBottom: tokens.spacing.xl,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: tokens.colors.text,
+        marginBottom: tokens.spacing.sm,
+    },
+    avatarRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    avatarActions: {
+        flex: 1,
+        marginLeft: tokens.spacing.lg,
+    },
+    avatarButtonSpacing: {
+        marginBottom: tokens.spacing.sm,
+    },
+    helperText: {
+        color: tokens.colors.textSubtle,
+        fontSize: 14,
+        marginTop: tokens.spacing.sm,
+    },
+    separatorWrapper: {
+        marginBottom: tokens.spacing.xl,
+    },
+    input: {
+        backgroundColor: '#F9FAFB',
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        borderRadius: tokens.radius.md,
+        paddingHorizontal: tokens.spacing.md,
+        paddingVertical: tokens.spacing.sm,
+        color: tokens.colors.text,
+        marginBottom: tokens.spacing.sm,
+    },
+    usernameMetaRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: tokens.spacing.sm,
+    },
+    usernameMetaText: {
+        color: tokens.colors.textSubtle,
+        fontSize: 12,
+    },
+    saveButton: {
+        marginTop: tokens.spacing.sm,
+    },
+    feedbackBox: {
+        borderRadius: tokens.radius.md,
+        padding: tokens.spacing.md,
+        marginTop: tokens.spacing.sm,
+    },
+    feedbackBoxError: {
+        backgroundColor: '#fee2e2',
+    },
+    feedbackBoxSuccess: {
+        backgroundColor: '#ecfdf5',
+    },
+    feedbackText: {
+        fontSize: 14,
+    },
+    feedbackTextError: {
+        color: '#b91c1c',
+    },
+    feedbackTextSuccess: {
+        color: '#047857',
+    },
+});
+
 export const homeScreenStyles = StyleSheet.create({
     header: {
         paddingHorizontal: 24,
