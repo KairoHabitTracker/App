@@ -1,7 +1,7 @@
-import {Text, View} from "react-native";
+import {StyleSheet, Text, View} from "react-native";
 import HabitList from "@/src/components/habit/HabitList";
 import {useRouter} from 'expo-router';
-import {homeScreenStyles, sharedFonts, sharedStyles} from "@/global";
+import {sharedFonts, sharedStyles} from "@/global";
 import {useAuth} from "@/src/contexts/AuthContext";
 import {Flame} from "@tamagui/lucide-icons";
 
@@ -10,8 +10,8 @@ export default function Home() {
     const {user, refreshProfile} = useAuth();
 
     return (
-        <View style={[sharedStyles.basicContainer, {marginTop: 64}]}>
-            <View style={homeScreenStyles.header}>
+        <View style={[sharedStyles.basicContainer, {paddingTop: 64}]}>
+            <View style={localStyles.headerRow}>
                 <View>
                     <Text style={[sharedFonts.headerText, {marginBottom: 4}]}>Today</Text>
                     <Text style={sharedFonts.mediumSubtleText}>
@@ -23,9 +23,9 @@ export default function Home() {
                     </Text>
                 </View>
 
-                <View style={homeScreenStyles.streakContainer}>
-                    <Flame size={24} color="#F59E0B" fill="#F59E0B"/>
-                    <Text style={homeScreenStyles.streakText}>
+                <View style={localStyles.streakBadge}>
+                    <Flame size={18} color="#F59E0B" fill="#F59E0B"/>
+                    <Text style={localStyles.streakText}>
                         {user?.streak ?? 0}
                     </Text>
                 </View>
@@ -39,3 +39,29 @@ export default function Home() {
         </View>
     );
 }
+
+const localStyles = StyleSheet.create({
+    headerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: 24,
+        paddingHorizontal: 20,
+    },
+    streakBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFF7ED',
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#FFEDD5',
+        gap: 4,
+    },
+    streakText: {
+        fontSize: 15,
+        fontWeight: '700',
+        color: '#B45309',
+    }
+});
