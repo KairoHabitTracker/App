@@ -5,19 +5,30 @@ import HabitListItem from "./HabitListItem";
 import ProgressCard from "@/src/components/habit/ProgressCard";
 import {errorStyles, sharedFonts, sharedStyles} from "@/global";
 import {useHabits} from "@/src/contexts/HabitsContext";
+import {useAuth} from "@/src/contexts/AuthContext";
 
 
 export default function HabitList({onAdd, onEditHabit}: any) {
-
+    const {refreshProfile} = useAuth();
     const {
-        userHabits,         // lista nawyków użytkownika
-        fetchUserHabits,    // odświeżanie listy
+        userHabits,
+        fetchUserHabits,
         completeHabit,
         uncompleteHabit,
         loading,
     } = useHabits();
 
     const [refreshing, setRefreshing] = useState(false);
+
+    const handleComplete = async (habitId: number) => {
+        await completeHabit(habitId);
+        await refreshProfile();
+    };
+
+    const handleUncomplete = async (habitId: number) => {
+        await uncompleteHabit(habitId);
+        await refreshProfile();
+    };
 
     const isToday = (dateString: string | null) => {
         if (!dateString) return false;
@@ -72,7 +83,7 @@ export default function HabitList({onAdd, onEditHabit}: any) {
                             <HabitListItem
                                 key={habit.id}
                                 userHabit={habit}
-                                onComplete={() => completeHabit(habit.id)}
+                                onComplete={() => handleComplete(habit.id)}
                                 onEditHabit={() => onEditHabit(habit.id)}
                             />
                         ))}
@@ -89,7 +100,7 @@ export default function HabitList({onAdd, onEditHabit}: any) {
                                 key={habit.id}
                                 userHabit={habit}
                                 isCompleted
-                                onUncomplete={() => uncompleteHabit(habit.id)}
+                                onUncomplete={() => handleUncomplete(habit.id)}
                             />
                         ))}
                     </View>
