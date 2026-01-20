@@ -1,3 +1,5 @@
+import {User} from "@/src/types/User";
+
 export interface FriendInvitation {
     id: number;
     sender_id: string;
@@ -6,4 +8,6 @@ export interface FriendInvitation {
     responded_at: string;
     created_at: string;
     updated_at: string;
+    sender: User;
+    receiver: User;
 }
