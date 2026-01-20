@@ -1211,3 +1211,122 @@ export const settingRowStyles = StyleSheet.create({
         color: '#6B7280',
     },
 });
+
+
+export const HabitListItemStyles = StyleSheet.create({
+    container: {
+        marginBottom: 12,
+        height: 80,
+        marginHorizontal: 16,
+    },
+    leftActionContainer: {
+        width: 100,
+        backgroundColor: '#10B981',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 16,
+        marginRight: 8,
+        gap: 4,
+    },
+    rightActionContainer: {
+        width: 100,
+        backgroundColor: '#F59E0B',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 16,
+        marginLeft: 8,
+        gap: 4,
+    },
+    actionText: {
+        color: 'white',
+        fontWeight: '600',
+        fontSize: 14,
+    },
+    habitCard: {
+        height: 80,
+        borderRadius: 16,
+        backgroundColor: '#3B82F6',
+        justifyContent: 'center',
+        shadowColor: "#000",
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.15,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    cardContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        height: '100%',
+    },
+    leftSection: {flexDirection: 'row', alignItems: 'center', flex: 1},
+    emojiContainer: {
+        width: 48, height: 48, borderRadius: 14,
+        backgroundColor: 'rgba(255,255,255,0.25)',
+        justifyContent: 'center', alignItems: 'center', marginRight: 12,
+    },
+    emoji: {fontSize: 24},
+    textContainer: {justifyContent: 'center', flex: 1},
+    habitName: {color: 'white', fontSize: 17, fontWeight: '700', marginBottom: 4},
+    categoryBadge: {
+        backgroundColor: 'rgba(0,0,0,0.2)', paddingHorizontal: 8, paddingVertical: 3,
+        borderRadius: 6, alignSelf: 'flex-start',
+    },
+    categoryText: {color: 'rgba(255,255,255,0.9)', fontSize: 12, fontWeight: '600'},
+    rightSection: {alignItems: 'flex-end', justifyContent: 'center', gap: 8},
+    streakContainer: {
+        flexDirection: 'row', alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, gap: 4,
+    },
+    streakText: {color: 'white', fontWeight: '700', fontSize: 13},
+    checkmarkCircle: {
+        width: 24, height: 24, borderRadius: 12, backgroundColor: 'white',
+        justifyContent: 'center', alignItems: 'center',
+    }
+});
+
+export const allHabitsStyles = StyleSheet.create({
+    card: {
+        backgroundColor: 'white',
+        borderRadius: 16,
+        marginBottom: 12,
+        padding: 16,
+        borderLeftWidth: 4,
+        shadowColor: "#000",
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
+        elevation: 2,
+    },
+    cardContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    emojiContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: 12,
+        backgroundColor: '#F3F4F6',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+    habitName: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#111827',
+        marginBottom: 2,
+    },
+    categoryText: {
+        fontSize: 12,
+        color: '#6B7280',
+        marginBottom: 4,
+    },
+    daysText: {
+        fontSize: 10,
+        color: '#9CA3AF',
+        fontWeight: '500',
+    }
+});

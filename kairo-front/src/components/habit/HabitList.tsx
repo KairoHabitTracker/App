@@ -1,12 +1,12 @@
 import AddButton from "@/src/components/AddButton";
 import {useMemo, useState} from 'react';
-import {RefreshControl, ScrollView, Text, View} from "react-native";
+import {RefreshControl, Text, View} from "react-native";
+import {ScrollView} from 'react-native-gesture-handler';
 import HabitListItem from "./HabitListItem";
 import ProgressCard from "@/src/components/habit/ProgressCard";
 import {errorStyles, sharedFonts, sharedStyles} from "@/global";
 import {useHabits} from "@/src/contexts/HabitsContext";
 import {useAuth} from "@/src/contexts/AuthContext";
-
 
 export default function HabitList({onAdd, onEditHabit}: any) {
     const {refreshProfile} = useAuth();
@@ -19,6 +19,18 @@ export default function HabitList({onAdd, onEditHabit}: any) {
     } = useHabits();
 
     const [refreshing, setRefreshing] = useState(false);
+
+    const todayName = useMemo(() => {
+        const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        const dayIndex = new Date().getDay();
+        return days[dayIndex];
+    }, []);
+
+    const dailyHabits = useMemo(() => {
+        return userHabits.filter(habit => {
+            return habit.days_of_week && habit.days_of_week.includes(todayName);
+        });
+    }, [userHabits, todayName]);
 
     const handleComplete = async (habitId: number) => {
         await completeHabit(habitId);
@@ -42,20 +54,18 @@ export default function HabitList({onAdd, onEditHabit}: any) {
     };
 
     const completedToday = useMemo(() => {
-        return userHabits.filter(habit => isToday(habit.last_completed_at));
-    }, [userHabits]);
+        return dailyHabits.filter(habit => isToday(habit.last_completed_at));
+    }, [dailyHabits]);
 
     const toBeCompleted = useMemo(() => {
-        return userHabits.filter(habit => !isToday(habit.last_completed_at));
-    }, [userHabits]);
+        return dailyHabits.filter(habit => !isToday(habit.last_completed_at));
+    }, [dailyHabits]);
 
     const onRefresh = async () => {
         setRefreshing(true);
-        await fetchUserHabits();
+        await Promise.all([fetchUserHabits(), refreshProfile()]);
         setRefreshing(false);
     };
-
-    const habitsToDisplay = userHabits;
 
     return (
         <View style={sharedStyles.basicContainer}>
@@ -65,13 +75,14 @@ export default function HabitList({onAdd, onEditHabit}: any) {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
                 }
             >
-                {habitsToDisplay.length === 0 && loading && (
-                    <Text style={[sharedFonts.mediumText, {textAlign: 'center', marginTop: 50}]}>Loading
-                        habits...</Text>
+                {userHabits.length === 0 && loading && (
+                    <Text style={[sharedFonts.mediumText, {textAlign: 'center', marginTop: 50}]}>
+                        Loading habits...
+                    </Text>
                 )}
 
-                {habitsToDisplay.length > 0 && (
-                    <ProgressCard habits={habitsToDisplay} completedToday={completedToday}/>
+                {dailyHabits.length > 0 && (
+                    <ProgressCard habits={dailyHabits} completedToday={completedToday}/>
                 )}
 
                 {toBeCompleted.length > 0 && (
@@ -106,7 +117,17 @@ export default function HabitList({onAdd, onEditHabit}: any) {
                     </View>
                 )}
 
-                {habitsToDisplay.length === 0 && !loading && (
+                {!loading && userHabits.length > 0 && dailyHabits.length === 0 && (
+                    <View style={[sharedStyles.center, {paddingVertical: 60}]}>
+                        <Text style={sharedFonts.bigEmoji}>😴</Text>
+                        <Text style={[errorStyles.title, {marginBottom: 8}]}>Rest Day</Text>
+                        <Text style={[errorStyles.subtitle, {paddingHorizontal: 32}]}>
+                            No habits scheduled for today ({todayName}).
+                        </Text>
+                    </View>
+                )}
+
+                {!loading && userHabits.length === 0 && (
                     <View style={[sharedStyles.center, {paddingVertical: 60}]}>
                         <Text style={sharedFonts.bigEmoji}>👀</Text>
                         <Text style={[errorStyles.title, {marginBottom: 8}]}>No habits yet</Text>
