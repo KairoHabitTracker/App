@@ -40,13 +40,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function fetchProfile() {
     try {
       const json = await apiFetch<ApiProfileResponse>('/api/profile');
+      const userId = json.data?.id;
       const info = json.data?.info;
       const username = info?.name ?? json.data?.email ?? 'User';
       const avatarUrl = info?.avatar_url ?? null;
       const streak = info?.streak ?? 0;
       const coins = info?.coins ?? 0;
 
-      setUser({ username, avatarUrl, streak, coins });
+      setUser({id: userId, username, avatarUrl, streak, coins});
     } catch (error: unknown) {
       // If 401, clear token and redirect to login
       if (typeof error === 'object' && error !== null && 'status' in error && (error as { status?: number }).status === 401) {
