@@ -1,51 +1,40 @@
 import {useCallback, useState} from 'react';
+import {Alert} from "react-native";
+import {apiFetch} from '@/src/lib/api';
 import {Friend} from "@/src/types/friends/Friend";
 import {FriendInvitation} from "@/src/types/friends/FriendInvitation";
-import {API_BASE} from '@/src/lib/api';
-import {Alert} from "react-native";
 
+type FriendsResponse = { data: Friend[] };
+type InvitationsResponse = { data: FriendInvitation[] };
 
-export const useFriends = (token: string | null) => {
+export const useFriends = () => {
     const [friends, setFriends] = useState<Friend[]>([]);
-    const [invitations, setInvitations] = useState<FriendInvitation[] | any>([]);
+    const [invitations, setInvitations] = useState<FriendInvitation[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-
     const [isSending, setIsSending] = useState(false);
     const [invite, setInvite] = useState('');
 
 
     const loadFriends = useCallback(async () => {
         try {
-            const response = await fetch(`${API_BASE}/api/friends`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            const json = await response.json();
-            setFriends(json.data ? json.data : []);
+            const json = await apiFetch<FriendsResponse>('/api/friends');
+            setFriends(json.data || []);
         } catch (error) {
             console.error('Error loading friends:', error);
         }
-    }, [token]);
+    }, []);
 
     const loadInvitations = useCallback(async () => {
         try {
-            const response = await fetch(`${API_BASE}/api/friend-requests/received`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            const json = await response.json();
+            const json = await apiFetch<InvitationsResponse>('/api/friend-requests/received');
             const pending = json.data
-                ? json.data.filter((inv: any) => inv.status === pending)
+                ? json.data.filter((inv) => inv.status === 'pending')
                 : [];
             setInvitations(pending);
         } catch (error) {
             console.error('Error loading invitations:', error);
         }
-    }, [token]);
+    }, []);
 
     const loadData = useCallback(async () => {
         setIsLoading(true);
@@ -53,69 +42,53 @@ export const useFriends = (token: string | null) => {
         setIsLoading(false);
     }, [loadFriends, loadInvitations]);
 
-
-    const sendInvitation = useCallback(async (invite: string, onComplete: () => void) => {
-        if (!invite) {
-            Alert.alert('Error', 'Please enter friend code');
+    const sendInvitation = useCallback(async (friendIdInput: string, onComplete: () => void) => {
+        if (!friendIdInput.trim()) {
+            Alert.alert('Błąd', 'Wpisz ID znajomego');
             return;
         }
 
         setIsSending(true);
         try {
-            const response = await fetch(`${API_BASE}/api/friend-requests`, {
+            await apiFetch('/api/friend-requests', {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({id: invite}),
+                body: JSON.stringify({friend_id: friendIdInput.trim()}),
             });
 
-            if (response.ok) {
-                Alert.alert('Success', 'Invitation sent!');
-                onComplete();
-            } else {
-                Alert.alert('Error', 'Failed to send invitation');
-            }
-        } catch (error) {
+            Alert.alert('Sukces', 'Zaproszenie wysłane!');
+            setInvite('');
+            onComplete();
+        } catch (error: any) {
             console.error('Error sending invitation:', error);
-            Alert.alert('Error', 'Failed to send invitation');
+            Alert.alert('Błąd', error.message || 'Nie udało się wysłać zaproszenia');
         } finally {
             setIsSending(false);
         }
-    }, [token])
-
+    }, []);
 
     const acceptInvitation = useCallback(async (invitationId: number) => {
         try {
-            await fetch(`${API_BASE}/api/friend-requests/accept/${invitationId}`, {
+            await apiFetch(`/api/friend-requests/accept/${invitationId}`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
             });
             await loadData();
+            Alert.alert("Sukces", "Masz nowego znajomego!");
         } catch (error) {
             console.error('Error accepting invitation:', error);
+            Alert.alert("Błąd", "Nie udało się zaakceptować zaproszenia");
         }
-    }, [token, loadData]);
+    }, [loadData]);
 
     const rejectInvitation = useCallback(async (invitationId: number) => {
         try {
-            await fetch(`${API_BASE}/api/friend-requests/reject/${invitationId}`, {
+            await apiFetch(`/api/friend-requests/reject/${invitationId}`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
             });
-            await loadData();
+            setInvitations(prev => prev.filter(i => i.id !== invitationId));
         } catch (error) {
             console.error('Error rejecting invitation:', error);
         }
-    }, [token, loadData])
-
+    }, []);
 
     return {
         friends,

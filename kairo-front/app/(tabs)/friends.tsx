@@ -1,16 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Image, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {useAuth} from '@/src/contexts/AuthContext';
-import {PersonStanding, Send, UserPlus, Users} from '@tamagui/lucide-icons';
+import {ActivityIndicator, Alert, FlatList, Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Check, Copy, PersonStanding, Send, UserPlus, X} from '@tamagui/lucide-icons';
 import {useFriends} from "@/src/hooks/useFriends";
 import {FriendInvitation} from "@/src/types/friends/FriendInvitation";
-import {friendStyles, homeScreenStyles, sharedFonts, sharedStyles} from "@/global";
+import {friendsScreenStyles, sharedFonts} from "@/global";
 import SharedButton from "@/src/components/SharedButton";
-
+import {useAuth} from "@/src/contexts/AuthContext";
+import * as Clipboard from 'expo-clipboard';
 
 export default function FriendsScreen() {
-    const {token} = useAuth();
-
+    const {user} = useAuth();
     const {
         friends,
         invitations,
@@ -22,175 +21,202 @@ export default function FriendsScreen() {
         sendInvitation,
         acceptInvitation,
         rejectInvitation,
-    } = useFriends(token);
-
+    } = useFriends();
 
     const [showInviteModal, setShowInviteModal] = useState(false);
-
 
     useEffect(() => {
         loadData();
     }, [loadData]);
 
     const handleSendInvitation = () => {
-        setInvite('');
         setShowInviteModal(false);
     };
 
+    const copyMyId = async () => {
+        if (user?.id) {
+            await Clipboard.setStringAsync(user.id);
+            Alert.alert("Copied!", "Your ID has been copied to clipboard. Send it to a friend!");
+        } else {
+            Alert.alert("Error", "Could not load your ID.");
+        }
+    };
+
+    const getAvatarUrl = (url: string | null) => {
+        if (!url) return null;
+
+        let finalUrl = url;
+
+        // React Native Image nie wyświetla SVG, więc prosimy API o PNG
+        if (finalUrl.includes('api.dicebear.com') && finalUrl.includes('/svg')) {
+            finalUrl = finalUrl.replace('/svg', '/png');
+        }
+
+        return finalUrl;
+    };
+
+    const formatUserId = (id: string) => {
+        if (!id) return 'Unknown';
+        if (id.length < 10) return id;
+        return `${id.substring(0, 6)}...${id.substring(id.length - 4)}`;
+    };
+
+    const renderFriendItem = ({item: friend}: { item: any }) => {
+        console.log("Avatar URL:", friend.info?.avatar_url);
+        return (
+            <View style={friendsScreenStyles.cardRow}>
+                <View style={friendsScreenStyles.avatarContainer}>
+                    {friend.info?.avatar_url ? (
+                        <Image
+                            source={{uri: getAvatarUrl(friend.info.avatar_url)}}
+                            style={friendsScreenStyles.avatarImage}
+                        />
+                    ) : (
+                        <Text style={friendsScreenStyles.avatarText}>
+                            {(friend.info?.name || '?').charAt(0).toUpperCase()}
+                        </Text>
+                    )}
+                </View>
+                <View style={friendsScreenStyles.infoContainer}>
+                    <Text style={friendsScreenStyles.nameText}>
+                        {friend.info?.name || 'Unknown User'}
+                    </Text>
+                    <Text style={friendsScreenStyles.subText}>{friend.email}</Text>
+                </View>
+                <View style={friendsScreenStyles.coinBadge}>
+                    <Text style={friendsScreenStyles.coinText}>🪙 {friend.info?.coins || 0}</Text>
+                </View>
+            </View>
+        );
+    }
 
     if (isLoading) {
         return (
-            <View style={friendStyles.loadingContainer}>
+            <View style={friendsScreenStyles.centerContainer}>
                 <ActivityIndicator size="large" color="#3B82F6"/>
             </View>
         );
     }
 
     return (
-        <View style={[sharedStyles.basicContainer, {marginTop: 64}]}>
-            <View style={[homeScreenStyles.header, sharedStyles.headerShadow, {
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: 'space-between',
-                alignItems: 'center',
-            }]}>
+        <View style={friendsScreenStyles.screenContainer}>
+            <View style={friendsScreenStyles.header}>
                 <View>
-                    <Text style={[sharedFonts.headerText, {marginBottom: 4}]}>Friends</Text>
-                    <Text style={[sharedFonts.mediumSubtleText, {marginBottom: 4}]}>
-                        {friends.length} {friends.length === 1 ? 'friend' : 'friends'}
-                    </Text>
+                    <Text style={friendsScreenStyles.headerTitle}>Friends</Text>
+                    <TouchableOpacity onPress={copyMyId} style={friendsScreenStyles.copyIdRow}>
+                        <Text style={friendsScreenStyles.headerSubtitle}>
+                            My ID: {formatUserId(user?.id || '')}
+                        </Text>
+                        <Copy size={14} color="#3B82F6" style={{marginLeft: 6}}/>
+                    </TouchableOpacity>
                 </View>
-
                 <SharedButton
                     title="Invite"
                     onPress={() => setShowInviteModal(!showInviteModal)}
-                    icon={<UserPlus size={20} color="white"/>}
+                    icon={<UserPlus size={18} color="white"/>}
+                    style={{paddingVertical: 8, paddingHorizontal: 16}}
                 />
             </View>
 
             {showInviteModal && (
-                <View style={friendStyles.inviteSection}>
-                    <Text style={friendStyles.inviteTitle}>Invite a Friend</Text>
-                    <View style={friendStyles.inviteInputContainer}>
-                        <PersonStanding size={20} color="#6B7280" style={friendStyles.inviteIcon}/>
+                <View style={friendsScreenStyles.inviteContainer}>
+                    <View style={friendsScreenStyles.inputWrapper}>
+                        <PersonStanding size={20} color="#6B7280" style={{marginRight: 10}}/>
                         <TextInput
-                            style={friendStyles.inviteInput}
-                            placeholder="Code from a friend"
+                            style={friendsScreenStyles.input}
+                            placeholder="Enter User ID"
                             value={invite}
                             onChangeText={setInvite}
                             autoCapitalize="none"
                         />
                         <TouchableOpacity
-                            style={friendStyles.sendButton}
-                            onPress={() => {
-                                sendInvitation(invite, handleSendInvitation)
-                            }}
+                            onPress={() => sendInvitation(invite, handleSendInvitation)}
                             disabled={isSending}
+                            style={friendsScreenStyles.sendIconBtn}
                         >
-                            {isSending ? (
-                                <ActivityIndicator size="small" color="#3B82F6"/>
-                            ) : (
-                                <Send size={20} color="#3B82F6"/>
-                            )}
+                            {isSending ? <ActivityIndicator size="small" color="#3B82F6"/> :
+                                <Send size={20} color="#3B82F6"/>}
                         </TouchableOpacity>
                     </View>
                 </View>
             )}
 
-            <ScrollView>
-                {invitations.length > 0 && (
-                    <View style={friendStyles.section}>
-                        <View style={friendStyles.sectionHeader}>
-                            <PersonStanding size={18} color="#F59E0B"/>
-                            <Text style={friendStyles.sectionTitle}>
-                                Pending Invitations ({invitations.length})
-                            </Text>
-                        </View>
-                        {invitations.map((invitation: FriendInvitation) => (
-                            <View key={invitation.id} style={friendStyles.invitationCard}>
-                                <View style={friendStyles.invitationInfo}>
-                                    <View style={friendStyles.avatar}>
-                                        <Text style={friendStyles.avatarText}>
-                                            {invitation.sender_id || '?'}
-                                        </Text>
-                                    </View>
-                                    <View style={friendStyles.invitationDetails}>
-                                        <Text style={friendStyles.invitationName}>
-                                            {invitation.sender_id || 'Unknown User'}
-                                        </Text>
-                                        <Text style={friendStyles.invitationDate}>
-                                            {new Date(invitation.created_at).toLocaleDateString()}
-                                        </Text>
-                                    </View>
-                                </View>
-                                <View style={friendStyles.invitationActions}>
-                                    <TouchableOpacity
-                                        style={[friendStyles.actionButton, friendStyles.acceptButton]}
-                                        onPress={() => acceptInvitation(invitation.id)}
-                                    >
-                                        <Text style={friendStyles.acceptButtonText}>Accept</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[friendStyles.actionButton, friendStyles.rejectButton]}
-                                        onPress={() => rejectInvitation(invitation.id)}
-                                    >
-                                        <Text style={friendStyles.rejectButtonText}>Decline</Text>
-                                    </TouchableOpacity>
+            <FlatList
+                data={friends}
+                keyExtractor={(item) => item.id}
+                renderItem={renderFriendItem}
+                contentContainerStyle={friendsScreenStyles.listContent}
+
+                ListHeaderComponent={
+                    <>
+                        {invitations.length > 0 && (
+                            <View style={friendsScreenStyles.sectionContainer}>
+                                <Text style={friendsScreenStyles.sectionTitle}>PENDING INVITATIONS
+                                    ({invitations.length})</Text>
+                                <View style={friendsScreenStyles.cardGroup}>
+                                    {invitations.map((invitation: FriendInvitation, index) => (
+                                        <View key={invitation.id} style={[
+                                            friendsScreenStyles.inviteRow,
+                                            index !== invitations.length - 1 && friendsScreenStyles.divider
+                                        ]}>
+                                            <View style={friendsScreenStyles.inviteInfo}>
+                                                <View
+                                                    style={[friendsScreenStyles.avatarContainer, {backgroundColor: '#FEF3C7'}]}>
+                                                    <Text
+                                                        style={[friendsScreenStyles.avatarText, {color: '#D97706'}]}>?</Text>
+                                                </View>
+                                                <View style={{marginLeft: 12, flex: 1}}>
+                                                    <Text style={friendsScreenStyles.nameText}>
+                                                        {formatUserId(invitation.sender_id)}
+                                                    </Text>
+                                                    <Text style={friendsScreenStyles.subText}>
+                                                        Wants to connect
+                                                    </Text>
+                                                </View>
+                                            </View>
+
+                                            <View style={friendsScreenStyles.actionButtons}>
+                                                <TouchableOpacity
+                                                    style={[friendsScreenStyles.iconBtn, {backgroundColor: '#DCFCE7'}]}
+                                                    onPress={() => acceptInvitation(invitation.id)}
+                                                >
+                                                    <Check size={18} color="#16A34A"/>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                    style={[friendsScreenStyles.iconBtn, {
+                                                        backgroundColor: '#FEE2E2',
+                                                        marginLeft: 8
+                                                    }]}
+                                                    onPress={() => rejectInvitation(invitation.id)}
+                                                >
+                                                    <X size={18} color="#DC2626"/>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    ))}
                                 </View>
                             </View>
-                        ))}
-                    </View>
-                )}
+                        )}
 
-                {friends.length > 0 ? (
-                    <View style={friendStyles.section}>
-                        <View style={friendStyles.sectionHeader}>
-                            <Users size={18} color="#3B82F6"/>
-                            <Text style={friendStyles.sectionTitle}>
-                                All Friends ({friends.length})
-                            </Text>
+                        {friends.length > 0 && (
+                            <Text style={[friendsScreenStyles.sectionTitle, {marginTop: 24}]}>ALL FRIENDS
+                                ({friends.length})</Text>
+                        )}
+                    </>
+                }
+
+                ItemSeparatorComponent={() => <View style={friendsScreenStyles.dividerMargin}/>}
+
+                ListEmptyComponent={
+                    !isLoading && invitations.length === 0 ? (
+                        <View style={friendsScreenStyles.emptyState}>
+                            <Text style={{fontSize: 40, marginBottom: 10}}>👋</Text>
+                            <Text style={sharedFonts.mediumSubtleText}>No friends yet. Add someone!</Text>
                         </View>
-                        {friends.map((friend) => (
-                            <View key={friend.id} style={friendStyles.friendCard}>
-                                <View style={friendStyles.friendAvatar}>
-                                    {friend.info?.avatar_url ? (
-                                        <Image
-                                            source={{uri: friend.info.avatar_url}}
-                                            style={friendStyles.avatarImage}
-                                        />
-                                    ) : (
-                                        <Text style={friendStyles.avatarText}>
-                                            {friend.info?.name?.[0]?.toUpperCase() || '?'}
-                                        </Text>
-                                    )}
-                                </View>
-                                <View style={friendStyles.friendInfo}>
-                                    <Text style={friendStyles.friendName}>{friend.info?.name || 'Unknown'}</Text>
-                                    <Text style={friendStyles.friendEmail}>{friend.email}</Text>
-                                </View>
-                                <View style={friendStyles.coinsBadge}>
-                                    <Text style={friendStyles.coinsText}>🪙 {friend.info?.coins || 0}</Text>
-                                </View>
-                            </View>
-                        ))}
-                    </View>
-                ) : (
-                    <View style={[sharedStyles.container, {backgroundColor: 'white'}]}>
-                        <Text style={[sharedFonts.bigEmoji, {marginBottom: 16}]}>😢</Text>
-                        <Text style={[sharedFonts.bigText, {marginBottom: 8}]}>No friends yet</Text>
-                        <Text style={[sharedFonts.mediumSubtleText, {textAlign: 'center', marginBottom: 24,}]}>
-                            Invite your friends to start tracking habits together!
-                        </Text>
-
-                        <SharedButton title={"Invite Friends"} onPress={() => setShowInviteModal(true)}
-                                      icon={<UserPlus size={20} color="white"/>} style={{
-                            paddingHorizontal: 24,
-                            paddingVertical: 14,
-                            borderRadius: 12
-                        }}/>
-                    </View>
-                )}
-            </ScrollView>
+                    ) : null
+                }
+            />
         </View>
     );
 }
+

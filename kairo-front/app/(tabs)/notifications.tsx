@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {Alert, ScrollView, StyleSheet, Text, View} from "react-native";
+import {Alert, ScrollView, Text, View} from "react-native";
 import {BellOff, Calendar, Clock, Volume2} from '@tamagui/lucide-icons';
 
 import {SettingsRow} from '@/src/components/notifications/SettingsRow';
 import {useLocalNotifications} from '@/src/hooks/useLocalNotifications';
 import {useHabits} from "@/src/contexts/HabitsContext";
+import {notificationStyles} from "@/global";
 
 const formatDays = (days: string[]) => {
     if (!days || days.length === 0) return 'No days selected.';
@@ -47,18 +48,18 @@ export default function NotificationsScreen() {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>Notifications</Text>
-                <Text style={styles.headerSubtitle}>
+        <View style={notificationStyles.container}>
+            <View style={notificationStyles.header}>
+                <Text style={notificationStyles.headerTitle}>Notifications</Text>
+                <Text style={notificationStyles.headerSubtitle}>
                     Manage your alerts and reminders
                 </Text>
             </View>
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <ScrollView contentContainerStyle={notificationStyles.scrollContent}>
 
-                <Text style={styles.sectionTitle}>General Settings</Text>
-                <View style={styles.settingsCard}>
+                <Text style={notificationStyles.sectionTitle}>General Settings</Text>
+                <View style={notificationStyles.settingsCard}>
                     <SettingsRow
                         icon={Clock}
                         title="Habit Reminders"
@@ -66,7 +67,7 @@ export default function NotificationsScreen() {
                         value={reminderEnabled}
                         onValueChange={handleToggleReminder}
                     />
-                    <View style={styles.divider}/>
+                    <View style={notificationStyles.divider}/>
                     <SettingsRow
                         icon={Volume2}
                         title="Sound"
@@ -77,28 +78,28 @@ export default function NotificationsScreen() {
                     />
                 </View>
 
-                <Text style={styles.sectionTitle}>
+                <Text style={notificationStyles.sectionTitle}>
                     Active notifications ({scheduledHabits.length})
                 </Text>
 
                 {scheduledHabits.length > 0 ? (
                     scheduledHabits.map((habitEntry) => (
-                        <View key={habitEntry.id} style={styles.notificationCard}>
+                        <View key={habitEntry.id} style={notificationStyles.notificationCard}>
                             <View
-                                style={[styles.notificationIcon, {backgroundColor: habitEntry.habit.hex_color + '20'}]}>
+                                style={[notificationStyles.notificationIcon, {backgroundColor: habitEntry.habit.hex_color + '20'}]}>
                                 <Text style={{fontSize: 24}}>{habitEntry.habit.emoji}</Text>
                             </View>
 
-                            <View style={styles.notificationContent}>
-                                <View style={styles.notificationHeader}>
-                                    <Text style={styles.notificationTitle}>
+                            <View style={notificationStyles.notificationContent}>
+                                <View style={notificationStyles.notificationHeader}>
+                                    <Text style={notificationStyles.notificationTitle}>
                                         {habitEntry.habit.name}
                                     </Text>
-                                    <Text style={styles.notificationTime}>
+                                    <Text style={notificationStyles.notificationTime}>
                                         {habitEntry.notification_time}
                                     </Text>
                                 </View>
-                                <Text style={styles.notificationDescription}>
+                                <Text style={notificationStyles.notificationDescription}>
                                     {formatDays(habitEntry.days_of_week)}
                                 </Text>
                             </View>
@@ -107,9 +108,9 @@ export default function NotificationsScreen() {
                         </View>
                     ))
                 ) : (
-                    <View style={styles.infoCard}>
+                    <View style={notificationStyles.infoCard}>
                         <BellOff size={32} color="#6B7280"/>
-                        <Text style={styles.infoText}>
+                        <Text style={notificationStyles.infoText}>
                             You don&#39;t have any active notifications yet.
                         </Text>
                     </View>
@@ -119,117 +120,3 @@ export default function NotificationsScreen() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F9FAFB',
-    },
-    header: {
-        padding: 20,
-        paddingTop: 60,
-        backgroundColor: 'white',
-        borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
-    },
-    headerTitle: {
-        fontSize: 32,
-        fontWeight: '700',
-        color: '#111827',
-    },
-    headerSubtitle: {
-        fontSize: 14,
-        color: '#6B7280',
-        marginTop: 2,
-    },
-    scrollContent: {
-        padding: 16,
-        paddingBottom: 100,
-    },
-    sectionTitle: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#6B7280',
-        textTransform: 'uppercase',
-        letterSpacing: 0.5,
-        marginBottom: 12,
-        marginTop: 8,
-    },
-    settingsCard: {
-        backgroundColor: 'white',
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 24,
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
-        elevation: 3,
-    },
-    divider: {
-        height: 1,
-        backgroundColor: '#F3F4F6',
-        marginVertical: 4,
-    },
-    notificationCard: {
-        flexDirection: 'row',
-        backgroundColor: 'white',
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 12,
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
-        elevation: 3,
-        alignItems: 'center',
-    },
-    notificationIcon: {
-        width: 48,
-        height: 48,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 16,
-    },
-    notificationContent: {
-        flex: 1,
-    },
-    notificationHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 4,
-    },
-    notificationTitle: {
-        flex: 1,
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#111827',
-    },
-    notificationTime: {
-        fontSize: 14,
-        fontWeight: '700',
-        color: '#3B82F6',
-        marginLeft: 8,
-    },
-    notificationDescription: {
-        fontSize: 13,
-        color: '#6B7280',
-        lineHeight: 20,
-    },
-    infoCard: {
-        backgroundColor: '#F3F4F6',
-        borderRadius: 16,
-        padding: 24,
-        alignItems: 'center',
-        marginTop: 12,
-    },
-    infoText: {
-        fontSize: 15,
-        color: '#6B7280',
-        textAlign: 'center',
-        marginTop: 12,
-        lineHeight: 22,
-    },
-});

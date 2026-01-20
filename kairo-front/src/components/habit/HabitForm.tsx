@@ -56,7 +56,7 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
         } else {
             setLoadingInitialData(false);
         }
-    }, [mode, userHabitDetails, predefinedHabit, pickerState]);
+    }, [mode, userHabitDetails, predefinedHabit, pickerState.initialize]);
 
     const toggleDay = (day: string) => {
         if (selectedDays.includes(day)) {
