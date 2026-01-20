@@ -169,6 +169,16 @@ export default function Profile() {
                         <Text style={styles.statValue}>Edit Profile</Text>
                     </View>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.statCard}
+                    onPress={() => router.push('/habit/all')}
+                >
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                        <Feather name="list" size={20} color="#3B82F6"/>
+                        <Text style={styles.statValue}>My Habits</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
 
             {/* Placeholder reminder for future stats */}
