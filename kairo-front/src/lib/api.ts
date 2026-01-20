@@ -1,8 +1,9 @@
+import {Platform} from 'react-native';
 import * as Device from 'expo-device';
-import type {ApiError, LoginResponse, RegisterResponse} from '@/src/types/apiTypes';
+import type {ApiError, ApiProfileResponse, LoginResponse, RegisterResponse} from '@/src/types/apiTypes';
 import {getItemAsync} from './secureStore';
 
-export const API_BASE = 'https://kairo.yuri.rocks';
+export const API_BASE = 'http://localhost:8000'; // Replace with your API base URL
 
 type FetchOptions = RequestInit & { skipAuth?: boolean };
 
@@ -58,8 +59,12 @@ export function isApiError(e: unknown): e is ApiError {
 export async function apiFetch<Token = unknown>(path: string, options: FetchOptions = {}): Promise<Token> {
   const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
   const { skipAuth, headers: customHeaders, ...rest } = options;
+  const bodyIsFormData = typeof FormData !== 'undefined' && rest.body instanceof FormData;
 
   const headers = mergeHeaders(customHeaders);
+  if (bodyIsFormData && headers['Content-Type'] === 'application/json') {
+    delete headers['Content-Type'];
+  }
 
   // Add Authorization header unless skipAuth is true
   if (!skipAuth) {
@@ -175,4 +180,70 @@ export async function logoutAllRequest() {
     method: 'DELETE',
   });
   return res;
+}
+
+// Email verification helpers
+export async function sendVerificationNotification(): Promise<{ message?: string } | null> {
+  return apiFetch('/api/email/verification-notification', {
+    method: 'POST',
+  });
+}
+
+export async function verifyEmail(id: string, hash: string): Promise<{ message?: string } | null> {
+  const path = `/api/email/verify/${encodeURIComponent(id)}/${encodeURIComponent(hash)}`;
+  return apiFetch(path, {
+    method: 'GET',
+  });
+}
+
+type ProfileUpdatePayload = {
+  name?: string | null;
+};
+
+export async function updateProfileRequest(payload: ProfileUpdatePayload) {
+  return apiFetch<ApiProfileResponse>('/api/profile', {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  });
+}
+
+type AvatarUploadParams = {
+  uri: string;
+  mimeType?: string | null;
+  name?: string | null;
+};
+
+export type AvatarUploadResponse = {
+  message?: string;
+  avatar_url?: string | null;
+};
+
+export async function uploadAvatarRequest({ uri, mimeType, name }: AvatarUploadParams) {
+  const formData = new FormData();
+  const filename = name || uri.split('/').pop() || 'avatar.jpg';
+  const type = mimeType || 'image/jpeg';
+
+  if (Platform.OS === 'web') {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    formData.append('avatar', blob, filename);
+  } else {
+    formData.append('avatar', {
+      uri,
+      name: filename,
+      type,
+    } as any);
+  }
+  formData.append('_method', 'PUT'); // Laravel parses files on POST, so spoof PUT via _method
+
+  return apiFetch<AvatarUploadResponse>('/api/profile/avatar', {
+    method: 'POST',
+    body: formData,
+  });
+}
+
+export async function deleteAvatarRequest() {
+  return apiFetch<AvatarUploadResponse>('/api/profile/avatar', {
+    method: 'DELETE',
+  });
 }
