@@ -1286,3 +1286,47 @@ export const HabitListItemStyles = StyleSheet.create({
         justifyContent: 'center', alignItems: 'center',
     }
 });
+
+export const allHabitsStyles = StyleSheet.create({
+    card: {
+        backgroundColor: 'white',
+        borderRadius: 16,
+        marginBottom: 12,
+        padding: 16,
+        borderLeftWidth: 4,
+        shadowColor: "#000",
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
+        elevation: 2,
+    },
+    cardContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    emojiContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: 12,
+        backgroundColor: '#F3F4F6',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+    habitName: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#111827',
+        marginBottom: 2,
+    },
+    categoryText: {
+        fontSize: 12,
+        color: '#6B7280',
+        marginBottom: 4,
+    },
+    daysText: {
+        fontSize: 10,
+        color: '#9CA3AF',
+        fontWeight: '500',
+    }
+});

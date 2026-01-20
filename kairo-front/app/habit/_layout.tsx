@@ -1,6 +1,5 @@
-import {router, Stack} from 'expo-router';
-import {Pressable, Text} from "react-native";
-import {ChevronLeft} from "@tamagui/lucide-icons";
+import {Stack} from 'expo-router';
+import BackButton from "@/src/components/BackButton";
 
 export default function HabitLayout() {
     return (
@@ -39,24 +38,3 @@ export default function HabitLayout() {
         </Stack>
     );
 }
-
-const BackButton = () => (
-    <Pressable
-        onPress={() => router.back()}
-        style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 4,
-            paddingRight: 8
-        }}
-        hitSlop={8}
-    >
-        <ChevronLeft size={24}/>
-        <Text
-            style={{
-                fontSize: 17,
-                fontWeight: '500',
-            }}
-        >Back</Text>
-    </Pressable>
-);

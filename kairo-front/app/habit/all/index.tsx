@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
-import {ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Pressable, ScrollView, Text, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {useHabits} from '@/src/contexts/HabitsContext';
-import {sharedFonts, sharedStyles} from '@/global';
+import {allHabitsStyles, sharedFonts, sharedStyles} from '@/global';
 import {ChevronRight} from '@tamagui/lucide-icons';
 
 export default function AllHabitsScreen() {
@@ -44,24 +44,24 @@ export default function AllHabitsScreen() {
                         <Pressable
                             key={userHabit.id}
                             style={[
-                                styles.card,
+                                allHabitsStyles.card,
                                 {borderLeftColor: userHabit.habit.hex_color || '#3B82F6'}
                             ]}
                             onPress={() => router.push(`/habit/edit/${userHabit.id}`)}
                         >
-                            <View style={styles.cardContent}>
-                                <View style={styles.emojiContainer}>
+                            <View style={allHabitsStyles.cardContent}>
+                                <View style={allHabitsStyles.emojiContainer}>
                                     <Text style={{fontSize: 24}}>{userHabit.habit.emoji}</Text>
                                 </View>
                                 <View style={{flex: 1}}>
-                                    <Text style={styles.habitName}>{userHabit.habit.name}</Text>
-                                    <Text style={styles.categoryText}>
+                                    <Text style={allHabitsStyles.habitName}>{userHabit.habit.name}</Text>
+                                    <Text style={allHabitsStyles.categoryText}>
                                         {userHabit.habit.category
                                             ? formatCategory(userHabit.habit.category)
                                             : 'General'}
                                     </Text>
 
-                                    <Text style={styles.daysText}>
+                                    <Text style={allHabitsStyles.daysText}>
                                         {userHabit.days_of_week && userHabit.days_of_week.length > 0
                                             ? userHabit.days_of_week.map(d => d.slice(0, 3).toUpperCase()).join(', ')
                                             : 'Everyday'}
@@ -78,46 +78,3 @@ export default function AllHabitsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    card: {
-        backgroundColor: 'white',
-        borderRadius: 16,
-        marginBottom: 12,
-        padding: 16,
-        borderLeftWidth: 4,
-        shadowColor: "#000",
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.05,
-        shadowRadius: 5,
-        elevation: 2,
-    },
-    cardContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    emojiContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: 12,
-        backgroundColor: '#F3F4F6',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 16,
-    },
-    habitName: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#111827',
-        marginBottom: 2,
-    },
-    categoryText: {
-        fontSize: 12,
-        color: '#6B7280',
-        marginBottom: 4,
-    },
-    daysText: {
-        fontSize: 10,
-        color: '#9CA3AF',
-        fontWeight: '500',
-    }
-});
