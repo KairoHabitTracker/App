@@ -885,6 +885,11 @@ export const friendsScreenStyles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F9FAFB',
     },
+    flex: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 8,
+    },
     copyIdRow: {
         flexDirection: 'row',
         alignItems: 'center',

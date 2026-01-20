@@ -44,8 +44,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const info = json.data?.info;
       const username = info?.name ?? json.data?.email ?? 'User';
       const avatarUrl = info?.avatar_url ?? null;
-      const streak = info?.streak ?? 0;
       const coins = info?.coins ?? 0;
+      const streak = info?.largest_streak ?? 0;
+
 
       setUser({id: userId, username, avatarUrl, streak, coins});
     } catch (error: unknown) {

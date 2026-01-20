@@ -1,5 +1,6 @@
 // Shared API response types for profile endpoints
 export type ApiProfileInfo = {
+  largest_streak: number;
   id: number;
   user_id: string;
   name: string | null;
