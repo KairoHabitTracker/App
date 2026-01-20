@@ -21,13 +21,20 @@ export const SettingsRow = ({
                             }: SettingsRowProps) => {
     return (
         <View style={settingRowStyles.settingRow}>
-            <View style={settingRowStyles.settingInfo}>
-                <Icon size={20} color={color} style={settingRowStyles.settingIcon}/>
+            <View style={[settingRowStyles.settingInfo, settingRowStyles.infoContainer]}>
+
+                <View style={settingRowStyles.iconContainer}>
+                    <Icon size={22} color={color}/>
+                </View>
+
                 <View style={settingRowStyles.settingText}>
                     <Text style={settingRowStyles.settingTitle}>{title}</Text>
-                    {description && <Text style={settingRowStyles.settingDescription}>{description}</Text>}
+                    {description && (
+                        <Text style={settingRowStyles.settingDescription}>{description}</Text>
+                    )}
                 </View>
             </View>
+
             <Switch
                 value={value}
                 onValueChange={onValueChange}

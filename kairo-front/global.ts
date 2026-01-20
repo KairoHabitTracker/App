@@ -1210,6 +1210,17 @@ export const settingRowStyles = StyleSheet.create({
         fontSize: 13,
         color: '#6B7280',
     },
+    infoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+        gap: 12,
+    },
+    iconContainer: {
+
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 });
 
 
