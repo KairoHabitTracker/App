@@ -58,6 +58,7 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
                             display="spinner"
                             onChange={props.onTimeChange}
                             style={{height: 200}}
+                            themeVariant="light"
                         />
                     </PickerModal>
 
@@ -73,6 +74,7 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
                             display="spinner"
                             onChange={props.onStartDateChange}
                             style={{height: 200}}
+                            themeVariant="light"
                         />
                     </PickerModal>
 
@@ -88,6 +90,7 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
                             display="spinner"
                             onChange={props.onEndDateChange}
                             style={{height: 200}}
+                            themeVariant="light"
                         />
                     </PickerModal>
                 </>
