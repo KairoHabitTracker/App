@@ -30,6 +30,7 @@
     "expo-font": "~14.0.9",
     "expo-haptics": "~15.0.7",
     "expo-image": "~3.0.9",
+    "expo-image-picker": "~17.0.10",
     "expo-linking": "~8.0.8",
     "expo-notifications": "~0.32.16",
     "expo-router": "~6.0.11",
@@ -60,6 +61,7 @@
   },
   "devDependencies": {
     "@tamagui/babel-plugin": "^1.135.4",
+    "@types/node": "^25.0.9",
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
