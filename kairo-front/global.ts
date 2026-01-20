@@ -769,6 +769,92 @@ export const progressCardStyles = StyleSheet.create({
     },
 })
 
+export const editProfileStyles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: tokens.colors.cardBackground,
+        paddingHorizontal: tokens.spacing.lg,
+        paddingVertical: tokens.spacing.lg,
+    },
+    heading: {
+        fontSize: 28,
+        fontWeight: '700',
+        color: tokens.colors.text,
+        marginBottom: tokens.spacing.lg,
+    },
+    section: {
+        marginBottom: tokens.spacing.xl,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: tokens.colors.text,
+        marginBottom: tokens.spacing.sm,
+    },
+    avatarRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    avatarActions: {
+        flex: 1,
+        marginLeft: tokens.spacing.lg,
+    },
+    avatarButtonSpacing: {
+        marginBottom: tokens.spacing.sm,
+    },
+    helperText: {
+        color: tokens.colors.textSubtle,
+        fontSize: 14,
+        marginTop: tokens.spacing.sm,
+    },
+    separatorWrapper: {
+        marginBottom: tokens.spacing.xl,
+    },
+    input: {
+        backgroundColor: '#F9FAFB',
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        borderRadius: tokens.radius.md,
+        paddingHorizontal: tokens.spacing.md,
+        paddingVertical: tokens.spacing.sm,
+        color: tokens.colors.text,
+        marginBottom: tokens.spacing.sm,
+    },
+    usernameMetaRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: tokens.spacing.sm,
+    },
+    usernameMetaText: {
+        color: tokens.colors.textSubtle,
+        fontSize: 12,
+    },
+    saveButton: {
+        marginTop: tokens.spacing.sm,
+    },
+    feedbackBox: {
+        borderRadius: tokens.radius.md,
+        padding: tokens.spacing.md,
+        marginTop: tokens.spacing.sm,
+    },
+    feedbackBoxError: {
+        backgroundColor: '#fee2e2',
+    },
+    feedbackBoxSuccess: {
+        backgroundColor: '#ecfdf5',
+    },
+    feedbackText: {
+        fontSize: 14,
+    },
+    feedbackTextError: {
+        color: '#b91c1c',
+    },
+    feedbackTextSuccess: {
+        color: '#047857',
+    },
+});
+
 export const homeScreenStyles = StyleSheet.create({
     header: {
         paddingHorizontal: 24,
@@ -793,3 +879,330 @@ export const homeScreenStyles = StyleSheet.create({
         color: '#B45309',
     }
 })
+
+export const friendsScreenStyles = StyleSheet.create({
+    screenContainer: {
+        flex: 1,
+        backgroundColor: '#F9FAFB',
+    },
+    copyIdRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 4,
+        paddingVertical: 4,
+    },
+    centerContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    header: {
+        padding: 20,
+        paddingTop: 60,
+        backgroundColor: 'white',
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    headerTitle: {
+        fontSize: 32,
+        fontWeight: '700',
+        color: '#111827',
+    },
+    headerSubtitle: {
+        fontSize: 14,
+        color: '#6B7280',
+        marginTop: 2,
+    },
+    listContent: {
+        padding: 16,
+        paddingBottom: 100,
+    },
+    sectionTitle: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#6B7280',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+        marginBottom: 8,
+        marginLeft: 4
+    },
+
+    cardGroup: {
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: 0,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 1},
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 2,
+        overflow: 'hidden'
+    },
+    sectionContainer: {
+        marginBottom: 8
+    },
+
+    cardRow: {
+        backgroundColor: 'white',
+        padding: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderRadius: 12,
+        marginBottom: 8,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 1},
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+    },
+
+    inviteRow: {
+        padding: 16,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: 'white'
+    },
+    divider: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6'
+    },
+    dividerMargin: {
+        height: 8
+    },
+    inviteInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1
+    },
+    actionButtons: {
+        flexDirection: 'row',
+    },
+    iconBtn: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    avatarContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#EFF6FF',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12
+    },
+    avatarImage: {
+        width: 40,
+        height: 40,
+        borderRadius: 20
+    },
+    avatarText: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#3B82F6'
+    },
+    infoContainer: {
+        flex: 1
+    },
+    nameText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#111827'
+    },
+    subText: {
+        fontSize: 13,
+        color: '#6B7280'
+    },
+    coinBadge: {
+        backgroundColor: '#FFF7ED',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#FFEDD5'
+    },
+    coinText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#B45309'
+    },
+
+    inviteContainer: {
+        padding: 16,
+        backgroundColor: '#F9FAFB'
+    },
+    inputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderWidth: 1,
+        borderColor: '#E5E7EB'
+    },
+    input: {
+        flex: 1,
+        paddingVertical: 12,
+        fontSize: 16,
+    },
+    sendIconBtn: {
+        padding: 8
+    },
+    emptyState: {
+        alignItems: 'center',
+        marginTop: 40
+    }
+});
+
+
+export const notificationStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#F9FAFB',
+    },
+    header: {
+        padding: 20,
+        paddingTop: 60,
+        backgroundColor: 'white',
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6',
+    },
+    headerTitle: {
+        fontSize: 32,
+        fontWeight: '700',
+        color: '#111827',
+    },
+    headerSubtitle: {
+        fontSize: 14,
+        color: '#6B7280',
+        marginTop: 2,
+    },
+    scrollContent: {
+        padding: 16,
+        paddingBottom: 100,
+    },
+    sectionTitle: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#6B7280',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+        marginBottom: 12,
+        marginTop: 8,
+    },
+    settingsCard: {
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: 16,
+        marginBottom: 24,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+        elevation: 3,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#F3F4F6',
+        marginVertical: 4,
+    },
+    notificationCard: {
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: 16,
+        marginBottom: 12,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+        elevation: 3,
+        alignItems: 'center',
+    },
+    notificationIcon: {
+        width: 48,
+        height: 48,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+    notificationContent: {
+        flex: 1,
+    },
+    notificationHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 4,
+    },
+    notificationTitle: {
+        flex: 1,
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#111827',
+    },
+    notificationTime: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#3B82F6',
+        marginLeft: 8,
+    },
+    notificationDescription: {
+        fontSize: 13,
+        color: '#6B7280',
+        lineHeight: 20,
+    },
+    infoCard: {
+        backgroundColor: '#F3F4F6',
+        borderRadius: 16,
+        padding: 24,
+        alignItems: 'center',
+        marginTop: 12,
+    },
+    infoText: {
+        fontSize: 15,
+        color: '#6B7280',
+        textAlign: 'center',
+        marginTop: 12,
+        lineHeight: 22,
+    },
+});
+
+export const settingRowStyles = StyleSheet.create({
+    settingRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 12,
+    },
+    settingInfo: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    settingIcon: {
+        marginRight: 12,
+    },
+    settingText: {
+        flex: 1,
+    },
+    settingTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#111827',
+        marginBottom: 2,
+    },
+    settingDescription: {
+        fontSize: 13,
+        color: '#6B7280',
+    },
+});
