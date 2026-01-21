@@ -1,6 +1,7 @@
 import {Platform} from 'react-native';
 import * as Device from 'expo-device';
 import type {ApiError, ApiProfileResponse, LoginResponse, RegisterResponse} from '@/src/types/apiTypes';
+import type {UserAchievementsResponse} from '@/src/types/achievements';
 import {getItemAsync} from './secureStore';
 
 export const API_BASE = 'http://localhost:8000'; // Replace with your API base URL
@@ -246,4 +247,8 @@ export async function deleteAvatarRequest() {
   return apiFetch<AvatarUploadResponse>('/api/profile/avatar', {
     method: 'DELETE',
   });
+}
+
+export async function fetchUserAchievements() {
+  return apiFetch<UserAchievementsResponse>('/api/achievements');
 }
