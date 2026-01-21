@@ -1,12 +1,13 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Plus} from "@tamagui/lucide-icons";
+import {useThemeMode} from '@/src/contexts/ThemeContext';
 
 type AddButtonProps = {
     onPress?: () => void;
 };
 
 export default function AddButton({ onPress }: AddButtonProps) {
-
+    const {colors} = useThemeMode();
 
     return (
         <TouchableOpacity
@@ -16,6 +17,10 @@ export default function AddButton({ onPress }: AddButtonProps) {
             <View
                 style={[
                     styles.button,
+                    {
+                        backgroundColor: colors.accent,
+                        shadowColor: colors.accent,
+                    }
 
                 ]}
             >

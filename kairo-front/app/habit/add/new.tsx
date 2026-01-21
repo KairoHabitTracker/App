@@ -3,7 +3,6 @@ import {
     ActivityIndicator,
     Alert,
     ScrollView,
-    StyleSheet,
     Switch,
     Text,
     TextInput,
@@ -14,19 +13,22 @@ import {useLocalSearchParams, useRouter} from 'expo-router';
 import {useAuth} from '@/src/contexts/AuthContext';
 import {API_BASE} from '@/src/lib/api';
 import {useDateTimePickers} from '@/src/hooks/useDateTimePickers';
-import DaySelector from "@/src/components/habit/DaySelector";
-import DateTimePickerGroup from "@/src/components/habit/DateTimePickerGroup";
-import CategoryPicker from "@/src/components/habit/CategoryPicker";
-import EmojiPicker from "@/src/components/habit/EmojiPicker";
-import ColorPickerModal from "@/src/components/habit/ColorPickerModal";
-
+import DaySelector from '@/src/components/habit/DaySelector';
+import DateTimePickerGroup from '@/src/components/habit/DateTimePickerGroup';
+import CategoryPicker from '@/src/components/habit/CategoryPicker';
+import EmojiPicker from '@/src/components/habit/EmojiPicker';
+import ColorPickerModal from '@/src/components/habit/ColorPickerModal';
+import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 export default function NewHabitDetail() {
     const {token} = useAuth();
     const router = useRouter();
+    const {colors} = useThemeMode();
+    const styles = useCustomHabitStyles();
 
     const params = useLocalSearchParams<{ gotName?: string }>();
-    const initialName = params.gotName ?? ''
+    const initialName = params.gotName ?? '';
 
     const [name, setName] = useState<string>(initialName);
     const [emoji, setEmoji] = useState('🙉');
@@ -75,20 +77,20 @@ export default function NewHabitDetail() {
                 name,
                 emoji,
                 hex_color: hexColor,
-                category
+                category,
             };
 
             const customHabitResponse = await fetch(`${API_BASE}/api/habits/custom`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(customHabitPayload)
+                body: JSON.stringify(customHabitPayload),
             });
 
             const customHabit = await customHabitResponse.json();
-            const habitId = customHabit?.data?.id
+            const habitId = customHabit?.data?.id;
             if (!habitId) {
                 throw new Error('Missing habit id in response');
             }
@@ -98,20 +100,20 @@ export default function NewHabitDetail() {
                 notification_time: pickerState.notificationTime || null,
                 days_of_week: selectedDays,
                 start_date: pickerState.startDate || null,
-                end_date: pickerState.endDate || null
+                end_date: pickerState.endDate || null,
             };
 
             await fetch(`${API_BASE}/api/habits/user`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(userHabitPayload)
+                body: JSON.stringify(userHabitPayload),
             });
 
             Alert.alert('Success', 'Custom habit created and added to your routine!', [
-                {text: 'OK', onPress: () => router.replace('/home')}
+                {text: 'OK', onPress: () => router.replace('/home')},
             ]);
         } catch (error) {
             console.error(error);
@@ -130,11 +132,16 @@ export default function NewHabitDetail() {
             />
         );
     }
+
     return (
         <>
-            <ScrollView contentContainerStyle={styles.container}>
+            <ScrollView
+                style={styles.screen}
+                contentContainerStyle={styles.container}
+                keyboardShouldPersistTaps="handled"
+            >
                 <View style={styles.previewSection}>
-                    <View style={[styles.previewCard, {backgroundColor: hexColor}]}>
+                    <View style={[styles.previewCard, {backgroundColor: hexColor}]}> 
                         <View style={styles.emojiCircle}>
                             <Text style={styles.bigEmoji}>{emoji}</Text>
                         </View>
@@ -143,7 +150,6 @@ export default function NewHabitDetail() {
                 </View>
 
                 <View style={styles.formSection}>
-
                     <CategoryPicker
                         category={category}
                         onCategorySelect={handleCategorySelect}
@@ -154,7 +160,7 @@ export default function NewHabitDetail() {
                         <TextInput
                             style={styles.input}
                             placeholder="e.g. Drink Water"
-                            placeholderTextColor="#9CA3AF"
+                            placeholderTextColor={colors.subtleText}
                             value={name}
                             onChangeText={setName}
                             maxLength={255}
@@ -162,7 +168,7 @@ export default function NewHabitDetail() {
                     </View>
 
                     <View style={styles.row}>
-                        <View style={[styles.inputGroup, {flex: 1, marginRight: 8}]}>
+                        <View style={[styles.inputGroup, styles.rowItem]}>
                             <Text style={styles.label}>Emoji *</Text>
                             <TouchableOpacity
                                 style={styles.emojiButton}
@@ -172,7 +178,7 @@ export default function NewHabitDetail() {
                             </TouchableOpacity>
                         </View>
 
-                        <View style={[styles.inputGroup, {flex: 1, marginLeft: 8}]}>
+                        <View style={[styles.inputGroup, styles.rowItem]}>
                             <Text style={styles.label}>Color *</Text>
                             <TouchableOpacity
                                 style={[styles.colorButton, {backgroundColor: hexColor}]}
@@ -195,16 +201,15 @@ export default function NewHabitDetail() {
                         <Switch
                             value={enableNotifications}
                             onValueChange={setEnableNotifications}
-                            trackColor={{false: '#E5E7EB', true: hexColor + '80'}}
-                            thumbColor={enableNotifications ? hexColor : '#f4f3f4'}
+                            trackColor={{false: colors.border, true: `${hexColor}80`}}
+                            thumbColor={enableNotifications ? '#fff' : colors.surface}
                         />
                     </View>
-
 
                     {enableNotifications && (
                         <View style={styles.remindersContainer}>
                             <Text style={styles.helperText}>
-                                We&#39;ll send you notifications on selected days.
+                                We&apos;ll send you notifications on selected days.
                             </Text>
                             <DateTimePickerGroup {...pickerState} />
                         </View>
@@ -214,13 +219,13 @@ export default function NewHabitDetail() {
                         style={[
                             styles.submitButton,
                             {backgroundColor: hexColor},
-                            submitting && styles.submitButtonDisabled
+                            submitting && styles.submitButtonDisabled,
                         ]}
                         onPress={handleSubmit}
                         disabled={submitting}
                     >
                         {submitting ? (
-                            <ActivityIndicator color="#fff"/>
+                            <ActivityIndicator color="#fff" />
                         ) : (
                             <Text style={styles.submitText}>Create Custom Habit</Text>
                         )}
@@ -238,17 +243,17 @@ export default function NewHabitDetail() {
     );
 }
 
-const styles = StyleSheet.create({
-    fullScreen: {
+const createCustomHabitStyles = (colors: ThemeColors) => ({
+    screen: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: colors.background,
     },
     container: {
         padding: 16,
-        backgroundColor: '#F9FAFB',
+        paddingBottom: 32,
+        gap: 24,
     },
     previewSection: {
-        marginBottom: 24,
         alignItems: 'center',
     },
     previewCard: {
@@ -266,7 +271,7 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 40,
-        backgroundColor: 'rgba(255,255,255,0.3)',
+        backgroundColor: 'rgba(255,255,255,0.25)',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 16,
@@ -281,48 +286,50 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     formSection: {
-        backgroundColor: 'white',
+        backgroundColor: colors.card,
         borderRadius: 16,
         padding: 20,
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
-        elevation: 3,
+        borderWidth: 1,
+        borderColor: colors.border,
+        gap: 20,
     },
     inputGroup: {
-        marginBottom: 20,
+        gap: 8,
     },
     label: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#374151',
-        marginBottom: 8,
+        color: colors.text,
     },
     input: {
-        backgroundColor: '#F9FAFB',
+        backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
         borderRadius: 12,
         padding: 14,
         fontSize: 16,
-        color: '#111827',
+        color: colors.text,
     },
     row: {
         flexDirection: 'row',
+        gap: 12,
+    },
+    rowItem: {
+        flex: 1,
     },
     emojiButton: {
-        backgroundColor: '#F9FAFB',
+        backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
         borderRadius: 12,
-        padding: 14,
+        paddingVertical: 10,
         alignItems: 'center',
         justifyContent: 'center',
         height: 60,
     },
     emojiButtonText: {
         fontSize: 32,
+        color: colors.text,
     },
     colorButton: {
         borderRadius: 12,
@@ -331,7 +338,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         height: 60,
         borderWidth: 2,
-        borderColor: '#E5E7EB',
+        borderColor: colors.surface,
     },
     colorButtonText: {
         color: 'white',
@@ -341,29 +348,23 @@ const styles = StyleSheet.create({
         textShadowOffset: {width: 0, height: 1},
         textShadowRadius: 2,
     },
-    categoriesScroll: {
-        paddingVertical: 4,
+    reminderHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingTop: 10,
+        marginTop: 10,
+        borderTopWidth: 1,
+        borderTopColor: colors.border,
     },
-    categoryChip: {
-        backgroundColor: '#F3F4F6',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-        marginRight: 8,
+    remindersContainer: {
+        gap: 12,
     },
-    categoryChipActive: {
-        backgroundColor: '#3B82F6',
-    },
-    categoryChipText: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#6B7280',
-    },
-    categoryChipTextActive: {
-        color: 'white',
+    helperText: {
+        fontSize: 13,
+        color: colors.subtleText,
     },
     submitButton: {
-        backgroundColor: '#3B82F6',
         borderRadius: 12,
         padding: 16,
         alignItems: 'center',
@@ -377,49 +378,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
     },
-    modalOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        justifyContent: 'flex-end',
-    },
-    colorPickerModal: {
-        backgroundColor: 'white',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        padding: 20,
-        paddingBottom: 40,
-        maxHeight: '80%',
-    },
-    modalHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 20,
-        paddingBottom: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#111827',
-    },
-    modalClose: {
-        fontSize: 16,
-        color: '#6B7280',
-    },
-    modalDone: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#3B82F6',
-    },
-
-    reminderHeader: {
-        flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10,
-        paddingTop: 10, borderTopWidth: 1, borderTopColor: '#F3F4F6'
-    },
-    remindersContainer: {marginBottom: 20},
-    helperText: {fontSize: 13, color: '#6B7280', marginBottom: 12},
-
-
 });
+
+function useCustomHabitStyles() {
+    return useThemedStyles(createCustomHabitStyles);
+}

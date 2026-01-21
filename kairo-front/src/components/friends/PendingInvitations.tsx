@@ -2,7 +2,8 @@ import React from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {Check, X} from '@tamagui/lucide-icons';
 import {FriendInvitation} from "@/src/types/friends/FriendInvitation";
-import {friendsScreenStyles} from "@/global";
+import {useFriendsStyles} from '@/src/styles/friendsStyles';
+import {useThemeMode} from '@/src/contexts/ThemeContext';
 
 interface PendingInvitationsProps {
     invitations: FriendInvitation[];
@@ -21,12 +22,15 @@ export const PendingInvitations = ({
                                    }: PendingInvitationsProps) => {
     if (invitations.length === 0) return null;
 
+    const styles = useFriendsStyles();
+    const {colors} = useThemeMode();
+
     return (
-        <View style={friendsScreenStyles.sectionContainer}>
-            <Text style={friendsScreenStyles.sectionTitle}>
+        <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>
                 PENDING INVITATIONS ({invitations.length})
             </Text>
-            <View style={friendsScreenStyles.cardGroup}>
+            <View style={styles.cardGroup}>
                 {invitations.map((invitation, index) => {
 
                     const sender = invitation.sender;
@@ -40,44 +44,44 @@ export const PendingInvitations = ({
 
                     return (
                         <View key={invitation.id} style={[
-                            friendsScreenStyles.inviteRow,
-                            index !== invitations.length - 1 && friendsScreenStyles.divider
+                            styles.inviteRow,
+                            index !== invitations.length - 1 && styles.divider
                         ]}>
-                            <View style={friendsScreenStyles.inviteInfo}>
-                                <View style={[friendsScreenStyles.avatarContainer, {backgroundColor: '#FEF3C7'}]}>
+                            <View style={styles.inviteInfo}>
+                                <View style={styles.avatarContainer}>
                                     {avatarUrl ? (
                                         <Image
                                             source={{uri: getAvatarUrl(avatarUrl) || undefined}}
-                                            style={friendsScreenStyles.avatarImage}
+                                            style={styles.avatarImage}
                                         />
                                     ) : (
-                                        <Text style={[friendsScreenStyles.avatarText, {color: '#D97706'}]}>
+                                        <Text style={styles.avatarText}>
                                             {initial}
                                         </Text>
                                     )}
                                 </View>
                                 <View style={{marginLeft: 12, flex: 1}}>
-                                    <Text style={friendsScreenStyles.nameText} numberOfLines={1}>
+                                    <Text style={styles.nameText} numberOfLines={1}>
                                         {displayName}
                                     </Text>
-                                    <Text style={friendsScreenStyles.subText}>
+                                    <Text style={styles.subText}>
                                         Wants to connect
                                     </Text>
                                 </View>
                             </View>
 
-                            <View style={friendsScreenStyles.actionButtons}>
+                            <View style={styles.actionButtons}>
                                 <TouchableOpacity
-                                    style={[friendsScreenStyles.iconBtn, {backgroundColor: '#DCFCE7'}]}
+                                    style={[styles.iconBtn, {backgroundColor: colors.successBackground}]}
                                     onPress={() => onAccept(invitation.id)}
                                 >
-                                    <Check size={18} color="#16A34A"/>
+                                    <Check size={18} color={colors.success}/>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[friendsScreenStyles.iconBtn, {backgroundColor: '#FEE2E2', marginLeft: 8}]}
+                                    style={[styles.iconBtn, {backgroundColor: colors.dangerBackground, marginLeft: 8}]}
                                     onPress={() => onReject(invitation.id)}
                                 >
-                                    <X size={18} color="#DC2626"/>
+                                    <X size={18} color={colors.danger}/>
                                 </TouchableOpacity>
                             </View>
                         </View>

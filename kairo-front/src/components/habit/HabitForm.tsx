@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Alert, ScrollView, Switch, Text, TouchableOpacity, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {useHabits} from '@/src/contexts/HabitsContext';
-import {errorStyles, oneHabitStyles, sharedFonts, sharedStyles} from "@/global";
 import HabitCard from '@/src/components/habit/HabitCard';
 import DaySelector from '@/src/components/habit/DaySelector';
 import DateTimePickerGroup from '@/src/components/habit/DateTimePickerGroup';
 import {useDateTimePickers} from '@/src/hooks/useDateTimePickers';
 import {Habit} from "@/src/types/habits/Habit";
+import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 interface HabitFormProps {
     mode: 'add' | 'edit';
@@ -18,6 +19,8 @@ interface HabitFormProps {
 export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) {
     const {getHabitById, getUserHabitById, addHabit, editHabit} = useHabits();
     const router = useRouter();
+    const {colors} = useThemeMode();
+    const styles = useHabitFormStyles();
 
     const [loadingInitialData, setLoadingInitialData] = useState(true);
     const [selectedDays, setSelectedDays] = useState<string[]>([]);
@@ -111,17 +114,17 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
 
     if (loadingInitialData) {
         return (
-            <View style={errorStyles.container}>
+            <View style={styles.loadingContainer}>
                 <ActivityIndicator color={habitColor} size="large"/>
-                <Text style={errorStyles.subtitle}>Loading habit details...</Text>
+                <Text style={styles.loadingSubtitle}>Loading habit details...</Text>
             </View>
         );
     }
 
     if (!habitToDisplay) {
         return (
-            <View style={errorStyles.container}>
-                <Text style={errorStyles.subtitle}>Habit not found.</Text>
+            <View style={styles.loadingContainer}>
+                <Text style={styles.loadingSubtitle}>Habit not found.</Text>
             </View>
         );
     }
@@ -129,10 +132,10 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
     const buttonText = mode === 'edit' ? 'Save Changes' : 'Add to My Habits';
 
     return (
-        <ScrollView contentContainerStyle={sharedStyles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <HabitCard habit={habitToDisplay}/>
 
-            <View style={oneHabitStyles.formSection}>
+            <View style={styles.formSection}>
                 <DaySelector
                     selectedDays={selectedDays}
                     onToggleDay={toggleDay}
@@ -140,13 +143,13 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
                     activeColor={habitColor}
                 />
 
-                <View style={styles.reminderHeader}>
+                    <View style={styles.reminderHeader}>
                     <Text style={styles.label}>Reminders & Dates</Text>
                     <Switch
                         value={enableNotifications}
                         onValueChange={setEnableNotifications}
-                        trackColor={{false: '#E5E7EB', true: habitColor + '80'}}
-                        thumbColor={enableNotifications ? habitColor : '#f4f3f4'}
+                            trackColor={{false: colors.border, true: habitColor + '80'}}
+                            thumbColor={enableNotifications ? habitColor : colors.card}
                     />
                 </View>
 
@@ -158,9 +161,9 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
 
                 <TouchableOpacity
                     style={[
-                        oneHabitStyles.submitButton,
+                        styles.submitButton,
                         {backgroundColor: habitColor},
-                        submitting && oneHabitStyles.submitButtonDisabled
+                        submitting && styles.submitButtonDisabled
                     ]}
                     onPress={handleSubmit}
                     disabled={submitting}
@@ -168,7 +171,7 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
                     {submitting ? (
                         <ActivityIndicator color="#fff"/>
                     ) : (
-                        <Text style={sharedFonts.mediumWhiteText}>{buttonText}</Text>
+                        <Text style={styles.submitText}>{buttonText}</Text>
                     )}
                 </TouchableOpacity>
             </View>
@@ -176,7 +179,22 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
     );
 }
 
-const styles = StyleSheet.create({
+const createHabitFormStyles = (colors: ThemeColors) => ({
+    container: {
+        flexGrow: 1,
+        backgroundColor: colors.background,
+        paddingHorizontal: 20,
+        paddingBottom: 40,
+        gap: 16,
+    },
+    formSection: {
+        backgroundColor: colors.card,
+        borderRadius: 16,
+        padding: 20,
+        borderWidth: 1,
+        borderColor: colors.border,
+        gap: 12,
+    },
     reminderHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -184,15 +202,46 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         paddingTop: 10,
         borderTopWidth: 1,
-        borderTopColor: '#F3F4F6',
-        marginTop: 10
+        borderTopColor: colors.border,
+        marginTop: 10,
     },
     label: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#374151'
+        color: colors.text,
     },
     remindersContainer: {
-        marginBottom: 20
+        marginBottom: 20,
+    },
+    submitButton: {
+        borderRadius: 12,
+        padding: 16,
+        alignItems: 'center',
+        marginTop: 8,
+    },
+    submitButtonDisabled: {
+        opacity: 0.6,
+    },
+    submitText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '700',
+    },
+    loadingContainer: {
+        flex: 1,
+        backgroundColor: colors.background,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 24,
+        gap: 12,
+    },
+    loadingSubtitle: {
+        fontSize: 16,
+        color: colors.subtleText,
+        textAlign: 'center',
     },
 });
+
+function useHabitFormStyles() {
+    return useThemedStyles(createHabitFormStyles);
+}

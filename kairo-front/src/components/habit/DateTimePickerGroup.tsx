@@ -5,15 +5,17 @@ import {Calendar, Clock} from '@tamagui/lucide-icons';
 import PickerButton from '@/src/components/PickerButton';
 import PickerModal from './PickerModal';
 import {formatDateDisplay} from '@/src/hooks/useDateTimePickers';
-import {oneHabitStyles, sharedFonts} from '@/global'
 import {DateTimePickerGroupProps} from "@/src/types/DateTimePickerGroupProps";
+import {ThemeColors} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
+    const styles = useDateTimePickerGroupStyles();
     return (
         <>
 
-            <View style={oneHabitStyles.inputGroup}>
-                <Text style={[sharedFonts.smallText, {marginBottom: 8}]}>Notification Time</Text>
+            <View style={styles.inputGroup}>
+                <Text style={styles.label}>Notification Time</Text>
                 <PickerButton
                     icon={Clock}
                     value={props.notificationTime}
@@ -22,8 +24,8 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
                 />
             </View>
 
-            <View style={oneHabitStyles.inputGroup}>
-                <Text style={[sharedFonts.smallText, {marginBottom: 8}]}>Start Date</Text>
+            <View style={styles.inputGroup}>
+                <Text style={styles.label}>Start Date</Text>
                 <PickerButton
                     icon={Calendar}
                     value={props.startDate ? formatDateDisplay(props.startDate) : ''}
@@ -32,8 +34,8 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
                 />
             </View>
 
-            <View style={oneHabitStyles.inputGroup}>
-                <Text style={[sharedFonts.smallText, {marginBottom: 8}]}>End Date</Text>
+            <View style={styles.inputGroup}>
+                <Text style={styles.label}>End Date</Text>
                 <PickerButton
                     icon={Calendar}
                     value={props.endDate ? formatDateDisplay(props.endDate) : ''}
@@ -125,5 +127,21 @@ export default function DateTimePickerGroup(props: DateTimePickerGroupProps) {
             )}
         </>
     );
+}
+
+const createDateTimePickerGroupStyles = (colors: ThemeColors) => ({
+    inputGroup: {
+        marginBottom: 20,
+    },
+    label: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: colors.text,
+        marginBottom: 8,
+    },
+});
+
+function useDateTimePickerGroupStyles() {
+    return useThemedStyles(createDateTimePickerGroupStyles);
 }
 

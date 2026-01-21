@@ -6,12 +6,15 @@ import { Button, Input, Separator } from 'tamagui';
 import ProfileAvatar from '@/src/components/ProfileAvatar';
 import { useAuth } from '@/src/contexts/AuthContext';
 import { deleteAvatarRequest, isApiError, updateProfileRequest, uploadAvatarRequest } from '@/src/lib/api';
-import { editProfileStyles } from '@/global';
+import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 const MIN_USERNAME_LENGTH = 2;
 
 export default function EditProfileScreen() {
     const { user, refreshProfile } = useAuth();
+    const styles = useEditProfileStyles();
+    const {colors} = useThemeMode();
     const [displayName, setDisplayName] = useState(user?.username ?? '');
     const [savingName, setSavingName] = useState(false);
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -114,18 +117,18 @@ export default function EditProfileScreen() {
     }
 
     return (
-        <View style={editProfileStyles.screen}>
-            <Text style={editProfileStyles.heading}>Edit Profile</Text>
+        <View style={styles.screen}>
+            <Text style={styles.heading}>Edit Profile</Text>
 
-            <View style={editProfileStyles.section}>
-                <Text style={editProfileStyles.sectionTitle}>Avatar</Text>
-                <View style={editProfileStyles.avatarRow}>
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Avatar</Text>
+                <View style={styles.avatarRow}>
                     <ProfileAvatar username={user?.username} avatarUrl={activeAvatarUri} size={80} />
-                    <View style={editProfileStyles.avatarActions}>
+                    <View style={styles.avatarActions}>
                         <Button
                             onPress={handlePickAvatar}
                             disabled={uploadingAvatar}
-                            style={editProfileStyles.avatarButtonSpacing}
+                            style={styles.avatarButtonSpacing}
                         >
                             {uploadingAvatar ? 'Uploading...' : 'Change avatar'}
                         </Button>
@@ -134,17 +137,17 @@ export default function EditProfileScreen() {
                         </Button>
                     </View>
                 </View>
-                <Text style={editProfileStyles.helperText}>
+                <Text style={styles.helperText}>
                     Upload a square JPEG, PNG, JPG or WEBP up to 2MB.
                 </Text>
             </View>
 
-            <View style={editProfileStyles.separatorWrapper}>
-                <Separator />
+            <View style={styles.separatorWrapper}>
+                <Separator style={{ backgroundColor: colors.border }} />
             </View>
 
-            <View style={editProfileStyles.section}>
-                <Text style={editProfileStyles.sectionTitle}>Username</Text>
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Username</Text>
                 <Input
                     value={displayName}
                     onChangeText={setDisplayName}
@@ -152,20 +155,20 @@ export default function EditProfileScreen() {
                     autoCapitalize="none"
                     autoCorrect={false}
                     maxLength={255}
-                    style={editProfileStyles.input}
+                    style={styles.input}
                 />
-                <View style={editProfileStyles.usernameMetaRow}>
-                    <Text style={editProfileStyles.usernameMetaText}>
+                <View style={styles.usernameMetaRow}>
+                    <Text style={styles.usernameMetaText}>
                         Minimum {MIN_USERNAME_LENGTH} characters.
                     </Text>
-                    <Text style={editProfileStyles.usernameMetaText}>
+                    <Text style={styles.usernameMetaText}>
                         {displayName.length}/255
                     </Text>
                 </View>
                 <Button
                     onPress={handleSaveName}
                     disabled={!canSaveName || savingName}
-                    style={editProfileStyles.saveButton}
+                    style={styles.saveButton}
                 >
                     {savingName ? 'Saving...' : 'Save changes'}
                 </Button>
@@ -174,14 +177,14 @@ export default function EditProfileScreen() {
             {(errorMessage || successMessage) && (
                 <View
                     style={[
-                        editProfileStyles.feedbackBox,
-                        errorMessage ? editProfileStyles.feedbackBoxError : editProfileStyles.feedbackBoxSuccess
+                        styles.feedbackBox,
+                        errorMessage ? styles.feedbackBoxError : styles.feedbackBoxSuccess
                     ]}
                 >
                     <Text
                         style={[
-                            editProfileStyles.feedbackText,
-                            errorMessage ? editProfileStyles.feedbackTextError : editProfileStyles.feedbackTextSuccess
+                            styles.feedbackText,
+                            errorMessage ? styles.feedbackTextError : styles.feedbackTextSuccess
                         ]}
                     >
                         {errorMessage ?? successMessage}
@@ -190,4 +193,91 @@ export default function EditProfileScreen() {
             )}
         </View>
     );
+}
+
+const createEditProfileStyles = (colors: ThemeColors) => ({
+    screen: {
+        flex: 1,
+        backgroundColor: colors.background,
+        paddingHorizontal: 20,
+        paddingVertical: 24,
+        gap: 24,
+    },
+    heading: {
+        fontSize: 28,
+        fontWeight: '700',
+        color: colors.text,
+    },
+    section: {
+        gap: 12,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: colors.text,
+    },
+    avatarRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 16,
+    },
+    avatarActions: {
+        flex: 1,
+        gap: 8,
+    },
+    avatarButtonSpacing: {
+        marginBottom: 8,
+    },
+    helperText: {
+        color: colors.subtleText,
+        fontSize: 14,
+    },
+    separatorWrapper: {
+        marginVertical: 12,
+    },
+    input: {
+        backgroundColor: colors.card,
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        color: colors.text,
+        fontSize: 16,
+    },
+    usernameMetaRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    usernameMetaText: {
+        color: colors.subtleText,
+        fontSize: 12,
+    },
+    saveButton: {
+        marginTop: 4,
+    },
+    feedbackBox: {
+        borderRadius: 12,
+        padding: 16,
+        marginTop: 8,
+    },
+    feedbackBoxError: {
+        backgroundColor: colors.dangerBackground,
+    },
+    feedbackBoxSuccess: {
+        backgroundColor: colors.successBackground,
+    },
+    feedbackText: {
+        fontSize: 14,
+    },
+    feedbackTextError: {
+        color: colors.danger,
+    },
+    feedbackTextSuccess: {
+        color: colors.success,
+    },
+});
+
+function useEditProfileStyles() {
+    return useThemedStyles(createEditProfileStyles);
 }

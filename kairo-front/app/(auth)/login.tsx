@@ -1,5 +1,6 @@
-import {profileStyles as styles} from '@/global';
 import {useAuth} from '@/src/contexts/AuthContext';
+import {useThemeMode} from '@/src/contexts/ThemeContext';
+import {useAuthStyles} from '@/src/styles/authStyles';
 import {router, useLocalSearchParams as useSearchParams} from 'expo-router';
 import {useState} from 'react';
 import {Text, TextInput, TouchableOpacity, View} from 'react-native';
@@ -7,6 +8,8 @@ import {Text, TextInput, TouchableOpacity, View} from 'react-native';
 export default function LoginScreen() {
     const { login } = useAuth();
     const params = useSearchParams() as { redirect?: string, email?: string };
+    const { colors } = useThemeMode();
+    const styles = useAuthStyles();
 
     const [email, setEmail] = useState(params.email || '');
     const [password, setPassword] = useState('');
@@ -43,39 +46,43 @@ export default function LoginScreen() {
     }
 
     return (
-        <View style={[styles.container, styles.center]}>
-            <Text style={styles.username}>Log in</Text>
+        <View style={styles.screen}>
+            <View style={styles.content}>
+                <Text style={styles.title}>Log in</Text>
 
-            {error ? (
-                <Text style={[styles.subtle, {color: '#ef4444', marginBottom: 15, textAlign: 'center'}]}>
-                    {error}
-                </Text>
-            ) : null}
+                {error ? (
+                    <Text style={styles.error}>
+                        {error}
+                    </Text>
+                ) : null}
 
-            <TextInput
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                style={{ width: '100%', padding: 12, marginVertical: 8, backgroundColor: '#fff', borderRadius: 8 }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
-            <TextInput
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                style={{ width: '100%', padding: 12, marginVertical: 8, backgroundColor: '#fff', borderRadius: 8 }}
-                secureTextEntry
-            />
+                <TextInput
+                    placeholder="Email"
+                    placeholderTextColor={colors.subtleText}
+                    value={email}
+                    onChangeText={setEmail}
+                    style={styles.input}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                />
+                <TextInput
+                    placeholder="Password"
+                    placeholderTextColor={colors.subtleText}
+                    value={password}
+                    onChangeText={setPassword}
+                    style={styles.input}
+                    secureTextEntry
+                />
 
-            <TouchableOpacity onPress={onSubmit} disabled={loading} style={{ marginTop: 12 }}>
-                <Text style={styles.statValue}>{loading ? 'Logging in...' : 'Log in'}</Text>
-            </TouchableOpacity>
+                <TouchableOpacity onPress={onSubmit} disabled={loading} style={styles.primaryButton}>
+                    <Text style={styles.primaryButtonText}>{loading ? 'Logging in...' : 'Log in'}</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-                onPress={() => router.push(`/register?redirect=${encodeURIComponent(params.redirect ?? '/home')}`)}>
-                <Text style={styles.subtle}>Don&#39;t have an account? Register</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => router.push(`/register?redirect=${encodeURIComponent(params.redirect ?? '/home')}`)}>
+                    <Text style={styles.link}>Don&#39;t have an account? Register</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }

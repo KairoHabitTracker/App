@@ -57,7 +57,7 @@ export const sharedStyles = StyleSheet.create({
     },
     basicContainer: {
         flex: 1,
-        backgroundColor: tokens.colors.cardBackground,
+        backgroundColor: 'transparent',
     },
     input: {
         backgroundColor: '#F9FAFB',

@@ -7,8 +7,10 @@ import {
     Text,
     View,
 } from 'react-native';
-import {Award, Calendar, CheckCircle, Crown, Flame, Gem, Lock, Shield, Sparkles, Star, Sun, Sunrise, Trophy, Zap} from '@tamagui/lucide-icons';
+import {Award, Calendar, CheckCircle, Crown, Flame, Gem, Lock, Shield, Sparkles, Star, Sun, Sunrise, Trophy, Zap} from 'lucide-react-native';
 import {useAchievements} from '@/src/hooks/useAchievements';
+import {useThemeMode, ThemeColors} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 type IconComponent = React.ComponentType<any>;
 
@@ -127,6 +129,8 @@ type DisplayAchievement = {
 
 export default function AchievementsScreen() {
     const {achievements, loading, error, refresh, total, unlockedCount, pointsEarned} = useAchievements();
+    const {colors} = useThemeMode();
+    const styles = useAchievementStyles();
 
     const displayList = useMemo<DisplayAchievement[]>(() => {
         return achievements
@@ -171,7 +175,7 @@ export default function AchievementsScreen() {
 
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
-                refreshControl={<RefreshControl refreshing={loading} onRefresh={refresh} tintColor="#111827" />}
+                refreshControl={<RefreshControl refreshing={loading} onRefresh={refresh} tintColor={colors.text} />}
             >
                 <View style={styles.comingSoonCard}>
                     <View style={styles.iconCircle}>
@@ -192,7 +196,7 @@ export default function AchievementsScreen() {
                     </View>
                     <View style={styles.statCard}>
                         <Text style={styles.statCardNumber}>
-                            <Flame size={20} color="#F59E0B" /> {pointsEarned}
+                            <Flame size={20} color={colors.warning as string} /> {pointsEarned}
                         </Text>
                         <Text style={styles.statCardLabel}>Points</Text>
                     </View>
@@ -209,7 +213,7 @@ export default function AchievementsScreen() {
 
                 {loading && !displayList.length ? (
                     <View style={styles.loaderWrapper}>
-                        <ActivityIndicator size="large" color="#111827" />
+                        <ActivityIndicator size="large" color={colors.accent} />
                     </View>
                 ) : showEmptyState ? (
                     <View style={styles.emptyState}>
@@ -235,7 +239,7 @@ export default function AchievementsScreen() {
                                 </View>
 
                                 <View style={styles.achievementContent}>
-                                    <Text style={[styles.achievementTitle, !item.isUnlocked && { color: '#6B7280' }]}>
+                                    <Text style={[styles.achievementTitle, !item.isUnlocked && { color: colors.subtleText }]}>
                                         {item.title}
                                     </Text>
                                     <Text style={styles.achievementDescription}>{item.description}</Text>
@@ -260,26 +264,26 @@ export default function AchievementsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+const createAchievementStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F9FAFB',
+        backgroundColor: colors.background,
     },
     header: {
         padding: 20,
         paddingTop: 60,
-        backgroundColor: 'white',
+        backgroundColor: colors.card,
         borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
+        borderBottomColor: colors.border,
     },
     headerTitle: {
         fontSize: 32,
         fontWeight: '700',
-        color: '#111827',
+        color: colors.text,
     },
     headerSubtitle: {
         fontSize: 14,
-        color: '#6B7280',
+        color: colors.subtleText,
         marginTop: 2,
     },
     scrollContent: {
@@ -288,7 +292,7 @@ const styles = StyleSheet.create({
     },
     comingSoonCard: {
         flexDirection: 'row',
-        backgroundColor: 'white',
+        backgroundColor: colors.card,
         borderRadius: 16,
         padding: 20,
         alignItems: 'center',
@@ -303,7 +307,7 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 30,
-        backgroundColor: '#FFFBEB',
+        backgroundColor: colors.warningBackground,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 16,
@@ -311,17 +315,17 @@ const styles = StyleSheet.create({
     comingSoonTitle: {
         fontSize: 18,
         fontWeight: '700',
-        color: '#111827',
+        color: colors.text,
         marginBottom: 4,
     },
     comingSoonText: {
         fontSize: 14,
-        color: '#6B7280',
+        color: colors.subtleText,
     },
     sectionTitle: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#6B7280',
+        color: colors.subtleText,
         textTransform: 'uppercase',
         letterSpacing: 0.5,
         marginBottom: 12,
@@ -334,7 +338,7 @@ const styles = StyleSheet.create({
     },
     statCard: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: colors.card,
         borderRadius: 16,
         padding: 16,
         alignItems: 'center',
@@ -347,78 +351,79 @@ const styles = StyleSheet.create({
     statCardNumber: {
         fontSize: 24,
         fontWeight: '700',
-        color: '#111827',
+        color: colors.text,
         marginBottom: 4,
         textAlign: 'center',
     },
     statCardLabel: {
         fontSize: 12,
-        color: '#6B7280',
+        color: colors.subtleText,
         textTransform: 'uppercase',
         fontWeight: '600',
     },
     errorCard: {
-        backgroundColor: '#FEF2F2',
+        backgroundColor: colors.dangerBackground,
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: '#FCA5A5',
+        borderColor: colors.danger,
     },
     errorTitle: {
         fontSize: 14,
         fontWeight: '700',
-        color: '#B91C1C',
+        color: colors.danger,
         marginBottom: 4,
     },
     errorSubtitle: {
         fontSize: 13,
-        color: '#7F1D1D',
+        color: colors.danger,
     },
     loaderWrapper: {
         paddingVertical: 40,
         alignItems: 'center',
     },
     emptyState: {
-        backgroundColor: 'white',
+        backgroundColor: colors.card,
         borderRadius: 16,
         padding: 24,
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
     },
     emptyStateTitle: {
         fontSize: 18,
         fontWeight: '700',
-        color: '#111827',
+        color: colors.text,
         marginBottom: 8,
     },
     emptyStateText: {
         fontSize: 14,
-        color: '#6B7280',
+        color: colors.subtleText,
         textAlign: 'center',
     },
     achievementCard: {
-        flexDirection: 'row',
-        backgroundColor: 'white',
+        backgroundColor: colors.card,
         borderRadius: 16,
         padding: 16,
-        marginBottom: 12,
+        flexDirection: 'row',
         alignItems: 'center',
+        marginBottom: 12,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 4,
         elevation: 2,
     },
     achievementCardLocked: {
-        backgroundColor: '#F8FAFC',
+        opacity: 0.85,
+        backgroundColor: colors.surface,
     },
     achievementIcon: {
-        width: 52,
-        height: 52,
-        borderRadius: 14,
+        width: 56,
+        height: 56,
+        borderRadius: 16,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 16,
@@ -428,32 +433,33 @@ const styles = StyleSheet.create({
     },
     achievementTitle: {
         fontSize: 16,
-        fontWeight: '700',
-        color: '#111827',
-        marginBottom: 2,
+        fontWeight: '600',
+        color: colors.text,
     },
     achievementDescription: {
-        fontSize: 13,
-        color: '#4B5563',
-        marginBottom: 4,
+        fontSize: 14,
+        color: colors.subtleText,
+        marginTop: 2,
     },
     unlockedDate: {
         fontSize: 12,
-        color: '#059669',
-        fontWeight: '500',
+        color: colors.subtleText,
+        marginTop: 4,
     },
     lockedText: {
         fontSize: 12,
-        color: '#9CA3AF',
-        marginBottom: 8,
+        color: colors.subtleText,
+        marginTop: 4,
     },
     checkmarkBadge: {
-        width: 32,
-        height: 32,
-        backgroundColor: '#10B981',
-        borderRadius: 16,
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        backgroundColor: colors.accent,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 8,
+        marginLeft: 12,
     },
 });
+
+const useAchievementStyles = () => useThemedStyles(createAchievementStyles);

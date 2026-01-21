@@ -1,6 +1,8 @@
 import React from 'react';
 import {Switch, Text, View} from 'react-native';
-import {settingRowStyles} from "@/global";
+import {useThemeMode} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
+import {ThemeColors} from '@/src/contexts/ThemeContext';
 
 interface SettingsRowProps {
     icon: React.ElementType;
@@ -11,26 +13,70 @@ interface SettingsRowProps {
     color?: string;
 }
 
+const createSettingsRowStyles = (colors: ThemeColors) => ({
+    settingRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 12,
+    },
+    settingInfo: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    settingText: {
+        flex: 1,
+    },
+    settingTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: colors.text,
+        marginBottom: 2,
+    },
+    settingDescription: {
+        fontSize: 13,
+        color: colors.subtleText,
+    },
+    infoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+        gap: 12,
+    },
+    iconContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 8,
+    },
+});
+
+const useSettingsRowStyles = () => useThemedStyles(createSettingsRowStyles);
+
 export const SettingsRow = ({
                                 icon: Icon,
                                 title,
                                 description,
                                 value,
                                 onValueChange,
-                                color = "#3B82F6"
+                                color
                             }: SettingsRowProps) => {
-    return (
-        <View style={settingRowStyles.settingRow}>
-            <View style={[settingRowStyles.settingInfo, settingRowStyles.infoContainer]}>
+    const {colors} = useThemeMode();
+    const styles = useSettingsRowStyles();
+    const iconColor = color ?? colors.accent;
 
-                <View style={settingRowStyles.iconContainer}>
-                    <Icon size={22} color={color}/>
+    return (
+        <View style={styles.settingRow}>
+            <View style={[styles.settingInfo, styles.infoContainer]}>
+
+                <View style={styles.iconContainer}>
+                    <Icon size={22} color={iconColor}/>
                 </View>
 
-                <View style={settingRowStyles.settingText}>
-                    <Text style={settingRowStyles.settingTitle}>{title}</Text>
+                <View style={styles.settingText}>
+                    <Text style={styles.settingTitle}>{title}</Text>
                     {description && (
-                        <Text style={settingRowStyles.settingDescription}>{description}</Text>
+                        <Text style={styles.settingDescription}>{description}</Text>
                     )}
                 </View>
             </View>
@@ -38,8 +84,8 @@ export const SettingsRow = ({
             <Switch
                 value={value}
                 onValueChange={onValueChange}
-                trackColor={{false: '#E5E7EB', true: '#93C5FD'}}
-                thumbColor={value ? '#3B82F6' : '#F3F4F6'}
+                trackColor={{false: colors.border, true: colors.accent}}
+                thumbColor={value ? colors.card : colors.surface}
             />
         </View>
     );
