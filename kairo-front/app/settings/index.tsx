@@ -60,13 +60,11 @@ export default function SettingsScreen() {
 
     const handleLogout = () => {
         logout();
-        router.replace('/login');
     };
 
     const handleLogoutAll = async () => {
         setConfirmOpen(false);
         await logoutAll();
-        router.replace('/login');
     };
 
     return (
