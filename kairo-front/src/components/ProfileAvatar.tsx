@@ -1,42 +1,65 @@
-// Libraries
-import {Image, ImageStyle, StyleProp, Text, View} from 'react-native';
+import {Image, ImageStyle, StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
+import {useState} from 'react';
 
-// Styles
-import {profileStyles, tokens} from '@/global';
+import {tokens} from '@/global';
+
 
 type Props = {
     username?: string | null;
     avatarUrl?: string | null;
     size?: number;
-    // Image-specific style only when rendering the <Image />; arrays also allowed
-    style?: StyleProp<ImageStyle> | Array<StyleProp<ImageStyle>>;
+    style?: StyleProp<ImageStyle>;
 };
 
 export default function ProfileAvatar({username, avatarUrl, size, style}: Props) {
-    const avatarSize = typeof size === 'number' ? size : tokens.avatar.width;
+    const [imageError, setImageError] = useState(false);
 
-    const avatarStyleObject: ImageStyle = {
+    const avatarSize = typeof size === 'number' ? size : tokens.avatar.width;
+    const borderRadius = avatarSize / 2;
+
+    const containerStyle: ViewStyle = {
         width: avatarSize,
         height: avatarSize,
-        borderRadius: avatarSize / 2,
+        borderRadius: borderRadius,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#EFF6FF',
     };
-    const avatarStyle: StyleProp<ImageStyle> = avatarStyleObject;
 
-    if (avatarUrl) {
-        // profileStyles.avatar may include View-specific props; cast to ImageStyle for the Image
-        const baseStyle = profileStyles.avatar as ImageStyle;
-        const extraStyles = (Array.isArray(style) ? style : [style]) as StyleProp<ImageStyle>[];
+    // Obliczamy inicjały
+    const initials = (username || '?').slice(0, 1).toUpperCase();
+
+    // Jeśli mamy URL i nie wystąpił błąd ładowania -> pokaż obrazek
+    if (avatarUrl && !imageError) {
         return (
-            <Image source={{uri: avatarUrl}} style={[baseStyle, avatarStyle, ...extraStyles]} resizeMode="cover"/>
+            <View style={[containerStyle, style]}>
+                <Image
+                    source={{uri: avatarUrl}}
+                    style={{width: '100%', height: '100%'}}
+                    resizeMode="cover"
+                    onError={(e) => {
+                        console.log("Avatar load error:", e.nativeEvent.error);
+                        setImageError(true);
+                    }}
+                />
+            </View>
         );
     }
 
-    const initials = (username || '?').slice(0, 1).toUpperCase();
-
-    // Fallback to initials placeholder
+    // Fallback: Inicjały
     return (
-        <View style={[profileStyles.avatar, profileStyles.avatarPlaceholder, avatarStyle]}>
-            <Text style={profileStyles.avatarInitials}>{initials}</Text>
+        <View style={[containerStyle, style]}>
+            <Text style={[styles.initials, {fontSize: avatarSize * 0.4}]}>
+                {initials}
+            </Text>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    initials: {
+        fontWeight: '700',
+        color: '#3B82F6',
+    },
+});
