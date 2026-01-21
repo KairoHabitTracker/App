@@ -12,25 +12,11 @@ import {ThemeProvider, useThemeMode} from '@/src/contexts/ThemeContext';
 function AppShell() {
     const {colorScheme, colors} = useThemeMode();
 
-    useEffect(() => {
-        SystemUI.setBackgroundColorAsync(colors.background).catch(() => {
-            // no-op in dev if system ui module is unavailable
-        });
-    }, [colors.background]);
-
-    const screenOptions = useMemo(() => ({
-        contentStyle: {backgroundColor: colors.background},
-        headerStyle: {backgroundColor: colors.card},
-        headerTintColor: colors.text,
-        headerTitleStyle: {color: colors.text},
-    }), [colors]);
-
-    return (
-        <TamaguiProvider config={config} defaultTheme={colorScheme}>
-            <AuthProvider>
-                <HabitsProvider>
-                    <View style={{flex: 1, backgroundColor: colors.background}}>
-                        <Stack screenOptions={screenOptions}>
+            <TamaguiProvider config={config}>
+                <AuthProvider>
+                    <HabitsProvider>
+                        <Stack>
+                            <Stack.Screen name="(auth)" options={{headerShown: false}}/>
                             <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
                             <Stack.Screen name="habit" options={{headerShown: false}}/>
                             <Stack.Screen name="settings"
