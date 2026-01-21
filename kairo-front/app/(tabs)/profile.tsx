@@ -10,29 +10,8 @@ import {deleteItemAsync} from '@/src/lib/secureStore';
 
 import ProfileAvatar from '@/src/components/ProfileAvatar';
 import {ChevronRight, Coins, CreditCard, Edit2, Flame, List, Settings, TrendingUp} from "lucide-react-native";
-import {sharedStyles} from "@/global";
-
-const StatBox = ({icon: Icon, value, label, color}: any) => (
-    <View style={styles.statBox}>
-        <View style={[styles.statIconContainer, {backgroundColor: color + '20'}]}>
-            <Icon size={20} color={color}/>
-        </View>
-        <Text style={styles.statValue}>{value}</Text>
-        <Text style={styles.statLabel}>{label}</Text>
-    </View>
-);
-
-const MenuItem = ({icon: Icon, title, onPress, color = "#111827"}: any) => (
-    <TouchableOpacity style={styles.menuItem} onPress={onPress} activeOpacity={0.7}>
-        <View style={styles.menuLeft}>
-            <View style={[styles.menuIconBadge, {backgroundColor: '#F3F4F6'}]}>
-                <Icon size={20} color={color}/>
-            </View>
-            <Text style={styles.menuText}>{title}</Text>
-        </View>
-        <ChevronRight size={20} color="#9CA3AF"/>
-    </TouchableOpacity>
-);
+import {useThemeMode, ThemeColors} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 async function fetchUserProfile(): Promise<UserProfile> {
     const json: ApiProfileResponse = await apiFetch('/api/profile');
@@ -50,6 +29,8 @@ async function fetchUserProfile(): Promise<UserProfile> {
 export default function Profile() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
+    const {colors} = useThemeMode();
+    const styles = useProfileStyles();
 
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -82,8 +63,8 @@ export default function Profile() {
 
     if (loading) {
         return (
-            <View style={[sharedStyles.basicContainer, {justifyContent: 'center', alignItems: 'center'}]}>
-                <ActivityIndicator size="large" color="#3B82F6"/>
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={colors.accent}/>
             </View>
         );
     }
@@ -92,8 +73,30 @@ export default function Profile() {
 
     const {username, streak, coins, avatarUrl, subscription} = profile;
 
+    const StatBox = ({icon: Icon, value, label, color}: any) => (
+        <View style={styles.statBox}>
+            <View style={[styles.statIconContainer, {backgroundColor: color + '20'}]}>
+                <Icon size={20} color={color}/>
+            </View>
+            <Text style={styles.statValue}>{value}</Text>
+            <Text style={styles.statLabel}>{label}</Text>
+        </View>
+    );
+
+    const MenuItem = ({icon: Icon, title, onPress, color = colors.text}: any) => (
+        <TouchableOpacity style={styles.menuItem} onPress={onPress} activeOpacity={0.7}>
+            <View style={styles.menuLeft}>
+                <View style={styles.menuIconBadge}>
+                    <Icon size={20} color={color}/>
+                </View>
+                <Text style={styles.menuText}>{title}</Text>
+            </View>
+            <ChevronRight size={20} color={colors.subtleText}/>
+        </TouchableOpacity>
+    );
+
     return (
-        <View style={[sharedStyles.basicContainer, {paddingTop: insets.top}]}>
+        <View style={[styles.screen, {paddingTop: insets.top}]}> 
             <View style={styles.topBar}>
                 <Text style={styles.topBarTitle}>Profile</Text>
             </View>
@@ -182,7 +185,17 @@ export default function Profile() {
     );
 }
 
-const styles = StyleSheet.create({
+const createProfileStyles = (colors: ThemeColors) => StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: colors.background,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.background,
+    },
     topBar: {
         height: 44,
         justifyContent: 'center',
@@ -192,7 +205,7 @@ const styles = StyleSheet.create({
     topBarTitle: {
         fontSize: 17,
         fontWeight: '600',
-        color: '#111827',
+        color: colors.text,
     },
     header: {
         alignItems: 'center',
@@ -202,32 +215,31 @@ const styles = StyleSheet.create({
     username: {
         fontSize: 24,
         fontWeight: '700',
-        color: '#111827',
+        color: colors.text,
         marginTop: 16,
     },
     userHandle: {
         fontSize: 14,
-        color: '#6B7280',
+        color: colors.subtleText,
         marginTop: 4,
     },
     avatarShadow: {
-        shadowColor: "#3B82F6",
+        shadowColor: colors.accent,
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.2,
         shadowRadius: 8,
         elevation: 5,
-        backgroundColor: '#EFF6FF'
+        backgroundColor: colors.surface,
     },
-
     statsContainer: {
         flexDirection: 'row',
-        backgroundColor: 'white',
+        backgroundColor: colors.card,
         marginHorizontal: 20,
         borderRadius: 16,
         paddingVertical: 16,
         justifyContent: 'space-between',
         alignItems: 'center',
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.05,
         shadowRadius: 8,
@@ -245,23 +257,23 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 8,
+        backgroundColor: colors.surface,
     },
     statValue: {
         fontSize: 18,
         fontWeight: '700',
-        color: '#111827',
+        color: colors.text,
     },
     statLabel: {
         fontSize: 12,
-        color: '#6B7280',
+        color: colors.subtleText,
         fontWeight: '500',
     },
     verticalDivider: {
         width: 1,
         height: '60%',
-        backgroundColor: '#F3F4F6',
+        backgroundColor: colors.border,
     },
-
     sectionTitleContainer: {
         paddingHorizontal: 24,
         marginBottom: 8,
@@ -269,17 +281,17 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 12,
         fontWeight: '700',
-        color: '#9CA3AF',
+        color: colors.subtleText,
         textTransform: 'uppercase',
         letterSpacing: 0.5,
     },
     menuContainer: {
-        backgroundColor: 'white',
+        backgroundColor: colors.card,
         marginHorizontal: 20,
         borderRadius: 16,
         marginBottom: 24,
         overflow: 'hidden',
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: {width: 0, height: 1},
         shadowOpacity: 0.03,
         shadowRadius: 4,
@@ -291,7 +303,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingVertical: 16,
         paddingHorizontal: 16,
-        backgroundColor: 'white',
+        backgroundColor: colors.card,
     },
     menuLeft: {
         flexDirection: 'row',
@@ -304,22 +316,22 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: colors.surface,
     },
     menuText: {
         fontSize: 16,
         fontWeight: '500',
-        color: '#1F2937',
+        color: colors.text,
     },
     menuDivider: {
         height: 1,
-        backgroundColor: '#F3F4F6',
+        backgroundColor: colors.border,
         marginLeft: 56,
     },
-
     comingSoonCard: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#8B5CF6',
+        backgroundColor: colors.accent,
         marginHorizontal: 20,
         borderRadius: 16,
         padding: 20,
@@ -343,3 +355,5 @@ const styles = StyleSheet.create({
         color: 'rgba(255,255,255,0.8)',
     },
 });
+
+const useProfileStyles = () => useThemedStyles(createProfileStyles);

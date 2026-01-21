@@ -4,9 +4,10 @@ import {RefreshControl, Text, View} from "react-native";
 import {ScrollView} from 'react-native-gesture-handler';
 import HabitListItem from "./HabitListItem";
 import ProgressCard from "@/src/components/habit/ProgressCard";
-import {errorStyles, sharedFonts, sharedStyles} from "@/global";
 import {useHabits} from "@/src/contexts/HabitsContext";
 import {useAuth} from "@/src/contexts/AuthContext";
+import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 export default function HabitList({onAdd, onEditHabit}: any) {
     const {refreshProfile} = useAuth();
@@ -19,6 +20,8 @@ export default function HabitList({onAdd, onEditHabit}: any) {
     } = useHabits();
 
     const [refreshing, setRefreshing] = useState(false);
+    const {colors} = useThemeMode();
+    const styles = useHabitListStyles();
 
     const todayName = useMemo(() => {
         const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -68,15 +71,15 @@ export default function HabitList({onAdd, onEditHabit}: any) {
     };
 
     return (
-        <View style={sharedStyles.basicContainer}>
+        <View style={styles.screen}>
             <ScrollView
-                contentContainerStyle={sharedStyles.scrollContent}
+                contentContainerStyle={styles.scrollContent}
                 refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent}/>
                 }
             >
                 {userHabits.length === 0 && loading && (
-                    <Text style={[sharedFonts.mediumText, {textAlign: 'center', marginTop: 50}]}>
+                    <Text style={styles.loadingText}> 
                         Loading habits...
                     </Text>
                 )}
@@ -87,7 +90,7 @@ export default function HabitList({onAdd, onEditHabit}: any) {
 
                 {toBeCompleted.length > 0 && (
                     <View style={{marginBottom: 24}}>
-                        <Text style={[sharedFonts.upperCaseSubtleText, {marginBottom: 12, marginLeft: 4}]}>
+                        <Text style={styles.sectionLabel}> 
                             To Complete ({toBeCompleted.length})
                         </Text>
                         {toBeCompleted.map(habit => (
@@ -103,7 +106,7 @@ export default function HabitList({onAdd, onEditHabit}: any) {
 
                 {completedToday.length > 0 && (
                     <View style={{marginBottom: 24}}>
-                        <Text style={[sharedFonts.upperCaseSubtleText, {marginBottom: 12, marginLeft: 4}]}>
+                        <Text style={styles.sectionLabel}> 
                             Completed ({completedToday.length})
                         </Text>
                         {completedToday.map(habit => (
@@ -118,29 +121,86 @@ export default function HabitList({onAdd, onEditHabit}: any) {
                 )}
 
                 {!loading && userHabits.length > 0 && dailyHabits.length === 0 && (
-                    <View style={[sharedStyles.center, {paddingVertical: 60}]}>
-                        <Text style={sharedFonts.bigEmoji}>😴</Text>
-                        <Text style={[errorStyles.title, {marginBottom: 8}]}>Rest Day</Text>
-                        <Text style={[errorStyles.subtitle, {paddingHorizontal: 32}]}>
+                    <View style={styles.centeredState}> 
+                        <Text style={styles.emoji}>😴</Text>
+                        <Text style={[styles.headline, {marginBottom: 8}]}>Rest Day</Text>
+                        <Text style={styles.subtitle}>
                             No habits scheduled for today ({todayName}).
                         </Text>
                     </View>
                 )}
 
                 {!loading && userHabits.length === 0 && (
-                    <View style={[sharedStyles.center, {paddingVertical: 60}]}>
-                        <Text style={sharedFonts.bigEmoji}>👀</Text>
-                        <Text style={[errorStyles.title, {marginBottom: 8}]}>No habits yet</Text>
-                        <Text style={[errorStyles.subtitle, {paddingHorizontal: 32}]}>
+                    <View style={styles.centeredState}> 
+                        <Text style={styles.emoji}>👀</Text>
+                        <Text style={[styles.headline, {marginBottom: 8}]}>No habits yet</Text>
+                        <Text style={styles.subtitle}>
                             Tap the + button below to add your first habit
                         </Text>
                     </View>
                 )}
             </ScrollView>
 
-            <View style={sharedStyles.addButton}>
+            <View style={styles.addButton}>
                 <AddButton onPress={onAdd}/>
             </View>
         </View>
     );
+}
+
+const createHabitListStyles = (colors: ThemeColors) => ({
+    screen: {
+        flex: 1,
+        backgroundColor: colors.background,
+    },
+    scrollContent: {
+        padding: 16,
+        paddingBottom: 120,
+        gap: 16,
+    },
+    loadingText: {
+        fontSize: 16,
+        color: colors.text,
+        textAlign: 'center',
+        marginTop: 50,
+    },
+    sectionLabel: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: colors.subtleText,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+        marginBottom: 12,
+        marginLeft: 4,
+    },
+    centeredState: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 60,
+        gap: 8,
+    },
+    emoji: {
+        fontSize: 48,
+    },
+    headline: {
+        fontSize: 24,
+        fontWeight: '700',
+        color: colors.text,
+        textAlign: 'center',
+    },
+    subtitle: {
+        fontSize: 16,
+        color: colors.subtleText,
+        textAlign: 'center',
+        paddingHorizontal: 32,
+    },
+    addButton: {
+        position: 'absolute',
+        bottom: 24,
+        right: 24,
+    },
+});
+
+function useHabitListStyles() {
+    return useThemedStyles(createHabitListStyles);
 }

@@ -1,9 +1,17 @@
 import {Stack} from 'expo-router';
 import BackButton from "@/src/components/BackButton";
+import {useThemeMode} from '@/src/contexts/ThemeContext';
 
 export default function HabitLayout() {
+    const {colors} = useThemeMode();
     return (
-        <Stack>
+        <Stack
+            screenOptions={{
+                headerStyle: {backgroundColor: colors.background},
+                headerTintColor: colors.text,
+                headerTitleStyle: {color: colors.text},
+            }}
+        >
             <Stack.Screen
                 name="add/index"
                 options={{

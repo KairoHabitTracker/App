@@ -1,13 +1,16 @@
+import React, {useEffect, useMemo} from 'react';
 import {TamaguiProvider} from '@tamagui/core';
 import {Stack} from 'expo-router';
+import {View} from 'react-native';
+import * as SystemUI from 'expo-system-ui';
 import {AuthProvider} from '@/src/contexts/AuthContext';
 import {config} from '@/tamagui.config';
 import {HabitsProvider} from "@/src/contexts/HabitsContext";
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {ThemeProvider, useThemeMode} from '@/src/contexts/ThemeContext';
 
-export default function RootLayout() {
-    return (
-        <GestureHandlerRootView style={{flex: 1}}>
+function AppShell() {
+    const {colorScheme, colors} = useThemeMode();
 
             <TamaguiProvider config={config}>
                 <AuthProvider>
@@ -27,9 +30,19 @@ export default function RootLayout() {
                                               headerBackTitle: 'Profile',
                                           }}/>
                         </Stack>
-                    </HabitsProvider>
-                </AuthProvider>
-            </TamaguiProvider>
+                    </View>
+                </HabitsProvider>
+            </AuthProvider>
+        </TamaguiProvider>
+    );
+}
+
+export default function RootLayout() {
+    return (
+        <GestureHandlerRootView style={{flex: 1}}>
+            <ThemeProvider>
+                <AppShell/>
+            </ThemeProvider>
         </GestureHandlerRootView>
 
     );

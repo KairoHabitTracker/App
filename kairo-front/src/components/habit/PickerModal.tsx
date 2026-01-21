@@ -1,6 +1,8 @@
 import React from 'react';
-import {Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import {X} from '@tamagui/lucide-icons';
+import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 interface PickerModalProps {
     visible: boolean;
@@ -11,6 +13,8 @@ interface PickerModalProps {
 }
 
 export default function PickerModal({visible, onClose, onConfirm, children, title = 'Select'}: PickerModalProps) {
+    const styles = usePickerModalStyles();
+    const {colors} = useThemeMode();
     return (
         <Modal
             visible={visible}
@@ -25,7 +29,7 @@ export default function PickerModal({visible, onClose, onConfirm, children, titl
                         <View style={styles.content}>
                             <View style={styles.header}>
                                 <TouchableOpacity onPress={onClose}>
-                                    <X size={24} color="#6B7280"/>
+                                    <X size={24} color={colors.subtleText}/>
                                 </TouchableOpacity>
                                 <Text style={styles.title}>{title}</Text>
                                 <TouchableOpacity onPress={onConfirm}>
@@ -41,17 +45,19 @@ export default function PickerModal({visible, onClose, onConfirm, children, titl
     );
 }
 
-const styles = StyleSheet.create({
+const createPickerModalStyles = (colors: ThemeColors) => ({
     overlay: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'flex-end',
     },
     content: {
-        backgroundColor: '#fff',
+        backgroundColor: colors.card,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         paddingBottom: 34,
+        borderWidth: 1,
+        borderColor: colors.border,
     },
     header: {
         flexDirection: 'row',
@@ -59,16 +65,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
+        borderBottomColor: colors.border,
     },
     title: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#111827'
+        color: colors.text,
     },
     doneButton: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#3B82F6'
+        color: colors.accent,
     },
 });
+
+function usePickerModalStyles() {
+    return useThemedStyles(createPickerModalStyles);
+}

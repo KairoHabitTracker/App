@@ -1,15 +1,17 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
+import {ThemeColors} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 const DAYS: string[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-const DAY_LABELS: any = {
+const DAY_LABELS: Record<string, string> = {
     monday: 'Mon',
     tuesday: 'Tue',
     wednesday: 'Wed',
     thursday: 'Thu',
     friday: 'Fri',
     saturday: 'Sat',
-    sunday: 'Sun'
+    sunday: 'Sun',
 };
 
 interface DaySelectorProps {
@@ -19,16 +21,17 @@ interface DaySelectorProps {
     activeColor: string;
 }
 
-export default function DaySelector({selectedDays, onToggleDay, onToggleAll, activeColor}: DaySelectorProps) {
-    const isAllSelected = selectedDays.length === 7;
+export default function DaySelector({selectedDays, onToggleDay, onToggleAll, activeColor}: DaySelectorProps): JSX.Element {
+    const styles = useDaySelectorStyles();
+    const isAllSelected = selectedDays.length === DAYS.length;
 
     return (
         <View style={styles.container}>
             <View style={styles.headerRow}>
-                <Text style={styles.label}>Frequency *</Text>
-                <TouchableOpacity onPress={onToggleAll}>
-                    <Text style={[styles.selectAllText, {color: activeColor}]}>
-                        {isAllSelected ? 'Deselect All' : 'Select All'}
+                <Text style={styles.label}>Schedule</Text>
+                <TouchableOpacity onPress={onToggleAll} hitSlop={8}>
+                    <Text style={[styles.selectAllText, {color: activeColor}]}> 
+                        {isAllSelected ? 'Clear All' : 'Select All'}
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -42,13 +45,10 @@ export default function DaySelector({selectedDays, onToggleDay, onToggleAll, act
                             onPress={() => onToggleDay(day)}
                             style={[
                                 styles.dayButton,
-                                isSelected && {backgroundColor: activeColor, borderColor: activeColor}
+                                isSelected && {backgroundColor: activeColor, borderColor: activeColor},
                             ]}
                         >
-                            <Text style={[
-                                styles.dayText,
-                                isSelected && styles.dayTextActive
-                            ]}>
+                            <Text style={[styles.dayText, isSelected && styles.dayTextActive]}>
                                 {DAY_LABELS[day]}
                             </Text>
                         </TouchableOpacity>
@@ -59,32 +59,35 @@ export default function DaySelector({selectedDays, onToggleDay, onToggleAll, act
     );
 }
 
-const styles = StyleSheet.create({
-    container: {marginBottom: 20},
+const createDaySelectorStyles = (colors: ThemeColors) => ({
+    container: {gap: 12},
     headerRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 12
     },
-    label: {fontSize: 14, fontWeight: '600', color: '#374151'},
+    label: {fontSize: 14, fontWeight: '600', color: colors.text},
     selectAllText: {fontSize: 13, fontWeight: '600'},
     daysGrid: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: 8
+        rowGap: 12,
     },
     dayButton: {
         width: 40,
         height: 40,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
+        borderColor: colors.border,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: colors.surface,
     },
-    dayText: {fontSize: 12, fontWeight: '600', color: '#6B7280'},
-    dayTextActive: {color: 'white'},
+    dayText: {fontSize: 12, fontWeight: '600', color: colors.subtleText},
+    dayTextActive: {color: '#fff'},
 });
+
+function useDaySelectorStyles() {
+    return useThemedStyles(createDaySelectorStyles);
+}

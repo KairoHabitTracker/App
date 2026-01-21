@@ -1,11 +1,14 @@
-import {profileStyles as styles} from '@/global';
 import {registerRequest} from '@/src/lib/api';
+import {useThemeMode} from '@/src/contexts/ThemeContext';
+import {useAuthStyles} from '@/src/styles/authStyles';
 import {router, useLocalSearchParams as useSearchParams} from 'expo-router';
 import {useState} from 'react';
 import {Text, TextInput, TouchableOpacity, View} from 'react-native';
 
 export default function RegisterScreen() {
     const { redirect } = useSearchParams() as { redirect?: string };
+    const { colors } = useThemeMode();
+    const styles = useAuthStyles();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -46,60 +49,52 @@ export default function RegisterScreen() {
     }
 
     return (
-        <View style={[styles.container, styles.center]}>
-            <Text style={styles.username}>Register</Text>
+        <View style={styles.screen}>
+            <View style={styles.content}>
+                <Text style={styles.title}>Register</Text>
 
-            {error ? (
-                <Text style={[styles.subtle, {color: '#ef4444', marginBottom: 15, textAlign: 'center'}]}>
-                    {error}
-                </Text>
-            ) : null}
+                {error ? (
+                    <Text style={styles.error}>
+                        {error}
+                    </Text>
+                ) : null}
 
-            <TextInput
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                style={{
-                    width: '100%',
-                    padding: 12,
-                    marginVertical: 8,
-                    backgroundColor: '#fff',
-                    borderRadius: 8,
-                }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
-            <TextInput
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                style={{
-                    width: '100%',
-                    padding: 12,
-                    marginVertical: 8,
-                    backgroundColor: '#fff',
-                    borderRadius: 8,
-                }}
-                secureTextEntry
-            />
+                <TextInput
+                    placeholder="Email"
+                    placeholderTextColor={colors.subtleText}
+                    value={email}
+                    onChangeText={setEmail}
+                    style={styles.input}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                />
+                <TextInput
+                    placeholder="Password"
+                    placeholderTextColor={colors.subtleText}
+                    value={password}
+                    onChangeText={setPassword}
+                    style={styles.input}
+                    secureTextEntry
+                />
 
-            <TouchableOpacity
-                onPress={onSubmit}
-                disabled={loading}
-                style={{ marginTop: 12 }}
-            >
-                <Text style={styles.statValue}>
-                    {loading ? 'Registering...' : 'Register'}
-                </Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={onSubmit}
+                    disabled={loading}
+                    style={styles.primaryButton}
+                >
+                    <Text style={styles.primaryButtonText}>
+                        {loading ? 'Registering...' : 'Register'}
+                    </Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-                onPress={() =>
-                    router.push(`/login?redirect=${encodeURIComponent(redirect ?? '/home')}`)
-                }
-            >
-                <Text style={styles.subtle}>Already have an account? Log in</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() =>
+                        router.push(`/login?redirect=${encodeURIComponent(redirect ?? '/home')}`)
+                    }
+                >
+                    <Text style={styles.link}>Already have an account? Log in</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }

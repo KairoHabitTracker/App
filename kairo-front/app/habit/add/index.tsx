@@ -7,17 +7,19 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
-    StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
     View
 } from 'react-native';
-import {searchHabitStyles, sharedFonts} from "@/global";
+import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 export default function Add() {
     const {habits, loading, userHabits} = useHabits();
     const router = useRouter();
+    const {colors} = useThemeMode();
+    const styles = useHabitSearchStyles();
 
     const [text, onChangeText] = useState<string>('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -64,17 +66,17 @@ export default function Add() {
     };
 
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={searchHabitStyles.flex}>
-            <ScrollView contentContainerStyle={searchHabitStyles.container} keyboardShouldPersistTaps="handled">
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.screen}>
+            <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
 
-                <View style={searchHabitStyles.inputCard}>
+                <View style={styles.inputCard}>
                     <TextInput
                         onChangeText={onChangeText}
                         value={text}
                         maxLength={40}
                         placeholder="Search or create a habit"
-                        placeholderTextColor="#9CA3AF"
-                        style={searchHabitStyles.input}
+                        placeholderTextColor={colors.subtleText}
+                        style={styles.input}
                         returnKeyType="done"
                     />
                     {filteredHabits.length === 0 && !loading && (
@@ -90,13 +92,13 @@ export default function Add() {
                         <TouchableOpacity
                             onPress={() => setSelectedCategory(null)}
                             style={[
-                                localStyles.chip,
-                                selectedCategory === null ? localStyles.chipActive : localStyles.chipInactive
+                                styles.chip,
+                                selectedCategory === null ? styles.chipActive : styles.chipInactive
                             ]}
                         >
                             <Text style={[
-                                localStyles.chipText,
-                                selectedCategory === null ? localStyles.chipTextActive : localStyles.chipTextInactive
+                                styles.chipText,
+                                selectedCategory === null ? styles.chipTextActive : styles.chipTextInactive
                             ]}>All</Text>
                         </TouchableOpacity>
 
@@ -105,13 +107,13 @@ export default function Add() {
                                 key={cat}
                                 onPress={() => setSelectedCategory(cat === selectedCategory ? null : cat)}
                                 style={[
-                                    localStyles.chip,
-                                    selectedCategory === cat ? localStyles.chipActive : localStyles.chipInactive
+                                    styles.chip,
+                                    selectedCategory === cat ? styles.chipActive : styles.chipInactive
                                 ]}
                             >
                                 <Text style={[
-                                    localStyles.chipText,
-                                    selectedCategory === cat ? localStyles.chipTextActive : localStyles.chipTextInactive
+                                    styles.chipText,
+                                    selectedCategory === cat ? styles.chipTextActive : styles.chipTextInactive
                                 ]}>
                                     {formatCategory(cat)}
                                 </Text>
@@ -120,16 +122,16 @@ export default function Add() {
                     </ScrollView>
                 </View>
 
-                <View style={searchHabitStyles.sectionHeaderRow}>
-                    <Text style={sharedFonts.smallSubtleText}>
+                <View style={styles.sectionHeaderRow}>
+                    <Text style={styles.sectionHeaderText}>
                         {selectedCategory ? formatCategory(selectedCategory) : 'All Suggestions'}
                     </Text>
-                    {loading && <ActivityIndicator size="small" color="#6B7280"/>}
+                    {loading && <ActivityIndicator size="small" color={colors.subtleText}/>}
                 </View>
 
-                <View style={searchHabitStyles.suggestionsWrap}>
+                <View style={styles.suggestionsWrap}>
                     {filteredHabits.length === 0 && !loading && (
-                        <Text style={[sharedFonts.smallSubtleText, {fontStyle: 'italic', marginTop: 10}]}>
+                        <Text style={styles.emptyText}>
                             No habits found. Create a new one above!
                         </Text>
                     )}
@@ -140,25 +142,21 @@ export default function Add() {
                             onPress={() => router.push(`/habit/add/${habit.id}`)}
                             activeOpacity={0.8}
                             style={[
-                                searchHabitStyles.suggestion,
+                                styles.suggestion,
                                 {backgroundColor: habit.hex_color || '#eee', paddingVertical: 12}
                             ]}
                         >
-                            <View style={searchHabitStyles.suggestionRow}>
-                                <Text style={[sharedFonts.smallEmoji, {marginRight: 12, fontSize: 28}]}>
+                            <View style={styles.suggestionRow}>
+                                <Text style={styles.suggestionEmoji}> 
                                     {habit.emoji}
                                 </Text>
 
                                 <View style={{flex: 1}}>
-                                    <Text style={[sharedFonts.smallText, {
-                                        color: 'white',
-                                        fontWeight: '700',
-                                        fontSize: 16
-                                    }]}>
+                                    <Text style={styles.suggestionTitle}> 
                                         {habit.name}
                                     </Text>
                                     {habit.category && (
-                                        <Text style={{color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 2}}>
+                                        <Text style={styles.suggestionCategory}>
                                             {formatCategory(habit.category)}
                                         </Text>
                                     )}
@@ -172,7 +170,27 @@ export default function Add() {
     );
 }
 
-const localStyles = StyleSheet.create({
+const createHabitSearchStyles = (colors: ThemeColors) => ({
+    screen: {flex: 1, backgroundColor: colors.background},
+    container: {padding: 16, alignItems: 'center', gap: 12},
+    inputCard: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        backgroundColor: colors.card,
+        padding: 12,
+        borderRadius: 12,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: colors.border,
+        gap: 12,
+    },
+    input: {
+        fontSize: 16,
+        padding: 8,
+        flex: 1,
+        color: colors.text,
+    },
     chip: {
         paddingHorizontal: 16,
         paddingVertical: 8,
@@ -180,21 +198,65 @@ const localStyles = StyleSheet.create({
         borderWidth: 1,
     },
     chipActive: {
-        backgroundColor: '#3B82F6',
-        borderColor: '#3B82F6',
+        backgroundColor: colors.accent,
+        borderColor: colors.accent,
     },
     chipInactive: {
-        backgroundColor: 'white',
-        borderColor: '#E5E7EB',
+        backgroundColor: colors.surface,
+        borderColor: colors.border,
     },
     chipText: {
         fontSize: 13,
         fontWeight: '600',
     },
     chipTextActive: {
-        color: 'white',
+        color: colors.background,
     },
     chipTextInactive: {
-        color: '#4B5563',
+        color: colors.text,
+    },
+    sectionHeaderRow: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    sectionHeaderText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: colors.subtleText,
+    },
+    suggestionsWrap: {
+        width: '100%',
+        gap: 8,
+    },
+    suggestion: {
+        paddingHorizontal: 12,
+        borderRadius: 999,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+        elevation: 2,
+    },
+    suggestionRow: {flexDirection: 'row', alignItems: 'center'},
+    suggestionEmoji: {marginRight: 12, fontSize: 28},
+    suggestionTitle: {
+        color: '#fff',
+        fontWeight: '700',
+        fontSize: 16,
+    },
+    suggestionCategory: {color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 2},
+    emptyText: {
+        fontSize: 13,
+        color: colors.subtleText,
+        fontStyle: 'italic',
+        marginTop: 10,
+        textAlign: 'center',
     },
 });
+
+function useHabitSearchStyles() {
+    return useThemedStyles(createHabitSearchStyles);
+}

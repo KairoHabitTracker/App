@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Alert, FlatList, Text, View} from 'react-native';
 import {useAuth} from "@/src/contexts/AuthContext";
 import {useFriends} from "@/src/hooks/useFriends";
-import {friendsScreenStyles, sharedFonts} from "@/global";
+import {useFriendsStyles} from '@/src/styles/friendsStyles';
+import {useThemeMode} from '@/src/contexts/ThemeContext';
 import * as Clipboard from 'expo-clipboard';
 import SharedButton from "@/src/components/SharedButton";
 import {UserPlus} from '@tamagui/lucide-icons';
@@ -13,6 +14,8 @@ import {FriendListItem} from "@/src/components/friends/FriendListItem";
 
 export default function FriendsScreen() {
     const {user} = useAuth();
+    const {colors} = useThemeMode();
+    const styles = useFriendsStyles();
     const {
         friends,
         invitations,
@@ -62,14 +65,14 @@ export default function FriendsScreen() {
 
     if (isLoading) {
         return (
-            <View style={friendsScreenStyles.centerContainer}>
-                <ActivityIndicator size="large" color="#3B82F6"/>
+            <View style={styles.centerContainer}>
+                <ActivityIndicator size="large" color={colors.accent}/>
             </View>
         );
     }
 
     return (
-        <View style={friendsScreenStyles.screenContainer}>
+        <View style={styles.screenContainer}>
             <FriendsHeader
                 userId={user?.id}
                 onCopyId={copyMyId}
@@ -91,7 +94,7 @@ export default function FriendsScreen() {
                 renderItem={({item}) => (
                     <FriendListItem friend={item} getAvatarUrl={getAvatarUrl}/>
                 )}
-                contentContainerStyle={friendsScreenStyles.listContent}
+                contentContainerStyle={styles.listContent}
 
                 ListHeaderComponent={
                     <>
@@ -104,20 +107,20 @@ export default function FriendsScreen() {
                         />
 
                         {friends.length > 0 && (
-                            <Text style={[friendsScreenStyles.sectionTitle, {marginTop: 24}]}>
+                            <Text style={[styles.sectionTitle, {marginTop: 24}]}>
                                 ALL FRIENDS ({friends.length})
                             </Text>
                         )}
                     </>
                 }
 
-                ItemSeparatorComponent={() => <View style={friendsScreenStyles.dividerMargin}/>}
+                ItemSeparatorComponent={() => <View style={styles.dividerMargin}/>}
 
                 ListEmptyComponent={
                     !isLoading && invitations.length === 0 ? (
-                        <View style={friendsScreenStyles.emptyState}>
+                        <View style={styles.emptyState}>
                             <Text style={{fontSize: 40, marginBottom: 10}}>👋</Text>
-                            <Text style={sharedFonts.mediumSubtleText}>No friends yet. Add someone!</Text>
+                            <Text style={styles.emptyText}>No friends yet. Add someone!</Text>
                             <SharedButton
                                 title="Invite Friends"
                                 onPress={() => setShowInviteModal(true)}

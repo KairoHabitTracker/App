@@ -2,7 +2,8 @@ import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {Copy, UserPlus} from '@tamagui/lucide-icons';
 import SharedButton from "@/src/components/SharedButton";
-import {friendsScreenStyles} from "@/global";
+import {useFriendsStyles} from '@/src/styles/friendsStyles';
+import {useThemeMode} from '@/src/contexts/ThemeContext';
 
 interface FriendsHeaderProps {
     userId?: string;
@@ -12,15 +13,18 @@ interface FriendsHeaderProps {
 }
 
 export const FriendsHeader = ({userId, onCopyId, onInvitePress, formatId}: FriendsHeaderProps) => {
+    const styles = useFriendsStyles();
+    const {colors} = useThemeMode();
+
     return (
-        <View style={friendsScreenStyles.header}>
+        <View style={styles.header}>
             <View>
-                <Text style={friendsScreenStyles.headerTitle}>Friends</Text>
-                <TouchableOpacity onPress={onCopyId} style={friendsScreenStyles.copyIdRow}>
-                    <Text style={friendsScreenStyles.headerSubtitle}>
+                <Text style={styles.headerTitle}>Friends</Text>
+                <TouchableOpacity onPress={onCopyId} style={styles.copyIdRow}>
+                    <Text style={styles.headerSubtitle}>
                         My ID: {formatId(userId || '')}
                     </Text>
-                    <Copy size={14} color="#3B82F6" style={{marginLeft: 6}}/>
+                    <Copy size={14} color={colors.accent} style={{marginLeft: 6}}/>
                 </TouchableOpacity>
             </View>
             <SharedButton

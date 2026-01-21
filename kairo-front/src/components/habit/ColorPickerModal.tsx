@@ -1,7 +1,9 @@
 import React from 'react';
-import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Modal, Text, TouchableOpacity, View} from 'react-native';
 import ColorPicker, {HueSlider, Panel5, returnedResults, Swatches} from 'reanimated-color-picker';
 import {runOnJS} from 'react-native-reanimated';
+import {ThemeColors} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 // Predefiniowane kolory do szybkiego wyboru
 const PRESET_COLORS = [
@@ -30,6 +32,8 @@ export default function ColorPickerModal({
         'worklet';
         runOnJS(onColorSelect)(hex);
     };
+
+    const styles = useColorPickerModalStyles();
 
     return (
         <Modal
@@ -71,19 +75,21 @@ export default function ColorPickerModal({
     );
 }
 
-const styles = StyleSheet.create({
+const createColorPickerModalStyles = (colors: ThemeColors) => ({
     modalOverlay: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'flex-end',
     },
     colorPickerModal: {
-        backgroundColor: 'white',
+        backgroundColor: colors.card,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 20,
         paddingBottom: 40,
         maxHeight: '80%',
+        borderWidth: 1,
+        borderColor: colors.border,
     },
     modalHeader: {
         flexDirection: 'row',
@@ -92,20 +98,24 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         paddingBottom: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
+        borderBottomColor: colors.border,
     },
     modalTitle: {
         fontSize: 18,
         fontWeight: '600',
-        color: '#111827',
+        color: colors.text,
     },
     modalClose: {
         fontSize: 16,
-        color: '#6B7280',
+        color: colors.subtleText,
     },
     modalDone: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#3B82F6',
+        color: colors.accent,
     },
 });
+
+function useColorPickerModalStyles() {
+    return useThemedStyles(createColorPickerModalStyles);
+}
