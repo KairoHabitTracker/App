@@ -1,142 +1,198 @@
 import React, {useMemo} from 'react';
-import {ScrollView, StyleSheet, Text, View} from "react-native";
-import {Award, Crown, Flame, Gift, Lock, Medal, Sparkles, Star, Trophy} from '@tamagui/lucide-icons';
+import {
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native';
+import {Award, Calendar, CheckCircle, Crown, Flame, Gem, Lock, Shield, Sparkles, Star, Sun, Sunrise, Trophy, Zap} from '@tamagui/lucide-icons';
+import {useAchievements} from '@/src/hooks/useAchievements';
 
-// MOCK DANYCH Z BACKENDU
-// Symulujemy, że user odblokował już 2 osiągnięcia
-const mockApiData = [
-    {
-        id: 101,
-        user_id: "user_123",
-        achievement_id: 1,
-        unlocked_at: "2024-01-15T10:30:00Z",
-        achievement: {
-            id: 1,
-            identifier: "FIRST_STEPS",
-            description: "Complete your first habit",
-            image_url: "some_url",
-        }
+type IconComponent = React.ComponentType<any>;
+
+type AchievementVisualConfig = {
+    title: string;
+    icon: IconComponent;
+    color: string;
+    bgColor: string;
+};
+
+const ACHIEVEMENT_CONFIG: Record<string, AchievementVisualConfig> = {
+    first_habit: {
+        title: 'First Habit Complete',
+        icon: CheckCircle,
+        color: '#22C55E',
+        bgColor: '#DCFCE7',
     },
-    {
-        id: 102,
-        user_id: "user_123",
-        achievement_id: 2,
-        unlocked_at: "2024-01-20T14:15:22Z",
-        achievement: {
-            id: 2,
-            identifier: "WEEK_WARRIOR",
-            description: "Complete all habits for 7 days straight",
-            image_url: "some_url",
-        }
-    }
-];
-
-
-//kolorki!!!!
-const ACHIEVEMENT_CONFIG: Record<string, any> = {
-    'FIRST_STEPS': {
-        title: 'First Steps',
-        icon: Trophy,
+    complete_a_day: {
+        title: 'Daily Dominator',
+        icon: Calendar,
+        color: '#F97316',
+        bgColor: '#FFEDD5',
+    },
+    habit_streak_7: {
+        title: '7-Day Streak',
+        icon: Flame,
         color: '#F59E0B',
         bgColor: '#FEF3C7',
     },
-    'WEEK_WARRIOR': {
-        title: 'Week Warrior',
+    habit_streak_14: {
+        title: '14-Day Streak',
+        icon: Sunrise,
+        color: '#EC4899',
+        bgColor: '#FDF2F8',
+    },
+    habit_streak_30: {
+        title: '30-Day Streak',
+        icon: Sun,
+        color: '#FACC15',
+        bgColor: '#FEF9C3',
+    },
+    habit_streak_90: {
+        title: '90-Day Streak',
+        icon: Zap,
+        color: '#14B8A6',
+        bgColor: '#CCFBF1',
+    },
+    habit_streak_365: {
+        title: 'Year-Long Flame',
+        icon: Crown,
+        color: '#A855F7',
+        bgColor: '#F3E8FF',
+    },
+    complete_3_habits: {
+        title: 'Trio Completed',
+        icon: Sparkles,
+        color: '#8B5CF6',
+        bgColor: '#EDE9FE',
+    },
+    complete_20_habits: {
+        title: '20 Habits',
         icon: Star,
         color: '#3B82F6',
         bgColor: '#DBEAFE',
     },
-    'HABIT_MASTER': {
-        title: 'Habit Master',
-        icon: Crown,
-        color: '#8B5CF6',
-        bgColor: '#EDE9FE',
+    complete_50_habits: {
+        title: '50 Habits',
+        icon: Trophy,
+        color: '#D97706',
+        bgColor: '#FFFBEB',
     },
-    'EARLY_BIRD': {
-        title: 'Early Bird',
-        icon: Medal,
-        color: '#10B981',
-        bgColor: '#D1FAE5',
+    complete_100_habits: {
+        title: 'Century Club',
+        icon: Award,
+        color: '#0EA5E9',
+        bgColor: '#E0F2FE',
     },
-    'PERFECTIONIST': {
-        title: 'Perfectionist',
-        icon: Sparkles,
+    complete_500_habits: {
+        title: '500 Habits',
+        icon: Shield,
+        color: '#6366F1',
+        bgColor: '#E0E7FF',
+    },
+    complete_1000_habits: {
+        title: 'Legendary 1000',
+        icon: Gem,
         color: '#EC4899',
         bgColor: '#FCE7F3',
     },
-    'SOCIAL_BUTTERFLY': {
-        title: 'Social Butterfly',
-        icon: Gift,
-        color: '#EF4444',
-        bgColor: '#FEE2E2',
-    }
 };
 
-// Lista wszystkich możliwych osiągnięć (żeby pokazać też te zablokowane)
-// pewnie bedziemy potrzebować więcej endpointów
-const ALL_ACHIEVEMENTS_LIST = [
-    'FIRST_STEPS',
-    'WEEK_WARRIOR',
-    'HABIT_MASTER',
-    'EARLY_BIRD',
-    'PERFECTIONIST',
-    'SOCIAL_BUTTERFLY'
-];
+const DEFAULT_CONFIG: AchievementVisualConfig = {
+    title: 'Achievement',
+    icon: Trophy,
+    color: '#6B7280',
+    bgColor: '#E5E7EB',
+};
+
+const formatIdentifier = (identifier: string) =>
+    identifier
+        .split('_')
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+
+type DisplayAchievement = {
+    id: number;
+    title: string;
+    description: string;
+    identifier: string;
+    icon: IconComponent;
+    color: string;
+    bgColor: string;
+    isUnlocked: boolean;
+    unlockedAt: string | null;
+};
 
 export default function AchievementsScreen() {
+    const {achievements, loading, error, refresh, total, unlockedCount, pointsEarned} = useAchievements();
 
-    const {unlockedIds, displayList} = useMemo(() => {
-        // Zbiór IDków, które user ma odblokowane
-        const unlocked = new Set(mockApiData.map(item => item.achievement.identifier));
+    const displayList = useMemo<DisplayAchievement[]>(() => {
+        return achievements
+            .map((entry) => {
+                const identifier = entry.achievement?.identifier ?? `achievement-${entry.id}`;
+                const config = ACHIEVEMENT_CONFIG[identifier] ?? {
+                    ...DEFAULT_CONFIG,
+                    title: entry.achievement?.description ? formatIdentifier(identifier) : DEFAULT_CONFIG.title,
+                };
 
-        // Tworzymy pełną listę do wyświetlenia
-        const list = ALL_ACHIEVEMENTS_LIST.map(identifier => {
-            const config = ACHIEVEMENT_CONFIG[identifier];
-            const isUnlocked = unlocked.has(identifier);
+                const isUnlocked = Boolean(entry.unlocked_at);
+                const unlockedAt = entry.unlocked_at
+                    ? new Date(entry.unlocked_at).toLocaleDateString()
+                    : null;
 
-            // Jeśli odblokowane, pobierz datę z mocka API
-            const apiData = mockApiData.find(item => item.achievement.identifier === identifier);
+                return {
+                    id: entry.id,
+                    identifier,
+                    title: config.title || formatIdentifier(identifier),
+                    description: entry.achievement?.description ?? formatIdentifier(identifier),
+                    icon: config.icon,
+                    color: config.color,
+                    bgColor: config.bgColor,
+                    isUnlocked,
+                    unlockedAt,
+                };
+            })
+            .sort((a, b) => {
+                if (a.isUnlocked === b.isUnlocked) return 0;
+                return a.isUnlocked ? -1 : 1;
+            });
+    }, [achievements]);
 
-            return {
-                ...config,
-                identifier,
-                isUnlocked,
-                unlockedAt: apiData ? new Date(apiData.unlocked_at).toLocaleDateString() : null,
-                // Tutaj normalnie byłby progress z backendu dla zablokowanych
-                progress: isUnlocked ? 'Completed' : 'Locked'
-            };
-        });
-
-        return {unlockedIds: unlocked, displayList: list};
-    }, []);
+    const showEmptyState = !loading && displayList.length === 0;
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Achievements</Text>
-                <Text style={styles.headerSubtitle}>Unlock rewards as you grow</Text>
+                <Text style={styles.headerSubtitle}>Track every badge you unlock</Text>
             </View>
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                refreshControl={<RefreshControl refreshing={loading} onRefresh={refresh} tintColor="#111827" />}
+            >
                 <View style={styles.comingSoonCard}>
                     <View style={styles.iconCircle}>
-                        <Award size={40} color="#F59E0B"/>
+                        <Award size={40} color="#F59E0B" />
                     </View>
-                    <View style={{flex: 1}}>
-                        <Text style={styles.comingSoonTitle}>Achievements System</Text>
-                        <Text style={styles.comingSoonText}>Earn badges for your consistency.</Text>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.comingSoonTitle}>Consistency Pays Off</Text>
+                        <Text style={styles.comingSoonText}>Complete habits daily to climb the badge ladder.</Text>
                     </View>
                 </View>
 
                 <View style={styles.statsRow}>
                     <View style={styles.statCard}>
-                        <Text style={styles.statCardNumber}>{unlockedIds.size} / {ALL_ACHIEVEMENTS_LIST.length}</Text>
+                        <Text style={styles.statCardNumber}>
+                            {unlockedCount} / {total || '—'}
+                        </Text>
                         <Text style={styles.statCardLabel}>Unlocked</Text>
                     </View>
                     <View style={styles.statCard}>
                         <Text style={styles.statCardNumber}>
-                            <Flame size={24} color="#F59E0B"/> {unlockedIds.size * 50}
+                            <Flame size={20} color="#F59E0B" /> {pointsEarned}
                         </Text>
                         <Text style={styles.statCardLabel}>Points</Text>
                     </View>
@@ -144,54 +200,61 @@ export default function AchievementsScreen() {
 
                 <Text style={styles.sectionTitle}>Your Badges</Text>
 
-                {displayList.map((item, index) => {
-                    const Icon = item.icon;
+                {error && (
+                    <View style={styles.errorCard}>
+                        <Text style={styles.errorTitle}>Could not load achievements</Text>
+                        <Text style={styles.errorSubtitle}>{error}</Text>
+                    </View>
+                )}
 
-                    return (
-                        <View
-                            key={index}
-                            style={[
-                                styles.achievementCard,
-                                !item.isUnlocked && styles.achievementCardLocked
-                            ]}
-                        >
-                            <View style={[
-                                styles.achievementIcon,
-                                {backgroundColor: item.isUnlocked ? item.bgColor : '#F3F4F6'}
-                            ]}>
-                                {item.isUnlocked ? (
-                                    <Icon size={28} color={item.color}/>
-                                ) : (
-                                    <Lock size={24} color="#9CA3AF"/>
-                                )}
-                            </View>
-
-                            <View style={styles.achievementContent}>
-                                <Text style={[
-                                    styles.achievementTitle,
-                                    !item.isUnlocked && {color: '#6B7280'}
-                                ]}>
-                                    {item.title}
-                                </Text>
-
-                                {item.isUnlocked ? (
-                                    <Text style={styles.unlockedDate}>
-                                        Unlocked on {item.unlockedAt}
-                                    </Text>
-                                ) : (
-                                    <Text style={styles.lockedText}>Keep going to unlock!</Text>
-                                )}
-                            </View>
-
-                            {item.isUnlocked && (
-                                <View style={styles.checkmarkBadge}>
-                                    <Award size={16} color="white"/>
+                {loading && !displayList.length ? (
+                    <View style={styles.loaderWrapper}>
+                        <ActivityIndicator size="large" color="#111827" />
+                    </View>
+                ) : showEmptyState ? (
+                    <View style={styles.emptyState}>
+                        <Text style={styles.emptyStateTitle}>No achievements yet</Text>
+                        <Text style={styles.emptyStateText}>Start completing habits to earn your first badge.</Text>
+                    </View>
+                ) : (
+                    displayList.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                            <View
+                                key={item.id}
+                                style={[styles.achievementCard, !item.isUnlocked && styles.achievementCardLocked]}
+                            >
+                                <View
+                                    style={[
+                                        styles.achievementIcon,
+                                        { backgroundColor: item.isUnlocked ? item.bgColor : '#F3F4F6' },
+                                    ]}
+                                >
+                                    
+                                    {item.isUnlocked ? <Icon size={28} color={item.color} /> : <Lock size={24} color="#9CA3AF" />}
                                 </View>
-                            )}
-                        </View>
-                    );
-                })}
 
+                                <View style={styles.achievementContent}>
+                                    <Text style={[styles.achievementTitle, !item.isUnlocked && { color: '#6B7280' }]}>
+                                        {item.title}
+                                    </Text>
+                                    <Text style={styles.achievementDescription}>{item.description}</Text>
+                                    {item.isUnlocked ? (
+                                        <Text style={styles.unlockedDate}>Unlocked on {item.unlockedAt}</Text>
+                                    ) : (
+                                        <Text style={styles.lockedText}>Keep going to unlock this badge.</Text>
+                                    )}
+                                </View>
+
+                                {item.isUnlocked && (
+                                    <View style={styles.checkmarkBadge}>
+                                        <Award size={16} color="white" />
+                                    </View>
+                                )}
+                            </View>
+                        );
+                    })
+                )}
             </ScrollView>
         </View>
     );
@@ -231,7 +294,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 24,
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 8,
         elevation: 2,
@@ -276,7 +339,7 @@ const styles = StyleSheet.create({
         padding: 16,
         alignItems: 'center',
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 4,
         elevation: 2,
@@ -286,12 +349,55 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#111827',
         marginBottom: 4,
+        textAlign: 'center',
     },
     statCardLabel: {
         fontSize: 12,
         color: '#6B7280',
         textTransform: 'uppercase',
-        fontWeight: '600'
+        fontWeight: '600',
+    },
+    errorCard: {
+        backgroundColor: '#FEF2F2',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: '#FCA5A5',
+    },
+    errorTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#B91C1C',
+        marginBottom: 4,
+    },
+    errorSubtitle: {
+        fontSize: 13,
+        color: '#7F1D1D',
+    },
+    loaderWrapper: {
+        paddingVertical: 40,
+        alignItems: 'center',
+    },
+    emptyState: {
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: 24,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+    },
+    emptyStateTitle: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#111827',
+        marginBottom: 8,
+    },
+    emptyStateText: {
+        fontSize: 14,
+        color: '#6B7280',
+        textAlign: 'center',
     },
     achievementCard: {
         flexDirection: 'row',
@@ -301,14 +407,13 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         alignItems: 'center',
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 1},
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 4,
         elevation: 2,
     },
     achievementCardLocked: {
-        opacity: 0.6,
-        backgroundColor: '#F3F4F6',
+        backgroundColor: '#F8FAFC',
     },
     achievementIcon: {
         width: 52,
@@ -320,31 +425,35 @@ const styles = StyleSheet.create({
     },
     achievementContent: {
         flex: 1,
-        justifyContent: 'center',
     },
     achievementTitle: {
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '700',
         color: '#111827',
+        marginBottom: 2,
+    },
+    achievementDescription: {
+        fontSize: 13,
+        color: '#4B5563',
         marginBottom: 4,
     },
     unlockedDate: {
         fontSize: 12,
         color: '#059669',
-        fontWeight: '500'
+        fontWeight: '500',
     },
     lockedText: {
         fontSize: 12,
         color: '#9CA3AF',
-        fontStyle: 'italic'
+        marginBottom: 8,
     },
     checkmarkBadge: {
-        width: 24,
-        height: 24,
+        width: 32,
+        height: 32,
         backgroundColor: '#10B981',
-        borderRadius: 12,
+        borderRadius: 16,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 8
-    }
+        marginLeft: 8,
+    },
 });
