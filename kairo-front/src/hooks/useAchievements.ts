@@ -2,6 +2,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import {fetchUserAchievements} from '@/src/lib/api';
 import type {UserAchievement} from '@/src/types/achievements';
 
+// do ustalenia ile
 const POINTS_PER_BADGE = 50;
 
 export function useAchievements() {
@@ -32,6 +33,8 @@ export function useAchievements() {
     const unlockedCount = achievements.filter((achievement) => Boolean(achievement.unlocked_at)).length;
     const lockedCount = Math.max(total - unlockedCount, 0);
     const pointsEarned = unlockedCount * POINTS_PER_BADGE;
+    // Póki co stała ilośc za odznakę
+    // w przyszłości można by to rozbudować o różne wartości
 
     return {
       total,

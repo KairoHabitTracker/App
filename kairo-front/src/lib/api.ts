@@ -249,6 +249,7 @@ export async function deleteAvatarRequest() {
   });
 }
 
+// Achievement API calls
 export async function fetchUserAchievements() {
   return apiFetch<UserAchievementsResponse>('/api/achievements');
 }

@@ -7,34 +7,16 @@ import {
     Text,
     View,
 } from 'react-native';
-import {
-    Award,
-    Calendar,
-    CheckCircle,
-    Crown,
-    Flame,
-    Gem,
-    Lock,
-    Shield,
-    Sparkles,
-    Star,
-    Sun,
-    Sunrise,
-    Target,
-    Trophy,
-    Zap,
-} from '@tamagui/lucide-icons';
+import {Award, Calendar, CheckCircle, Crown, Flame, Gem, Lock, Shield, Sparkles, Star, Sun, Sunrise, Trophy, Zap} from '@tamagui/lucide-icons';
 import {useAchievements} from '@/src/hooks/useAchievements';
-import type {UserAchievement} from '@/src/types/achievements';
 
-type IconComponent = React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
+type IconComponent = React.ComponentType<any>;
 
 type AchievementVisualConfig = {
     title: string;
     icon: IconComponent;
     color: string;
     bgColor: string;
-    goal?: number;
 };
 
 const ACHIEVEMENT_CONFIG: Record<string, AchievementVisualConfig> = {
@@ -43,91 +25,78 @@ const ACHIEVEMENT_CONFIG: Record<string, AchievementVisualConfig> = {
         icon: CheckCircle,
         color: '#22C55E',
         bgColor: '#DCFCE7',
-        goal: 1,
     },
     complete_a_day: {
         title: 'Daily Dominator',
         icon: Calendar,
         color: '#F97316',
         bgColor: '#FFEDD5',
-        goal: 1,
     },
     habit_streak_7: {
         title: '7-Day Streak',
         icon: Flame,
         color: '#F59E0B',
         bgColor: '#FEF3C7',
-        goal: 7,
     },
     habit_streak_14: {
         title: '14-Day Streak',
         icon: Sunrise,
         color: '#EC4899',
         bgColor: '#FDF2F8',
-        goal: 14,
     },
     habit_streak_30: {
         title: '30-Day Streak',
         icon: Sun,
         color: '#FACC15',
         bgColor: '#FEF9C3',
-        goal: 30,
     },
     habit_streak_90: {
         title: '90-Day Streak',
         icon: Zap,
         color: '#14B8A6',
         bgColor: '#CCFBF1',
-        goal: 90,
     },
     habit_streak_365: {
         title: 'Year-Long Flame',
         icon: Crown,
         color: '#A855F7',
         bgColor: '#F3E8FF',
-        goal: 365,
     },
     complete_3_habits: {
         title: 'Trio Completed',
         icon: Sparkles,
         color: '#8B5CF6',
         bgColor: '#EDE9FE',
-        goal: 3,
     },
     complete_20_habits: {
         title: '20 Habits',
         icon: Star,
         color: '#3B82F6',
         bgColor: '#DBEAFE',
-        goal: 20,
     },
     complete_50_habits: {
         title: '50 Habits',
         icon: Trophy,
         color: '#D97706',
         bgColor: '#FFFBEB',
-        goal: 50,
     },
     complete_100_habits: {
         title: 'Century Club',
         icon: Award,
         color: '#0EA5E9',
         bgColor: '#E0F2FE',
-        goal: 100,
     },
     complete_500_habits: {
         title: '500 Habits',
         icon: Shield,
         color: '#6366F1',
         bgColor: '#E0E7FF',
-        goal: 500,
     },
     complete_1000_habits: {
         title: 'Legendary 1000',
         icon: Gem,
         color: '#EC4899',
         bgColor: '#FCE7F3',
-        goal: 1000,
     },
 };
 
@@ -136,10 +105,7 @@ const DEFAULT_CONFIG: AchievementVisualConfig = {
     icon: Trophy,
     color: '#6B7280',
     bgColor: '#E5E7EB',
-    goal: 1,
 };
-
-const clampPercent = (value: number) => Math.min(100, Math.max(0, value));
 
 const formatIdentifier = (identifier: string) =>
     identifier
@@ -157,41 +123,6 @@ type DisplayAchievement = {
     bgColor: string;
     isUnlocked: boolean;
     unlockedAt: string | null;
-    progressPercent: number;
-    progressText: string;
-};
-
-const toPercent = (achievement: UserAchievement, isUnlocked: boolean) => {
-    if (isUnlocked) return 100;
-    if (typeof achievement.progress_percentage === 'number') {
-        return clampPercent(achievement.progress_percentage);
-    }
-    if (
-        typeof achievement.progress_current === 'number' &&
-        typeof achievement.progress_target === 'number' &&
-        achievement.progress_target > 0
-    ) {
-        return clampPercent((achievement.progress_current / achievement.progress_target) * 100);
-    }
-    return 0;
-};
-
-const toProgressText = (
-    achievement: UserAchievement,
-    percent: number,
-    config: AchievementVisualConfig,
-) => {
-    if (
-        typeof achievement.progress_current === 'number' &&
-        typeof achievement.progress_target === 'number'
-    ) {
-        return `${achievement.progress_current} / ${achievement.progress_target}`;
-    }
-    if (config.goal) {
-        const current = Math.round((config.goal * percent) / 100);
-        return `${current} / ${config.goal}`;
-    }
-    return `${Math.round(percent)}% complete`;
 };
 
 export default function AchievementsScreen() {
@@ -210,8 +141,6 @@ export default function AchievementsScreen() {
                 const unlockedAt = entry.unlocked_at
                     ? new Date(entry.unlocked_at).toLocaleDateString()
                     : null;
-                const progressPercent = toPercent(entry, isUnlocked);
-                const progressText = toProgressText(entry, progressPercent, config);
 
                 return {
                     id: entry.id,
@@ -223,8 +152,6 @@ export default function AchievementsScreen() {
                     bgColor: config.bgColor,
                     isUnlocked,
                     unlockedAt,
-                    progressPercent,
-                    progressText,
                 };
             })
             .sort((a, b) => {
@@ -303,6 +230,7 @@ export default function AchievementsScreen() {
                                         { backgroundColor: item.isUnlocked ? item.bgColor : '#F3F4F6' },
                                     ]}
                                 >
+                                    
                                     {item.isUnlocked ? <Icon size={28} color={item.color} /> : <Lock size={24} color="#9CA3AF" />}
                                 </View>
 
@@ -315,17 +243,6 @@ export default function AchievementsScreen() {
                                         <Text style={styles.unlockedDate}>Unlocked on {item.unlockedAt}</Text>
                                     ) : (
                                         <Text style={styles.lockedText}>Keep going to unlock this badge.</Text>
-                                    )}
-
-                                    {!item.isUnlocked && (
-                                        <View style={styles.progressContainer}>
-                                            <View style={styles.progressBar}>
-                                                <View
-                                                    style={[styles.progressFill, { width: `${item.progressPercent}%` }]}
-                                                />
-                                            </View>
-                                            <Text style={styles.progressLabel}>{item.progressText}</Text>
-                                        </View>
                                     )}
                                 </View>
 
@@ -529,26 +446,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#9CA3AF',
         marginBottom: 8,
-    },
-    progressContainer: {
-        marginTop: 4,
-    },
-    progressBar: {
-        height: 8,
-        borderRadius: 999,
-        backgroundColor: '#E5E7EB',
-        overflow: 'hidden',
-    },
-    progressFill: {
-        height: '100%',
-        borderRadius: 999,
-        backgroundColor: '#10B981',
-    },
-    progressLabel: {
-        marginTop: 4,
-        fontSize: 12,
-        color: '#4B5563',
-        fontWeight: '500',
     },
     checkmarkBadge: {
         width: 32,

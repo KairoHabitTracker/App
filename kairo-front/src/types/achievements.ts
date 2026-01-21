@@ -16,9 +16,9 @@ export type UserAchievement = {
   updated_at: string;
   achievement: Achievement;
   // Backend may extend progress info in the future; keep optional fields ready.
-  progress_current?: number | null;
-  progress_target?: number | null;
-  progress_percentage?: number | null;
+  // progress_current?: number | null;
+  // progress_target?: number | null;
+  // progress_percentage?: number | null;
 };
 
 export type UserAchievementsResponse = {
