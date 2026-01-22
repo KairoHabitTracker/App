@@ -1,6 +1,7 @@
 // Libraries
 import {router} from 'expo-router';
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Api
 import {apiFetch, loginRequest, logoutAllRequest, logoutRequest} from '@/src/lib/api';
@@ -12,6 +13,28 @@ import {UserProfile} from '@/src/types/types';
 // Token Storage
 import {deleteItemAsync, getItemAsync, setItemAsync} from '@/src/lib/secureStore';
 
+const PENDING_COINS_KEY_PREFIX = 'pending_coins:';
+
+const getPendingCoinsStorageKey = (userId: string) => `${PENDING_COINS_KEY_PREFIX}${userId}`;
+
+async function readPendingCoins(userId: string): Promise<number> {
+  try {
+    const raw = await AsyncStorage.getItem(getPendingCoinsStorageKey(userId));
+    if (!raw) return 0;
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) ? parsed : 0;
+  } catch (error) {
+    console.warn('Failed to read pending coins', error);
+    return 0;
+  }
+}
+
+function persistPendingCoins(userId: string, amount: number) {
+  AsyncStorage.setItem(getPendingCoinsStorageKey(userId), String(amount)).catch((error) => {
+    console.warn('Failed to persist pending coins', error);
+  });
+}
+
 
 type AuthContextType = {
   user: UserProfile | null;
@@ -22,6 +45,9 @@ type AuthContextType = {
   logout: () => Promise<void>;
   logoutAll: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  pendingCoins: number;
+  applyCoinBonus: (amount: number) => void;
+  acknowledgeCoinBonus: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,6 +62,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [coinOffset, setCoinOffset] = useState(0);
+  const [pendingCoins, setPendingCoins] = useState(0);
+  const pendingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelPendingTimer = useCallback(() => {
+    if (pendingTimerRef.current) {
+      clearTimeout(pendingTimerRef.current);
+      pendingTimerRef.current = null;
+    }
+  }, []);
 
   async function fetchProfile() {
     try {
@@ -124,6 +160,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await deleteItemAsync('authToken');
     setToken(null);
     setUser(null);
+    setCoinOffset(0);
+    setPendingCoins(0);
     router.replace('/login');
   }
 
@@ -136,6 +174,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await deleteItemAsync('authToken');
     setToken(null);
     setUser(null);
+    setCoinOffset(0);
+    setPendingCoins(0);
     router.replace('/login');
   }
 
@@ -148,8 +188,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!user?.id) {
+        if (!cancelled) {
+          setCoinOffset(0);
+          setPendingCoins(0);
+        }
+        return;
+      }
+      if (!cancelled) {
+        setCoinOffset(0);
+        setPendingCoins(0);
+      }
+      const stored = await readPendingCoins(user.id);
+      if (!cancelled) setCoinOffset(stored);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
+
+  const applyCoinBonus = useCallback((amount: number) => {
+    if (!user?.id || amount <= 0) return;
+    setCoinOffset((prev) => {
+      const next = prev + amount;
+      persistPendingCoins(user.id!, next);
+      return next;
+    });
+    setPendingCoins((prev) => prev + amount);
+  }, [user?.id]);
+
+  const acknowledgeCoinBonus = useCallback(() => {
+    cancelPendingTimer();
+    setPendingCoins(0);
+  }, [cancelPendingTimer]);
+
+  useEffect(() => {
+    if (pendingCoins <= 0) {
+      cancelPendingTimer();
+      return;
+    }
+
+    cancelPendingTimer();
+    pendingTimerRef.current = setTimeout(() => {
+      setPendingCoins(0);
+      pendingTimerRef.current = null;
+    }, 4000);
+
+    return cancelPendingTimer;
+  }, [cancelPendingTimer, pendingCoins]);
+
+  useEffect(() => {
+    return () => {
+      cancelPendingTimer();
+    };
+  }, [cancelPendingTimer]);
+
+  const decoratedUser = user ? {...user, coins: user.coins + coinOffset} : null;
+
   const value: AuthContextType = {
-    user,
+    user: decoratedUser,
     token,
     loading,
     login,
@@ -157,6 +258,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     logoutAll,
     refreshProfile,
+    pendingCoins,
+    applyCoinBonus,
+    acknowledgeCoinBonus,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

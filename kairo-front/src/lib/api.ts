@@ -4,7 +4,7 @@ import type {ApiError, ApiProfileResponse, LoginResponse, RegisterResponse} from
 import type {UserAchievementsResponse} from '@/src/types/achievements';
 import {getItemAsync} from './secureStore';
 
-export const API_BASE = 'http://localhost:8000'; // Replace with your API base URL
+export const API_BASE = 'https://torchy-synecologic-maryland.ngrok-free.dev'; // Replace with your API base URL
 
 type FetchOptions = RequestInit & { skipAuth?: boolean };
 
@@ -252,4 +252,36 @@ export async function deleteAvatarRequest() {
 // Achievement API calls
 export async function fetchUserAchievements() {
   return apiFetch<UserAchievementsResponse>('/api/achievements');
+}
+
+type PasswordResetResponse = { message?: string } | null;
+
+export async function requestPasswordReset(email: string) {
+  return apiFetch<PasswordResetResponse>('/api/password/forgot-password', {
+    method: 'POST',
+    skipAuth: true,
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function validatePasswordResetToken(token: string, email?: string) {
+  const query = email ? `?email=${encodeURIComponent(email)}` : '';
+  return apiFetch<PasswordResetResponse>(`/api/password/reset-password/${encodeURIComponent(token)}${query}`, {
+    method: 'GET',
+    skipAuth: true,
+  });
+}
+
+type ResetPasswordPayload = {
+  email: string;
+  password: string;
+  password_confirmation: string;
+};
+
+export async function resetPasswordWithToken(token: string, payload: ResetPasswordPayload) {
+  return apiFetch<PasswordResetResponse>(`/api/password/reset-password/${encodeURIComponent(token)}`, {
+    method: 'POST',
+    skipAuth: true,
+    body: JSON.stringify(payload),
+  });
 }
