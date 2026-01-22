@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {
     ActivityIndicator,
     RefreshControl,
@@ -7,10 +7,12 @@ import {
     Text,
     View,
 } from 'react-native';
-import {Award, Calendar, CheckCircle, Crown, Flame, Gem, Lock, Shield, Sparkles, Star, Sun, Sunrise, Trophy, Zap} from 'lucide-react-native';
+import {Award, Calendar, CheckCircle, Coins, Crown, Flame, Gem, Lock, Shield, Sparkles, Star, Sun, Sunrise, Trophy, Zap} from 'lucide-react-native';
 import {useAchievements} from '@/src/hooks/useAchievements';
 import {useThemeMode, ThemeColors} from '@/src/contexts/ThemeContext';
 import {useThemedStyles} from '@/src/hooks/useThemedStyles';
+import {useAuth} from '@/src/contexts/AuthContext';
+import {useFocusEffect} from 'expo-router';
 
 type IconComponent = React.ComponentType<any>;
 
@@ -20,6 +22,8 @@ type AchievementVisualConfig = {
     color: string;
     bgColor: string;
 };
+
+const COIN_ICON_COLOR = '#EAB308';
 
 const ACHIEVEMENT_CONFIG: Record<string, AchievementVisualConfig> = {
     first_habit: {
@@ -128,9 +132,20 @@ type DisplayAchievement = {
 };
 
 export default function AchievementsScreen() {
-    const {achievements, loading, error, refresh, total, unlockedCount, pointsEarned} = useAchievements();
+    const {achievements, loading, error, refresh, total, unlockedCount} = useAchievements();
     const {colors} = useThemeMode();
+    const {user, loading: authLoading, pendingCoins, acknowledgeCoinBonus} = useAuth();
     const styles = useAchievementStyles();
+    const coinDisplay = authLoading ? '—' : user?.coins ?? 0;
+    const showPendingCoins = !authLoading && pendingCoins > 0;
+
+    useFocusEffect(
+        useCallback(() => {
+            return () => {
+                acknowledgeCoinBonus();
+            };
+        }, [acknowledgeCoinBonus])
+    );
 
     const displayList = useMemo<DisplayAchievement[]>(() => {
         return achievements
@@ -195,10 +210,16 @@ export default function AchievementsScreen() {
                         <Text style={styles.statCardLabel}>Unlocked</Text>
                     </View>
                     <View style={styles.statCard}>
-                        <Text style={styles.statCardNumber}>
-                            <Flame size={20} color={colors.warning as string} /> {pointsEarned}
-                        </Text>
-                        <Text style={styles.statCardLabel}>Points</Text>
+                        <View style={styles.statCardContent}>
+                            <View style={styles.coinValueRow}>
+                                <Coins size={20} color={COIN_ICON_COLOR} />
+                                <Text style={styles.statCardNumber}>{coinDisplay}</Text>
+                            </View>
+                            {showPendingCoins && (
+                                <Text style={styles.pendingLabel}>+{pendingCoins} pending</Text>
+                            )}
+                        </View>
+                        <Text style={styles.statCardLabel}>Coins</Text>
                     </View>
                 </View>
 
@@ -348,6 +369,10 @@ const createAchievementStyles = (colors: ThemeColors) => StyleSheet.create({
         shadowRadius: 4,
         elevation: 2,
     },
+    statCardContent: {
+        alignItems: 'center',
+        gap: 4,
+    },
     statCardNumber: {
         fontSize: 24,
         fontWeight: '700',
@@ -360,6 +385,16 @@ const createAchievementStyles = (colors: ThemeColors) => StyleSheet.create({
         color: colors.subtleText,
         textTransform: 'uppercase',
         fontWeight: '600',
+    },
+    pendingLabel: {
+        fontSize: 12,
+        color: colors.subtleText,
+        fontWeight: '600',
+    },
+    coinValueRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
     },
     errorCard: {
         backgroundColor: colors.dangerBackground,

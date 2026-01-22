@@ -12,6 +12,7 @@ import ProfileAvatar from '@/src/components/ProfileAvatar';
 import {ChevronRight, Coins, CreditCard, Edit2, Flame, List, Settings, TrendingUp} from "lucide-react-native";
 import {useThemeMode, ThemeColors} from '@/src/contexts/ThemeContext';
 import {useThemedStyles} from '@/src/hooks/useThemedStyles';
+import {useAuth} from '@/src/contexts/AuthContext';
 
 async function fetchUserProfile(): Promise<UserProfile> {
     const json: ApiProfileResponse = await apiFetch('/api/profile');
@@ -31,6 +32,7 @@ export default function Profile() {
     const insets = useSafeAreaInsets();
     const {colors} = useThemeMode();
     const styles = useProfileStyles();
+    const {pendingCoins} = useAuth();
 
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -72,13 +74,16 @@ export default function Profile() {
     if (!profile) return null;
 
     const {username, streak, coins, avatarUrl, subscription} = profile;
+    const coinsWithPending = coins + pendingCoins;
+    const pendingCoinsLabel = pendingCoins > 0 ? `+${pendingCoins} pending` : undefined;
 
-    const StatBox = ({icon: Icon, value, label, color}: any) => (
+    const StatBox = ({icon: Icon, value, label, color, subLabel}: any) => (
         <View style={styles.statBox}>
             <View style={[styles.statIconContainer, {backgroundColor: color + '20'}]}>
                 <Icon size={20} color={color}/>
             </View>
             <Text style={styles.statValue}>{value}</Text>
+            {subLabel ? <Text style={styles.statPending}>{subLabel}</Text> : null}
             <Text style={styles.statLabel}>{label}</Text>
         </View>
     );
@@ -127,9 +132,10 @@ export default function Profile() {
                     <View style={styles.verticalDivider}/>
                     <StatBox
                         icon={Coins}
-                        value={coins}
+                        value={coinsWithPending}
                         label="Coins"
                         color="#EAB308"
+                        subLabel={pendingCoinsLabel}
                     />
                     <View style={styles.verticalDivider}/>
                     <StatBox
@@ -263,6 +269,12 @@ const createProfileStyles = (colors: ThemeColors) => StyleSheet.create({
         fontSize: 18,
         fontWeight: '700',
         color: colors.text,
+    },
+    statPending: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: colors.subtleText,
+        marginBottom: 2,
     },
     statLabel: {
         fontSize: 12,
