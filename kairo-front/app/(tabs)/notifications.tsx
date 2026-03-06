@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
-import {Alert, ScrollView, Text, View} from 'react-native';
+import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {BellOff, Calendar, Clock, Volume2} from '@tamagui/lucide-icons';
 
 import {SettingsRow} from '@/src/components/notifications/SettingsRow';
 import {useLocalNotifications} from '@/src/hooks/useLocalNotifications';
 import {useHabits} from '@/src/contexts/HabitsContext';
-import {useThemedStyles} from '@/src/hooks/useThemedStyles';
+import {useScreenStyles} from '@/src/styles/screenStyles';
 import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
+import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 
 const formatDays = (days: string[]) => {
   if (!days || days.length === 0) return 'No days selected.';
@@ -34,6 +35,7 @@ export default function NotificationsScreen() {
   const {userHabits} = useHabits();
   const {scheduleHabitReminders, cancelAllNotifications} = useLocalNotifications();
   const {colors} = useThemeMode();
+  const s = useScreenStyles();
   const styles = useNotificationStyles();
 
   const scheduledHabits = userHabits.filter(
@@ -56,14 +58,14 @@ export default function NotificationsScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Notifications</Text>
-        <Text style={styles.headerSubtitle}>Manage your alerts and reminders</Text>
+    <View style={s.screen}>
+      <View style={s.header}>
+        <Text style={s.headerTitle}>Notifications</Text>
+        <Text style={s.headerSubtitle}>Manage your alerts and reminders</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.sectionTitle}>General Settings</Text>
+      <ScrollView contentContainerStyle={s.scrollContent}>
+        <Text style={[s.sectionTitle, {marginTop: 8}]}>General Settings</Text>
         <View style={styles.settingsCard}>
           <SettingsRow
             icon={Clock}
@@ -72,7 +74,7 @@ export default function NotificationsScreen() {
             value={reminderEnabled}
             onValueChange={handleToggleReminder}
           />
-          <View style={styles.divider} />
+          <View style={s.divider} />
           <SettingsRow
             icon={Volume2}
             title="Sound"
@@ -83,7 +85,9 @@ export default function NotificationsScreen() {
           />
         </View>
 
-        <Text style={styles.sectionTitle}>Active notifications ({scheduledHabits.length})</Text>
+        <Text style={[s.sectionTitle, {marginTop: 8}]}>
+          Active notifications ({scheduledHabits.length})
+        </Text>
 
         {scheduledHabits.length > 0 ? (
           scheduledHabits.map(habitEntry => (
@@ -98,12 +102,10 @@ export default function NotificationsScreen() {
 
               <View style={styles.notificationContent}>
                 <View style={styles.notificationHeader}>
-                  <Text style={styles.notificationTitle}>{habitEntry.habit.name}</Text>
+                  <Text style={s.itemTitle}>{habitEntry.habit.name}</Text>
                   <Text style={styles.notificationTime}>{habitEntry.notification_time}</Text>
                 </View>
-                <Text style={styles.notificationDescription}>
-                  {formatDays(habitEntry.days_of_week)}
-                </Text>
+                <Text style={s.itemSubtext}>{formatDays(habitEntry.days_of_week)}</Text>
               </View>
 
               <Calendar
@@ -124,119 +126,70 @@ export default function NotificationsScreen() {
   );
 }
 
-const createNotificationStyles = (colors: ThemeColors) => ({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    padding: 20,
-    paddingTop: 60,
-    backgroundColor: colors.card,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: colors.text,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: colors.subtleText,
-    marginTop: 2,
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 100,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.subtleText,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 12,
-    marginTop: 8,
-  },
-  settingsCard: {
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginVertical: 4,
-  },
-  notificationCard: {
-    flexDirection: 'row',
-    backgroundColor: colors.card,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
-    alignItems: 'center',
-  },
-  notificationIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-    backgroundColor: colors.surface,
-  },
-  notificationContent: {
-    flex: 1,
-  },
-  notificationHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  notificationTitle: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  notificationTime: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.accent,
-    marginLeft: 8,
-  },
-  notificationDescription: {
-    fontSize: 13,
-    color: colors.subtleText,
-    lineHeight: 20,
-  },
-  infoCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  infoText: {
-    fontSize: 15,
-    color: colors.subtleText,
-    textAlign: 'center',
-    marginTop: 12,
-    lineHeight: 22,
-  },
-});
+const createNotificationStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    settingsCard: {
+      backgroundColor: colors.card,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 24,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    notificationCard: {
+      flexDirection: 'row',
+      backgroundColor: colors.card,
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 12,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 3,
+      alignItems: 'center',
+    },
+    notificationIcon: {
+      width: 48,
+      height: 48,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 16,
+      backgroundColor: colors.surface,
+    },
+    notificationContent: {
+      flex: 1,
+    },
+    notificationHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 4,
+    },
+    notificationTime: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: colors.accent,
+      marginLeft: 8,
+    },
+    infoCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: 24,
+      alignItems: 'center',
+      marginTop: 12,
+    },
+    infoText: {
+      fontSize: 15,
+      color: colors.subtleText,
+      textAlign: 'center',
+      marginTop: 12,
+      lineHeight: 22,
+    },
+  });
 
 const useNotificationStyles = () => useThemedStyles(createNotificationStyles);

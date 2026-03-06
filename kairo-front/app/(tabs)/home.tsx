@@ -1,23 +1,23 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import HabitList from '@/src/components/habit/HabitList';
 import {useRouter} from 'expo-router';
 import {useAuth} from '@/src/contexts/AuthContext';
 import {Flame} from '@tamagui/lucide-icons';
-import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
-import {useThemedStyles} from '@/src/hooks/useThemedStyles';
+import {useThemeMode} from '@/src/contexts/ThemeContext';
+import {useScreenStyles} from '@/src/styles/screenStyles';
 
 export default function Home() {
   const router = useRouter();
   const {user} = useAuth();
   const {colors} = useThemeMode();
-  const styles = useHomeStyles();
+  const s = useScreenStyles();
 
   return (
-    <View style={styles.screen}>
-      <View style={styles.headerRow}>
+    <View style={[s.screen, {paddingTop: 64}]}>
+      <View style={s.headerRow}>
         <View>
-          <Text style={styles.headerTitle}>Today</Text>
-          <Text style={styles.headerSubtitle}>
+          <Text style={s.headerTitle}>Today</Text>
+          <Text style={[s.headerSubtitle, {fontSize: 16, fontWeight: '500'}]}>
             {new Date().toLocaleDateString('en-US', {
               weekday: 'long',
               month: 'long',
@@ -26,9 +26,15 @@ export default function Home() {
           </Text>
         </View>
 
-        <View style={styles.streakBadge}>
+        <View
+          style={[
+            s.badge,
+            {backgroundColor: colors.warningBackground, borderColor: colors.warning},
+          ]}>
           <Flame size={18} color={colors.warning} fill={colors.warning} />
-          <Text style={styles.streakText}>{user?.streak ?? 0}</Text>
+          <Text style={{fontSize: 15, fontWeight: '700', color: colors.warning}}>
+            {user?.streak ?? 0}
+          </Text>
         </View>
       </View>
       <HabitList
@@ -41,48 +47,3 @@ export default function Home() {
     </View>
   );
 }
-
-const createHomeStyles = (colors: ThemeColors) =>
-  StyleSheet.create({
-    screen: {
-      flex: 1,
-      backgroundColor: colors.background,
-      paddingTop: 64,
-    },
-    headerRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      marginBottom: 24,
-      paddingHorizontal: 20,
-    },
-    headerTitle: {
-      fontSize: 32,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 4,
-    },
-    headerSubtitle: {
-      fontSize: 16,
-      color: colors.subtleText,
-      fontWeight: '500',
-    },
-    streakBadge: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: colors.warningBackground,
-      paddingHorizontal: 10,
-      paddingVertical: 6,
-      borderRadius: 16,
-      borderWidth: 1,
-      borderColor: colors.warning,
-      gap: 4,
-    },
-    streakText: {
-      fontSize: 15,
-      fontWeight: '700',
-      color: colors.warning,
-    },
-  });
-
-const useHomeStyles = () => useThemedStyles(createHomeStyles);

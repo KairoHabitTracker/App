@@ -1,19 +1,11 @@
 import {ThemeColors} from '@/src/contexts/ThemeContext';
 import {useThemedStyles} from '@/src/hooks/useThemedStyles';
+import {radii, shadows, spacing} from '@/src/styles/screenStyles';
 
 const createFriendsStyles = (colors: ThemeColors) => ({
-  screenContainer: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.background,
-  },
+  // ── Header ─────────────────────────────────
   header: {
-    padding: 20,
+    padding: spacing.xl,
     paddingTop: 60,
     backgroundColor: colors.card,
     borderBottomWidth: 1,
@@ -35,51 +27,29 @@ const createFriendsStyles = (colors: ThemeColors) => ({
   copyIdRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
-    paddingVertical: 4,
+    marginTop: spacing.xs,
+    paddingVertical: spacing.xs,
   },
-  listContent: {
-    padding: 16,
-    paddingBottom: 100,
-  },
-  sectionContainer: {
-    marginBottom: 8,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.subtleText,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 8,
-    marginLeft: 4,
-  },
+
+  // ── Cards ───────────────────────────────────
   cardGroup: {
     backgroundColor: colors.card,
-    borderRadius: 16,
+    borderRadius: radii.lg,
     padding: 0,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
+    ...shadows.subtle,
     overflow: 'hidden',
   },
   cardRow: {
     backgroundColor: colors.card,
-    padding: 16,
+    padding: spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 12,
-    marginBottom: 8,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    borderRadius: radii.md,
+    marginBottom: spacing.sm,
+    ...shadows.subtle,
   },
   inviteRow: {
-    padding: 16,
+    padding: spacing.lg,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -89,9 +59,42 @@ const createFriendsStyles = (colors: ThemeColors) => ({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  dividerMargin: {
-    height: 8,
+
+  // ── Avatar ──────────────────────────────────
+  avatarContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.md,
   },
+  avatarImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  avatarText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.accent,
+  },
+
+  // ── Info ─────────────────────────────────────
+  infoContainer: {
+    flex: 1,
+  },
+  nameText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  subText: {
+    fontSize: 13,
+    color: colors.subtleText,
+  },
+
   inviteInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -107,47 +110,13 @@ const createFriendsStyles = (colors: ThemeColors) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  avatarContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  avatarImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  avatarText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.accent,
-  },
-  infoContainer: {
-    flex: 1,
-  },
-  nameText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  subText: {
-    fontSize: 13,
-    color: colors.subtleText,
-  },
-  flex: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
+
+  // ── Chip ────────────────────────────────────
   coinBadge: {
     backgroundColor: colors.chipBackground,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.md,
     borderWidth: 1,
     borderColor: colors.chipBorder,
   },
@@ -156,37 +125,37 @@ const createFriendsStyles = (colors: ThemeColors) => ({
     fontWeight: '600',
     color: colors.chipText,
   },
+
+  // ── Invite input ─────────────────────────────
   inviteContainer: {
-    padding: 16,
+    padding: spacing.lg,
     backgroundColor: colors.background,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.card,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
     borderWidth: 1,
     borderColor: colors.border,
   },
   input: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: spacing.md,
     fontSize: 16,
     color: colors.text,
   },
   sendIconBtn: {
-    padding: 8,
+    padding: spacing.sm,
   },
-  emptyState: {
-    alignItems: 'center',
-    marginTop: 40,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.subtleText,
-    textAlign: 'center',
+
+  // ── Misc ─────────────────────────────────────
+  flex: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
   },
 });
 

@@ -19,6 +19,7 @@ import {
 import {useAchievements} from '@/src/hooks/useAchievements';
 import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
 import {useThemedStyles} from '@/src/hooks/useThemedStyles';
+import {useScreenStyles} from '@/src/styles/screenStyles';
 
 type IconComponent = React.ComponentType<any>;
 
@@ -139,6 +140,7 @@ export default function AchievementsScreen() {
   const {achievements, loading, error, refresh, total, unlockedCount, pointsEarned} =
     useAchievements();
   const {colors} = useThemeMode();
+  const s = useScreenStyles();
   const styles = useAchievementStyles();
 
   const displayList = useMemo<DisplayAchievement[]>(() => {
@@ -178,14 +180,14 @@ export default function AchievementsScreen() {
   const showEmptyState = !loading && displayList.length === 0;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Achievements</Text>
-        <Text style={styles.headerSubtitle}>Track every badge you unlock</Text>
+    <View style={s.screen}>
+      <View style={s.header}>
+        <Text style={s.headerTitle}>Achievements</Text>
+        <Text style={s.headerSubtitle}>Track every badge you unlock</Text>
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={s.scrollContent}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={refresh} tintColor={colors.text} />
         }>
@@ -194,47 +196,43 @@ export default function AchievementsScreen() {
             <Award size={40} color="#F59E0B" />
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.comingSoonTitle}>Consistency Pays Off</Text>
-            <Text style={styles.comingSoonText}>
-              Complete habits daily to climb the badge ladder.
-            </Text>
+            <Text style={[s.itemTitle, {fontSize: 18}]}>Consistency Pays Off</Text>
+            <Text style={s.itemSubtext}>Complete habits daily to climb the badge ladder.</Text>
           </View>
         </View>
 
-        <View style={styles.statsRow}>
-          <View style={styles.statCard}>
-            <Text style={styles.statCardNumber}>
+        <View style={s.statsRow}>
+          <View style={s.statCard}>
+            <Text style={s.statValue}>
               {unlockedCount} / {total || '—'}
             </Text>
-            <Text style={styles.statCardLabel}>Unlocked</Text>
+            <Text style={s.statLabel}>Unlocked</Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statCardNumber}>
+          <View style={s.statCard}>
+            <Text style={s.statValue}>
               <Flame size={20} color={colors.warning as string} /> {pointsEarned}
             </Text>
-            <Text style={styles.statCardLabel}>Points</Text>
+            <Text style={s.statLabel}>Points</Text>
           </View>
         </View>
 
-        <Text style={styles.sectionTitle}>Your Badges</Text>
+        <Text style={[s.sectionTitle, {marginTop: 8, marginBottom: 12}]}>Your Badges</Text>
 
         {error && (
-          <View style={styles.errorCard}>
-            <Text style={styles.errorTitle}>Could not load achievements</Text>
-            <Text style={styles.errorSubtitle}>{error}</Text>
+          <View style={s.errorCard}>
+            <Text style={s.errorTitle}>Could not load achievements</Text>
+            <Text style={s.errorSubtitle}>{error}</Text>
           </View>
         )}
 
         {loading && !displayList.length ? (
-          <View style={styles.loaderWrapper}>
+          <View style={s.loaderWrapper}>
             <ActivityIndicator size="large" color={colors.accent} />
           </View>
         ) : showEmptyState ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyStateTitle}>No achievements yet</Text>
-            <Text style={styles.emptyStateText}>
-              Start completing habits to earn your first badge.
-            </Text>
+          <View style={s.emptyState}>
+            <Text style={s.emptyStateTitle}>No achievements yet</Text>
+            <Text style={s.emptyStateText}>Start completing habits to earn your first badge.</Text>
           </View>
         ) : (
           displayList.map(item => {
@@ -256,18 +254,18 @@ export default function AchievementsScreen() {
                 </View>
 
                 <View style={styles.achievementContent}>
-                  <Text
-                    style={[
-                      styles.achievementTitle,
-                      !item.isUnlocked && {color: colors.subtleText},
-                    ]}>
+                  <Text style={[s.itemTitle, !item.isUnlocked && {color: colors.subtleText}]}>
                     {item.title}
                   </Text>
-                  <Text style={styles.achievementDescription}>{item.description}</Text>
+                  <Text style={s.itemSubtext}>{item.description}</Text>
                   {item.isUnlocked ? (
-                    <Text style={styles.unlockedDate}>Unlocked on {item.unlockedAt}</Text>
+                    <Text style={[s.itemSubtext, {fontSize: 12, marginTop: 4}]}>
+                      Unlocked on {item.unlockedAt}
+                    </Text>
                   ) : (
-                    <Text style={styles.lockedText}>Keep going to unlock this badge.</Text>
+                    <Text style={[s.itemSubtext, {fontSize: 12, marginTop: 4}]}>
+                      Keep going to unlock this badge.
+                    </Text>
                   )}
                 </View>
 
@@ -287,31 +285,6 @@ export default function AchievementsScreen() {
 
 const createAchievementStyles = (colors: ThemeColors) =>
   StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.background,
-    },
-    header: {
-      padding: 20,
-      paddingTop: 60,
-      backgroundColor: colors.card,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-    },
-    headerTitle: {
-      fontSize: 32,
-      fontWeight: '700',
-      color: colors.text,
-    },
-    headerSubtitle: {
-      fontSize: 14,
-      color: colors.subtleText,
-      marginTop: 2,
-    },
-    scrollContent: {
-      padding: 16,
-      paddingBottom: 100,
-    },
     comingSoonCard: {
       flexDirection: 'row',
       backgroundColor: colors.card,
@@ -333,97 +306,6 @@ const createAchievementStyles = (colors: ThemeColors) =>
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: 16,
-    },
-    comingSoonTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 4,
-    },
-    comingSoonText: {
-      fontSize: 14,
-      color: colors.subtleText,
-    },
-    sectionTitle: {
-      fontSize: 14,
-      fontWeight: '600',
-      color: colors.subtleText,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-      marginBottom: 12,
-      marginTop: 8,
-    },
-    statsRow: {
-      flexDirection: 'row',
-      gap: 12,
-      marginBottom: 24,
-    },
-    statCard: {
-      flex: 1,
-      backgroundColor: colors.card,
-      borderRadius: 16,
-      padding: 16,
-      alignItems: 'center',
-      shadowColor: '#000',
-      shadowOffset: {width: 0, height: 2},
-      shadowOpacity: 0.05,
-      shadowRadius: 4,
-      elevation: 2,
-    },
-    statCardNumber: {
-      fontSize: 24,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 4,
-      textAlign: 'center',
-    },
-    statCardLabel: {
-      fontSize: 12,
-      color: colors.subtleText,
-      textTransform: 'uppercase',
-      fontWeight: '600',
-    },
-    errorCard: {
-      backgroundColor: colors.dangerBackground,
-      borderRadius: 12,
-      padding: 16,
-      marginBottom: 16,
-      borderWidth: 1,
-      borderColor: colors.danger,
-    },
-    errorTitle: {
-      fontSize: 14,
-      fontWeight: '700',
-      color: colors.danger,
-      marginBottom: 4,
-    },
-    errorSubtitle: {
-      fontSize: 13,
-      color: colors.danger,
-    },
-    loaderWrapper: {
-      paddingVertical: 40,
-      alignItems: 'center',
-    },
-    emptyState: {
-      backgroundColor: colors.card,
-      borderRadius: 16,
-      padding: 24,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    emptyStateTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 8,
-    },
-    emptyStateText: {
-      fontSize: 14,
-      color: colors.subtleText,
-      textAlign: 'center',
     },
     achievementCard: {
       backgroundColor: colors.card,
@@ -452,26 +334,6 @@ const createAchievementStyles = (colors: ThemeColors) =>
     },
     achievementContent: {
       flex: 1,
-    },
-    achievementTitle: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: colors.text,
-    },
-    achievementDescription: {
-      fontSize: 14,
-      color: colors.subtleText,
-      marginTop: 2,
-    },
-    unlockedDate: {
-      fontSize: 12,
-      color: colors.subtleText,
-      marginTop: 4,
-    },
-    lockedText: {
-      fontSize: 12,
-      color: colors.subtleText,
-      marginTop: 4,
     },
     checkmarkBadge: {
       width: 28,

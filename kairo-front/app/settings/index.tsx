@@ -15,6 +15,7 @@ import {
 import {sharedStyles} from '@/global';
 import ProfileAvatar from '@/src/components/ProfileAvatar';
 import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
+import {useScreenStyles} from '@/src/styles/screenStyles';
 
 type SettingsRowProps = {
   icon: React.ElementType;
@@ -31,12 +32,10 @@ export default function SettingsScreen() {
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const {colors, isDarkMode, setTheme} = useThemeMode();
-
+  const s = useScreenStyles();
   const styles = useMemo(() => createStyles(colors), [colors]);
 
-  const SectionHeader = ({title}: {title: string}) => (
-    <Text style={styles.sectionHeader}>{title}</Text>
-  );
+  const SectionHeader = ({title}: {title: string}) => <Text style={s.sectionTitle}>{title}</Text>;
 
   const SettingsRow = ({
     icon: Icon,
@@ -51,15 +50,15 @@ export default function SettingsScreen() {
       <View style={styles.rowLeft}>
         <View
           style={[
-            styles.iconContainer,
+            s.iconBadge,
             {backgroundColor: isDestructive ? 'rgba(239,68,68,0.15)' : colors.surface},
           ]}>
           <Icon size={20} color={isDestructive ? '#EF4444' : color} />
         </View>
-        <Text style={[styles.rowLabel, isDestructive && styles.destructiveLabel]}>{label}</Text>
+        <Text style={[s.itemTitle, isDestructive && {color: '#EF4444'}]}>{label}</Text>
       </View>
       <View style={styles.rowRight}>
-        {value && <Text style={styles.rowValue}>{value}</Text>}
+        {value && <Text style={s.itemSubtext}>{value}</Text>}
         {showChevron && <ChevronRight size={20} color={colors.subtleText as any} />}
       </View>
     </TouchableOpacity>
@@ -77,11 +76,12 @@ export default function SettingsScreen() {
   return (
     <View style={[sharedStyles.basicContainer, {backgroundColor: colors.background}]}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.profileCard}>
+        <View
+          style={[s.card, {flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 24}]}>
           <ProfileAvatar username={user?.username} avatarUrl={user?.avatarUrl} size={54} />
           <View style={{flex: 1}}>
-            <Text style={styles.profileName}>{user ? user.username : 'Guest'}</Text>
-            <Text style={styles.profileSubtext}>
+            <Text style={s.itemTitle}>{user ? user.username : 'Guest'}</Text>
+            <Text style={s.itemSubtext}>
               {user
                 ? `Current streak: ${user.streak} days · Coins: ${user.coins}`
                 : 'Sign in to sync your progress'}
@@ -95,7 +95,7 @@ export default function SettingsScreen() {
         </View>
 
         <SectionHeader title="INTEGRATIONS" />
-        <View style={styles.sectionContainer}>
+        <View style={s.cardGroup}>
           <SettingsRow
             icon={Activity}
             label="Connections"
@@ -104,8 +104,8 @@ export default function SettingsScreen() {
             color="#10B981"
           />
           <View style={styles.banner}>
-            <Text style={styles.bannerTitle}>Coming soon</Text>
-            <Text style={styles.bannerText}>
+            <Text style={[s.itemTitle, {fontSize: 13}]}>Coming soon</Text>
+            <Text style={[s.itemSubtext, {lineHeight: 18, marginTop: 4}]}>
               Connecting to health apps is sadly still in development. We&apos;re working hard to
               bring this feature to you soon!
             </Text>
@@ -113,21 +113,21 @@ export default function SettingsScreen() {
         </View>
 
         <SectionHeader title="PREFERENCES" />
-        <View style={styles.sectionContainer}>
+        <View style={s.cardGroup}>
           <SettingsRow
             icon={Bell}
             label="Notifications"
             onPress={() => router.push('../settings/notifications')}
             color="#F59E0B"
           />
-          <View style={styles.divider} />
+          <View style={s.dividerIndented} />
 
           <View style={styles.row}>
             <View style={styles.rowLeft}>
-              <View style={[styles.iconContainer, {backgroundColor: colors.surface}]}>
+              <View style={[s.iconBadge, {backgroundColor: colors.surface}]}>
                 <Moon size={20} color={isDarkMode ? '#FCD34D' : '#6366F1'} />
               </View>
-              <Text style={styles.rowLabel}>Dark Mode</Text>
+              <Text style={s.itemTitle}>Dark Mode</Text>
             </View>
             <Switch
               value={isDarkMode}
@@ -139,7 +139,7 @@ export default function SettingsScreen() {
         </View>
 
         <SectionHeader title="SECURITY" />
-        <View style={styles.sectionContainer}>
+        <View style={s.cardGroup}>
           <SettingsRow
             icon={Shield}
             label="Password & Security"
@@ -149,7 +149,7 @@ export default function SettingsScreen() {
         </View>
 
         <SectionHeader title="SUPPORT" />
-        <View style={styles.sectionContainer}>
+        <View style={s.cardGroup}>
           <SettingsRow
             icon={HelpCircle}
             label="About & Help"
@@ -160,7 +160,7 @@ export default function SettingsScreen() {
         </View>
 
         <SectionHeader title="ACCOUNT ACTIONS" />
-        <View style={styles.sectionContainer}>
+        <View style={s.cardGroup}>
           <SettingsRow
             icon={LogOut}
             label="Log Out"
@@ -168,7 +168,7 @@ export default function SettingsScreen() {
             isDestructive
             showChevron={false}
           />
-          <View style={styles.divider} />
+          <View style={s.dividerIndented} />
           <SettingsRow
             icon={Smartphone}
             label="Log Out All Devices"
@@ -178,7 +178,7 @@ export default function SettingsScreen() {
           />
         </View>
 
-        <Text style={styles.footerText}>Kairo Habit © 2026</Text>
+        <Text style={[s.itemSubtext, {textAlign: 'center', marginTop: 8}]}>Kairo Habit © 2026</Text>
       </ScrollView>
 
       <Modal
@@ -186,22 +186,22 @@ export default function SettingsScreen() {
         visible={confirmOpen}
         animationType="fade"
         onRequestClose={() => setConfirmOpen(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Log out from all devices?</Text>
-            <Text style={styles.modalDescription}>
+        <View style={s.modalOverlay}>
+          <View style={s.modalContainer}>
+            <Text style={s.modalTitle}>Log out from all devices?</Text>
+            <Text style={s.modalDescription}>
               You will be signed out from all other sessions. You&apos;ll need to log in again.
             </Text>
-            <View style={styles.modalButtons}>
+            <View style={s.modalButtonsRow}>
               <TouchableOpacity
-                style={[styles.modalButton, styles.modalButtonCancel]}
+                style={[s.modalButton, s.modalButtonCancel]}
                 onPress={() => setConfirmOpen(false)}>
-                <Text style={styles.modalButtonCancelText}>Cancel</Text>
+                <Text style={s.modalButtonCancelText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalButton, styles.modalButtonConfirm]}
+                style={[s.modalButton, s.modalButtonConfirm]}
                 onPress={handleLogoutAll}>
-                <Text style={styles.modalButtonConfirmText}>Log Out All</Text>
+                <Text style={s.modalButtonConfirmText}>Log Out All</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -215,31 +215,8 @@ const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     scrollContent: {
       paddingHorizontal: 16,
+      paddingTop: 16,
       paddingBottom: 40,
-    },
-    profileCard: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: colors.card,
-      padding: 16,
-      borderRadius: 16,
-      marginBottom: 24,
-      shadowColor: '#000',
-      shadowOffset: {width: 0, height: 2},
-      shadowOpacity: colors.background === '#0F172A' ? 0.4 : 0.05,
-      shadowRadius: 8,
-      elevation: 2,
-      gap: 16,
-    },
-    profileName: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: colors.text,
-    },
-    profileSubtext: {
-      fontSize: 13,
-      color: colors.subtleText,
-      marginTop: 4,
     },
     editButton: {
       paddingHorizontal: 12,
@@ -251,30 +228,6 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 12,
       fontWeight: '600',
       color: colors.text,
-    },
-    sectionHeader: {
-      fontSize: 12,
-      fontWeight: '600',
-      color: colors.subtleText,
-      marginBottom: 8,
-      marginLeft: 4,
-      letterSpacing: 0.5,
-    },
-    sectionContainer: {
-      backgroundColor: colors.card,
-      borderRadius: 16,
-      overflow: 'hidden',
-      marginBottom: 24,
-      shadowColor: '#000',
-      shadowOffset: {width: 0, height: 1},
-      shadowOpacity: colors.background === '#0F172A' ? 0.3 : 0.05,
-      shadowRadius: 6,
-      elevation: 1,
-    },
-    divider: {
-      height: 1,
-      backgroundColor: colors.border,
-      marginLeft: 56,
     },
     row: {
       flexDirection: 'row',
@@ -289,104 +242,15 @@ const createStyles = (colors: ThemeColors) =>
       alignItems: 'center',
       gap: 12,
     },
-    iconContainer: {
-      width: 32,
-      height: 32,
-      borderRadius: 8,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    rowLabel: {
-      fontSize: 15,
-      fontWeight: '500',
-      color: colors.text,
-    },
-    destructiveLabel: {
-      color: '#EF4444',
-    },
     rowRight: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 8,
-    },
-    rowValue: {
-      fontSize: 14,
-      color: colors.subtleText,
-    },
-    footerText: {
-      textAlign: 'center',
-      color: colors.subtleText,
-      fontSize: 12,
-      marginTop: 8,
     },
     banner: {
       borderTopWidth: 1,
       borderTopColor: colors.border,
       padding: 16,
       backgroundColor: colors.surface,
-    },
-    bannerTitle: {
-      fontSize: 13,
-      fontWeight: '600',
-      color: colors.text,
-      marginBottom: 4,
-    },
-    bannerText: {
-      fontSize: 13,
-      color: colors.subtleText,
-      lineHeight: 18,
-    },
-    modalOverlay: {
-      flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.4)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 20,
-    },
-    modalContainer: {
-      backgroundColor: colors.card,
-      borderRadius: 20,
-      padding: 24,
-      width: '100%',
-      maxWidth: 340,
-      alignItems: 'center',
-    },
-    modalTitle: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 8,
-    },
-    modalDescription: {
-      fontSize: 14,
-      color: colors.subtleText,
-      textAlign: 'center',
-      marginBottom: 24,
-      lineHeight: 20,
-    },
-    modalButtons: {
-      flexDirection: 'row',
-      gap: 12,
-      width: '100%',
-    },
-    modalButton: {
-      flex: 1,
-      paddingVertical: 12,
-      borderRadius: 12,
-      alignItems: 'center',
-    },
-    modalButtonCancel: {
-      backgroundColor: colors.surface,
-    },
-    modalButtonConfirm: {
-      backgroundColor: '#EF4444',
-    },
-    modalButtonCancelText: {
-      fontWeight: '600',
-      color: colors.text,
-    },
-    modalButtonConfirmText: {
-      fontWeight: '600',
-      color: 'white',
     },
   });
