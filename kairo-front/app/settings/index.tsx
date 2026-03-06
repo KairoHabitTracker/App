@@ -12,7 +12,6 @@ import {
   Shield,
   Smartphone,
 } from '@tamagui/lucide-icons';
-import {sharedStyles} from '@/global';
 import ProfileAvatar from '@/src/components/ProfileAvatar';
 import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
 import {useScreenStyles} from '@/src/styles/screenStyles';
@@ -74,7 +73,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={[sharedStyles.basicContainer, {backgroundColor: colors.background}]}>
+    <View style={[s.screen, {backgroundColor: colors.background}]}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View
           style={[s.card, {flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 24}]}>

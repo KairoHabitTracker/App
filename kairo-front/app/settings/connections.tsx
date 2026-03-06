@@ -1,6 +1,7 @@
-import React, {useMemo} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
+import React from 'react';
+import {ScrollView, Text, View} from 'react-native';
+import {useThemeMode} from '@/src/contexts/ThemeContext';
+import {useScreenStyles} from '@/src/styles/screenStyles';
 
 const STATUS_CARDS = [
   {
@@ -24,108 +25,46 @@ const STATUS_CARDS = [
 
 export default function ConnectionsScreen() {
   const {colors} = useThemeMode();
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const s = useScreenStyles();
 
   return (
-    <View style={styles.wrapper}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Connections</Text>
-        <Text style={styles.subtitle}>
+    <View style={s.screen}>
+      <ScrollView contentContainerStyle={[s.scrollContent, {gap: 16}]}>
+        <Text style={[s.headerTitle, {fontSize: 28}]}>Connections</Text>
+        <Text style={[s.itemSubtext, {lineHeight: 22, fontSize: 15}]}>
           Integration with third party health platforms is in the works! Stay tuned for updates as
           we roll out new connectors to sync your habit data seamlessly.
         </Text>
 
-        <View style={styles.callout}>
-          <Text style={styles.calloutTitle}>Work in progress</Text>
-          <Text style={styles.calloutBody}>
+        <View
+          style={[
+            s.card,
+            {borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface},
+          ]}>
+          <Text
+            style={[s.itemTitle, {fontSize: 13, letterSpacing: 0.5, textTransform: 'uppercase'}]}>
+            Work in progress
+          </Text>
+          <Text style={[s.itemSubtext, {lineHeight: 20, marginTop: 4}]}>
             We&apos;ll try to add the integration in the next stretch of updates (hopefully) You can
             still browse what we&apos;re trying to bring to you though!
           </Text>
         </View>
 
         {STATUS_CARDS.map(card => (
-          <View key={card.title} style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>{card.title}</Text>
-              <Text style={styles.cardStatus}>{card.status}</Text>
+          <View key={card.title} style={s.card}>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Text style={s.itemTitle}>{card.title}</Text>
+              <Text
+                style={[s.itemSubtext, {color: colors.accent, fontWeight: '600', fontSize: 13}]}>
+                {card.status}
+              </Text>
             </View>
-            <Text style={styles.cardDescription}>{card.description}</Text>
+            <Text style={[s.itemSubtext, {lineHeight: 20}]}>{card.description}</Text>
           </View>
         ))}
       </ScrollView>
     </View>
   );
 }
-
-const createStyles = (colors: ThemeColors) =>
-  StyleSheet.create({
-    wrapper: {
-      flex: 1,
-      backgroundColor: colors.background,
-    },
-    content: {
-      padding: 20,
-      gap: 16,
-      paddingBottom: 40,
-    },
-    title: {
-      fontSize: 28,
-      fontWeight: '700',
-      color: colors.text,
-    },
-    subtitle: {
-      fontSize: 15,
-      lineHeight: 22,
-      color: colors.subtleText,
-    },
-    callout: {
-      borderRadius: 16,
-      borderWidth: 1,
-      borderColor: colors.border,
-      backgroundColor: colors.surface,
-      padding: 16,
-    },
-    calloutTitle: {
-      fontSize: 13,
-      fontWeight: '600',
-      color: colors.text,
-      marginBottom: 4,
-      letterSpacing: 0.5,
-    },
-    calloutBody: {
-      fontSize: 14,
-      color: colors.subtleText,
-      lineHeight: 20,
-    },
-    card: {
-      backgroundColor: colors.card,
-      borderRadius: 18,
-      padding: 18,
-      gap: 8,
-      shadowColor: '#000',
-      shadowOffset: {width: 0, height: 2},
-      shadowOpacity: colors.background === '#0F172A' ? 0.35 : 0.08,
-      shadowRadius: 8,
-      elevation: 3,
-    },
-    cardHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    cardTitle: {
-      fontSize: 18,
-      fontWeight: '600',
-      color: colors.text,
-    },
-    cardStatus: {
-      fontSize: 13,
-      fontWeight: '600',
-      color: colors.accent,
-    },
-    cardDescription: {
-      fontSize: 14,
-      color: colors.subtleText,
-      lineHeight: 20,
-    },
-  });

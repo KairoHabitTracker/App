@@ -1,6 +1,6 @@
 import {Link, Stack} from 'expo-router';
 import {Image, Text, View} from 'react-native';
-import {errorStyles as styles, tokens} from '@/global';
+import {errorStyles as styles} from '@/global';
 
 export default function NotFoundScreen() {
   return (
@@ -9,7 +9,7 @@ export default function NotFoundScreen() {
       <View style={styles.container}>
         <Image
           source={require('../assets/kairo/errors/kairo_404.png')}
-          style={{width: 200, height: 200, marginBottom: tokens.spacing.sm, borderRadius: 100}}
+          style={{width: 200, height: 200, marginBottom: 12, borderRadius: 100}}
         />
         <Text style={styles.title}>You&apos;re a little lost</Text>
         <Text style={styles.subtitle}>We couldn&apos;t find the page you&apos;re looking for.</Text>
