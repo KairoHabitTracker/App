@@ -1,12 +1,17 @@
 import {Platform} from 'react-native';
 import * as Device from 'expo-device';
-import type {ApiError, ApiProfileResponse, LoginResponse, RegisterResponse} from '@/src/types/apiTypes';
+import type {
+  ApiError,
+  ApiProfileResponse,
+  LoginResponse,
+  RegisterResponse,
+} from '@/src/types/apiTypes';
 import type {UserAchievementsResponse} from '@/src/types/achievements';
 import {getItemAsync} from './secureStore';
 
-export const API_BASE = 'http://localhost:8000'; // Replace with your API base URL
+export const API_BASE = 'http://localhost:8000'; // https://calycine-dominga-unpoisonously.ngrok-free.dev
 
-type FetchOptions = RequestInit & { skipAuth?: boolean };
+type FetchOptions = RequestInit & {skipAuth?: boolean};
 
 function mergeHeaders(custom?: HeadersInit): Record<string, string> {
   const base: Record<string, string> = {
@@ -49,17 +54,30 @@ class ApiFetchError extends Error implements ApiError {
   }
 
   toJSON() {
-    return { name: this.name, message: this.message, status: this.status, body: this.body, code: this.code };
+    return {
+      name: this.name,
+      message: this.message,
+      status: this.status,
+      body: this.body,
+      code: this.code,
+    };
   }
 }
 
 export function isApiError(e: unknown): e is ApiError {
-  return !!e && typeof e === 'object' && ('status' in (e as object) || 'body' in (e as object) || 'message' in (e as object));
+  return (
+    !!e &&
+    typeof e === 'object' &&
+    ('status' in (e as object) || 'body' in (e as object) || 'message' in (e as object))
+  );
 }
 
-export async function apiFetch<Token = unknown>(path: string, options: FetchOptions = {}): Promise<Token> {
+export async function apiFetch<Token = unknown>(
+  path: string,
+  options: FetchOptions = {},
+): Promise<Token> {
   const url = path.startsWith('http') ? path : `${API_BASE}${path}`;
-  const { skipAuth, headers: customHeaders, ...rest } = options;
+  const {skipAuth, headers: customHeaders, ...rest} = options;
   const bodyIsFormData = typeof FormData !== 'undefined' && rest.body instanceof FormData;
 
   const headers = mergeHeaders(customHeaders);
@@ -80,7 +98,7 @@ export async function apiFetch<Token = unknown>(path: string, options: FetchOpti
 
   let response: Response;
   try {
-    response = await fetch(url, { headers, ...rest });
+    response = await fetch(url, {headers, ...rest});
   } catch (err: any) {
     // Network error / CORS / DNS etc. Normalize into ApiFetchError
     const msg = err?.message ?? 'Network request failed';
@@ -88,7 +106,7 @@ export async function apiFetch<Token = unknown>(path: string, options: FetchOpti
   }
 
   const contentType = response.headers.get('content-type') || '';
-  let body: unknown = null;
+  let body: unknown;
   if (contentType.includes('application/json')) {
     try {
       body = await response.json();
@@ -126,7 +144,11 @@ export async function apiFetch<Token = unknown>(path: string, options: FetchOpti
 }
 
 // Authentication API calls (For the future we can use react-native-device-info to get an actual device name)
-export async function loginRequest(email: string, password: string, device_name?: string): Promise<LoginResponse> {
+export async function loginRequest(
+  email: string,
+  password: string,
+  device_name?: string,
+): Promise<LoginResponse> {
   let deviceName = device_name;
   if (!deviceName) {
     try {
@@ -141,13 +163,17 @@ export async function loginRequest(email: string, password: string, device_name?
   const response = await apiFetch('/api/auth/login', {
     method: 'POST',
     skipAuth: true,
-    body: JSON.stringify({ email, password, device_name: deviceName }),
+    body: JSON.stringify({email, password, device_name: deviceName}),
   });
 
   return response as LoginResponse;
 }
 
-export async function registerRequest(email: string, password: string, device_name?: string): Promise<RegisterResponse> {
+export async function registerRequest(
+  email: string,
+  password: string,
+  device_name?: string,
+): Promise<RegisterResponse> {
   let deviceName = device_name;
   if (!deviceName) {
     try {
@@ -161,7 +187,7 @@ export async function registerRequest(email: string, password: string, device_na
   const response = await apiFetch('/api/auth/register', {
     method: 'POST',
     skipAuth: true,
-    body: JSON.stringify({ email, password, device_name: deviceName }),
+    body: JSON.stringify({email, password, device_name: deviceName}),
   });
 
   return response as RegisterResponse;
@@ -169,28 +195,26 @@ export async function registerRequest(email: string, password: string, device_na
 
 export async function logoutRequest() {
   // Invalidate current token on the server
-  const res = await apiFetch('/api/auth/logout', {
+  return await apiFetch('/api/auth/logout', {
     method: 'DELETE',
   });
-  return res;
 }
 
 export async function logoutAllRequest() {
   // Invalidate all sessions for this user on the server
-  const res = await apiFetch('/api/auth/logout-all', {
+  return await apiFetch('/api/auth/logout-all', {
     method: 'DELETE',
   });
-  return res;
 }
 
 // Email verification helpers
-export async function sendVerificationNotification(): Promise<{ message?: string } | null> {
+export async function sendVerificationNotification(): Promise<{message?: string} | null> {
   return apiFetch('/api/email/verification-notification', {
     method: 'POST',
   });
 }
 
-export async function verifyEmail(id: string, hash: string): Promise<{ message?: string } | null> {
+export async function verifyEmail(id: string, hash: string): Promise<{message?: string} | null> {
   const path = `/api/email/verify/${encodeURIComponent(id)}/${encodeURIComponent(hash)}`;
   return apiFetch(path, {
     method: 'GET',
@@ -219,7 +243,7 @@ export type AvatarUploadResponse = {
   avatar_url?: string | null;
 };
 
-export async function uploadAvatarRequest({ uri, mimeType, name }: AvatarUploadParams) {
+export async function uploadAvatarRequest({uri, mimeType, name}: AvatarUploadParams) {
   const formData = new FormData();
   const filename = name || uri.split('/').pop() || 'avatar.jpg';
   const type = mimeType || 'image/jpeg';
