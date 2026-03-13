@@ -12,7 +12,6 @@ import {UserProfile} from '@/src/types/types';
 // Token Storage
 import {deleteItemAsync, getItemAsync, setItemAsync} from '@/src/lib/secureStore';
 
-
 type AuthContextType = {
   user: UserProfile | null;
   token: string | null;
@@ -71,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (token) {
           try {
             await fetchProfile();
-          } catch (error) {
+          } catch {
             // Already handled inside fetchProfile
           }
         }

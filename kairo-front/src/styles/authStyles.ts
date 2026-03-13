@@ -1,12 +1,13 @@
 import {ThemeColors} from '@/src/contexts/ThemeContext';
 import {useThemedStyles} from '@/src/hooks/useThemedStyles';
+import {radii, spacing} from '@/src/styles/screenStyles';
 
 const createAuthStyles = (colors: ThemeColors) => ({
   screen: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingHorizontal: 24,
-    paddingVertical: 32,
+    paddingHorizontal: spacing.xxl,
+    paddingVertical: spacing.xxxl,
   },
   content: {
     flex: 1,
@@ -26,20 +27,20 @@ const createAuthStyles = (colors: ThemeColors) => ({
   },
   input: {
     width: '100%',
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
     paddingVertical: 14,
     marginVertical: 6,
     backgroundColor: colors.card,
-    borderRadius: 12,
+    borderRadius: radii.md,
     borderWidth: 1,
     borderColor: colors.border,
     color: colors.text,
   },
   primaryButton: {
     width: '100%',
-    marginTop: 16,
+    marginTop: spacing.lg,
     backgroundColor: colors.accent,
-    borderRadius: 12,
+    borderRadius: radii.md,
     paddingVertical: 14,
     alignItems: 'center',
   },
@@ -49,15 +50,15 @@ const createAuthStyles = (colors: ThemeColors) => ({
     fontWeight: '600',
   },
   link: {
-    marginTop: 12,
+    marginTop: spacing.md,
     color: colors.accent,
     fontSize: 14,
     fontWeight: '500',
   },
   error: {
     width: '100%',
-    borderRadius: 12,
-    padding: 12,
+    borderRadius: radii.md,
+    padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.danger,
     backgroundColor: colors.dangerBackground,

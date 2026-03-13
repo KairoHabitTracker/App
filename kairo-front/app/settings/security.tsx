@@ -1,11 +1,16 @@
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import {Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
-import {requestPasswordReset, resetPasswordWithToken, validatePasswordResetToken} from '@/src/lib/api';
+// import {
+//   requestPasswordReset,
+//   resetPasswordWithToken,
+//   validatePasswordResetToken,
+// } from '@/src/lib/api';
+import {useThemeMode} from '@/src/contexts/ThemeContext';
+import {useScreenStyles} from '@/src/styles/screenStyles';
 
 export default function SecuritySettings() {
   const {colors} = useThemeMode();
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const s = useScreenStyles();
 
   const [email, setEmail] = useState('');
   const [token, setToken] = useState('');
@@ -46,7 +51,6 @@ export default function SecuritySettings() {
       Alert.alert('Passwords do not match', 'Ensure both password fields are identical.');
       return;
     }
-
     setLoadingAction('reset');
     try {
       await validatePasswordResetToken(token.trim());
@@ -60,24 +64,26 @@ export default function SecuritySettings() {
       setConfirmPassword('');
       setToken('');
     } catch (error: any) {
-      Alert.alert('Could not reset password', error?.message || 'Double-check the token and try again.');
+      Alert.alert(
+        'Could not reset password',
+        error?.message || 'Double-check the token and try again.',
+      );
     } finally {
       setLoadingAction(null);
     }
   };
 
   return (
-    <View style={styles.wrapper}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Password & Security</Text>
-        <Text style={styles.subtitle}>
-          Currently not working, since we lost our server.
-        </Text>
+    <View style={s.screen}>
+      <ScrollView contentContainerStyle={[s.scrollContent, {gap: 20}]}>
+        <Text style={[s.headerTitle, {fontSize: 28}]}>Password & Security</Text>
+        <Text style={s.itemSubtext}>Currently not working, since we lost our server.</Text>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Request a reset link</Text>
-          <Text style={styles.cardDescription}>
-            Enter the email tied to your profile. We'll send you a code to your inbox to reset your password.
+        <View style={s.card}>
+          <Text style={[s.itemTitle, {fontSize: 18}]}>Request a reset link</Text>
+          <Text style={[s.itemSubtext, {lineHeight: 20}]}>
+            Enter the email tied to your profile. We&apos;ll send you a code to your inbox to reset
+            your password.
           </Text>
           <TextInput
             placeholder="Email"
@@ -85,23 +91,26 @@ export default function SecuritySettings() {
             onChangeText={setEmail}
             autoCapitalize="none"
             keyboardType="email-address"
-            style={styles.input}
+            style={[s.input, {backgroundColor: colors.surface}]}
             placeholderTextColor={colors.subtleText}
           />
           <TouchableOpacity
-            style={[styles.button, loadingAction === 'request' && styles.buttonDisabled]}
+            style={[
+              styles.button,
+              {backgroundColor: colors.accent},
+              loadingAction === 'request' && styles.buttonDisabled,
+            ]}
             disabled={loadingAction === 'request'}
-            onPress={handleRequestLink}
-          >
+            onPress={handleRequestLink}>
             <Text style={styles.buttonText}>
               {loadingAction === 'request' ? 'Sending…' : 'Send email'}
             </Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Reset with token</Text>
-          <Text style={styles.cardDescription}>
+        <View style={s.card}>
+          <Text style={[s.itemTitle, {fontSize: 18}]}>Reset with token</Text>
+          <Text style={[s.itemSubtext, {lineHeight: 20}]}>
             Paste the code from the email, then set a new password.
           </Text>
           <TextInput
@@ -109,7 +118,7 @@ export default function SecuritySettings() {
             value={token}
             onChangeText={setToken}
             autoCapitalize="none"
-            style={styles.input}
+            style={[s.input, {backgroundColor: colors.surface}]}
             placeholderTextColor={colors.subtleText}
           />
           <TextInput
@@ -117,7 +126,7 @@ export default function SecuritySettings() {
             value={password}
             onChangeText={setPassword}
             secureTextEntry
-            style={styles.input}
+            style={[s.input, {backgroundColor: colors.surface}]}
             placeholderTextColor={colors.subtleText}
           />
           <TextInput
@@ -125,14 +134,17 @@ export default function SecuritySettings() {
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
-            style={styles.input}
+            style={[s.input, {backgroundColor: colors.surface}]}
             placeholderTextColor={colors.subtleText}
           />
           <TouchableOpacity
-            style={[styles.button, loadingAction === 'reset' && styles.buttonDisabled]}
+            style={[
+              styles.button,
+              {backgroundColor: colors.accent},
+              loadingAction === 'reset' && styles.buttonDisabled,
+            ]}
             disabled={loadingAction === 'reset'}
-            onPress={handleResetPassword}
-          >
+            onPress={handleResetPassword}>
             <Text style={styles.buttonText}>
               {loadingAction === 'reset' ? 'Updating…' : 'Update password'}
             </Text>
@@ -143,59 +155,8 @@ export default function SecuritySettings() {
   );
 }
 
-const createStyles = (colors: ThemeColors) => StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    padding: 20,
-    gap: 20,
-    paddingBottom: 40,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.text,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: colors.subtleText,
-    lineHeight: 22,
-  },
-  card: {
-    backgroundColor: colors.card,
-    borderRadius: 18,
-    padding: 20,
-    gap: 12,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: colors.background === '#0F172A' ? 0.35 : 0.08,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  cardDescription: {
-    fontSize: 14,
-    color: colors.subtleText,
-    lineHeight: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 15,
-    color: colors.text,
-    backgroundColor: colors.surface,
-  },
+const styles = StyleSheet.create({
   button: {
-    backgroundColor: colors.accent,
     paddingVertical: 14,
     borderRadius: 14,
     alignItems: 'center',

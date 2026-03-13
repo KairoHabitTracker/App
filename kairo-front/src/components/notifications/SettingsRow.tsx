@@ -1,8 +1,7 @@
 import React from 'react';
 import {Switch, Text, View} from 'react-native';
-import {useThemeMode} from '@/src/contexts/ThemeContext';
+import {useThemeMode,ThemeColors} from '@/src/contexts/ThemeContext';
 import {useThemedStyles} from '@/src/hooks/useThemedStyles';
-import {ThemeColors} from '@/src/contexts/ThemeContext';
 
 interface SettingsRowProps {
     icon: React.ElementType;
