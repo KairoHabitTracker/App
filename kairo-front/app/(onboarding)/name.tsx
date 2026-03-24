@@ -22,9 +22,9 @@ export default function NameScreen() {
   const isValid = name.trim().length > 0;
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, styles.centerContainer]}>
       <View style={styles.centerContainer}>
-        <Text style={styles.screenTitle}>What&apos;s your name?</Text>
+        <Text style={styles.headerTitle}>What&apos;s your name?</Text>
         <Text style={[styles.headerSubtitle, {marginTop: spacing.md, marginBottom: spacing.xxl}]}>
           We&apos;d love to know what to call you
         </Text>
@@ -45,21 +45,18 @@ export default function NameScreen() {
         style={[
           styles.card,
           {
-            backgroundColor: isValid ? colors.accent : colors.mutedAccent,
-            marginHorizontal: spacing.xl,
-            marginBottom: spacing.xl,
-          },
+            marginBottom: spacing.xxl,
+            alignItems: 'center',
+            paddingVertical: spacing.md,
+            width: '80%',
+            backgroundColor: isValid ? colors.accent : colors.mutedAccent
+          }
         ]}
         onPress={handleNext}
         disabled={!isValid}
         activeOpacity={0.8}
       >
-        <Text
-          style={[
-            styles.primaryButtonText,
-            {color: isValid ? colors.card : colors.text, textAlign: 'center'},
-          ]}
-        >
+        <Text style={[styles.itemTitle, {color: isValid ? colors.card : colors.text}]}>
           Next
         </Text>
       </TouchableOpacity>

@@ -42,14 +42,12 @@ export default function InterestsScreen() {
   };
 
   return (
-    <View style={styles.screen}>
+    <View style={[styles.screen, styles.centerContainer]}>
+      <View style={[styles.topBar, {height: 80}]}></View>
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-        <TouchableOpacity onPress={() => router.back()} style={{paddingHorizontal: spacing.xl, paddingTop: spacing.xl}}>
-          <Text style={[styles.link, {marginTop: 0}]}>← Back</Text>
-        </TouchableOpacity>
 
         <View style={{paddingHorizontal: spacing.xl, paddingVertical: spacing.lg}}>
-          <Text style={styles.screenTitle}>What interests you most?</Text>
+          <Text style={styles.headerTitle}>What interests you most?</Text>
           <Text style={[styles.headerSubtitle, {marginTop: spacing.md, marginBottom: spacing.xxl}]}>
             Select areas you&apos;d like to focus on
           </Text>
@@ -71,7 +69,7 @@ export default function InterestsScreen() {
                 onPress={() => toggleInterest(interest.id)}
                 activeOpacity={0.7}
               >
-                <Text style={{fontSize: 24, marginRight: spacing.md}}>{interest.emoji}</Text>
+                <Text style={[styles.itemTitle, {marginRight: spacing.md}]}>{interest.emoji}</Text>
                 <Text
                   style={[
                     styles.itemTitle,
@@ -90,7 +88,7 @@ export default function InterestsScreen() {
         </View>
       </ScrollView>
 
-      <View style={{paddingHorizontal: spacing.xl, paddingBottom: spacing.xl, gap: spacing.md}}>
+      <View style={[{gap: spacing.md, width: '100%'}]}>
         <Text style={[styles.itemSubtext, {textAlign: 'center'}]}>
           Selected: {selected.length}
         </Text>
@@ -98,11 +96,12 @@ export default function InterestsScreen() {
           style={[
             styles.card,
             {
-              backgroundColor: selected.length === 0
-                ? colors.mutedAccent
-                : colors.accent,
-              marginHorizontal: 0,
-              marginBottom: 0,
+              marginBottom: spacing.xxl,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingVertical: spacing.md,
+              width: '80%',
+              backgroundColor: selected.length === 0 ? colors.mutedAccent : colors.accent
             },
           ]}
           onPress={handleNext}
@@ -114,7 +113,7 @@ export default function InterestsScreen() {
           ) : (
             <Text
               style={[
-                styles.primaryButtonText,
+                styles.itemTitle,
                 {
                   color: selected.length === 0 ? colors.text : colors.card,
                   textAlign: 'center',

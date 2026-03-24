@@ -13,14 +13,14 @@ export default function WelcomeScreen() {
   };
 
   return (
-    <View style={[styles.screen, {padding: spacing.xl, justifyContent: 'space-between'}]}>
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', gap: spacing.lg}}>
-        <Text style={{fontSize: 80, marginBottom: spacing.xl}}>👋</Text>
-        <Text style={[styles.screenTitle, {color: colors.text, textAlign: 'center'}]}>Welcome!</Text>
+    <View style={[styles.screen, styles.centerContainer]}>
+      <View style={[styles.centerContainer]}>
+        <Text style={{fontSize: 70, marginBottom: spacing.xl}}>👋</Text>
+        <Text style={[styles.modalTitle, {color: colors.text, textAlign: 'center'}]}>Hi there!</Text>
         <Text style={[styles.headerSubtitle, {textAlign: 'center', maxWidth: 280, fontSize: 16}]}>
-          Let&apos;s get to know you better to create a
-          {'\n'}
-          personalized experience for you
+          Thank you for choosing Kairo!
+          {'\n\n'}
+          Let&apos;s get to know you better!!
         </Text>
       </View>
 
@@ -29,15 +29,16 @@ export default function WelcomeScreen() {
           styles.card,
           {
             backgroundColor: colors.accent,
-            marginBottom: spacing.xl,
+            marginBottom: spacing.xxl,
             alignItems: 'center',
             paddingVertical: spacing.md,
+            width: '80%',
           }
         ]}
         onPress={handleStart}
         activeOpacity={0.8}
       >
-        <Text style={[styles.itemTitle, {color: colors.card, fontWeight: '700'}]}>Get Started</Text>
+        <Text style={[styles.itemTitle, {color: colors.card}]}>Get Started</Text>
       </TouchableOpacity>
     </View>
   );
