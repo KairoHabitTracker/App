@@ -17,7 +17,7 @@ const INTERESTS = [
 export default function InterestsScreen() {
   const styles = useScreenStyles();
   const {colors} = useThemeMode();
-  const {name, age} = useLocalSearchParams<{ name: string; age: string }>();
+  const {name} = useLocalSearchParams<{ name: string }>();
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +34,7 @@ export default function InterestsScreen() {
     try {
       router.push({
         pathname: '/(onboarding)/habits',
-        params: {name, age, interests: selected.join(',')},
+        params: {name, interests: selected.join(',')},
       });
     } finally {
       setLoading(false);

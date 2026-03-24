@@ -1,7 +1,6 @@
 // Libraries
 import {router} from 'expo-router';
 import React, {createContext, useContext, useEffect, useState} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 // Api
@@ -76,7 +75,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
             await fetchProfile();
 
             // Check onboarding status
-            const onboardingCompleted = await AsyncStorage.getItem('onboardingCompleted');
+            const onboardingCompleted = await getItemAsync('onboardingCompleted');
             if (mounted) {
               if (onboardingCompleted === 'true') {
                 router.replace('/(tabs)/home' as any);
@@ -109,16 +108,16 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
       // Fetch profile after saving token
       await fetchProfile();
 
-      // TODO: Check if onboarding is completed from backend
-      // const onboardingCompleted = user?.onboarding_completed ?? false;
-      // For now, hardcode as false to always show onboarding
-      const onboardingCompleted = false;
+      // Check if onboarding is completed from storage or backend
+      // TODO: Check if onboarding is completed from backend (user?.onboarding_completed)
+      const storedOnboarding = await getItemAsync('onboardingCompleted');
+      const onboardingCompleted = storedOnboarding === 'false';
 
       // Navigate to onboarding or home based on completion status
       if (onboardingCompleted) {
         router.replace('/(tabs)/home' as any);
       } else {
-        router.push('/(onboarding)/name' as any);
+        router.push('/(onboarding)/welcome' as any);
       }
     } finally {
       setLoading(false);
@@ -133,16 +132,16 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
       // Fetch profile after saving token
       await fetchProfile();
 
-      // TODO: Check if onboarding is completed from backend
-      // const onboardingCompleted = user?.onboarding_completed ?? false;
-      // For now, hardcode as false
-      const onboardingCompleted = false;
+      // Check if onboarding is completed from storage or backend
+      // TODO: Check if onboarding is completed from backend (user?.onboarding_completed)
+      const storedOnboarding = await getItemAsync('onboardingCompleted');
+      const onboardingCompleted = storedOnboarding === 'true';
 
       // Navigate to onboarding or redirect based on completion status
       if (onboardingCompleted) {
         router.replace((redirect ?? '/(tabs)/home') as any);
       } else {
-        router.push('/(onboarding)/name' as any);
+        router.push('/(onboarding)/welcome' as any);
       }
     } finally {
       setLoading(false);

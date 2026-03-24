@@ -17,7 +17,7 @@ const HABITS = [
 export default function HabitsScreen() {
   const styles = useScreenStyles();
   const {colors} = useThemeMode();
-  const {name, age, interests} = useLocalSearchParams<{ name: string; age: string; interests: string }>();
+  const {name, interests} = useLocalSearchParams<{ name: string; interests: string }>();
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +34,7 @@ export default function HabitsScreen() {
     try {
       router.push({
         pathname: '/(onboarding)/loading',
-        params: {name, age, interests, habits: selected.join(',')},
+        params: {name, interests, habits: selected.join(',')},
       });
     } finally {
       setLoading(false);

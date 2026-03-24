@@ -12,7 +12,7 @@ export default function NameScreen() {
   const handleNext = () => {
     if (name.trim()) {
       router.push({
-        pathname: '/(onboarding)/age',
+        pathname: '/(onboarding)/interests',
         params: {name: name.trim()},
       });
     }

@@ -3,6 +3,7 @@ import {ActivityIndicator, Text, View} from 'react-native';
 import {router} from 'expo-router';
 import {spacing, useScreenStyles} from '@/src/styles/screenStyles';
 import {useThemeMode} from '@/src/contexts/ThemeContext';
+import {setItemAsync} from '@/src/lib/secureStore';
 
 export default function LoadingScreen() {
   const styles = useScreenStyles();
@@ -11,8 +12,9 @@ export default function LoadingScreen() {
 
   useEffect(() => {
     // Simulate loading for 2 seconds, then go to home
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       // TODO: Save onboarding data to backend when ready
+      await setItemAsync('onboardingCompleted', 'true');
       router.replace('/(tabs)/home');
     }, 2000);
 
