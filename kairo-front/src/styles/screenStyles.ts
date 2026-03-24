@@ -16,7 +16,7 @@ import {useThemedStyles} from '@/src/hooks/useThemedStyles';
 export const typography = {
   /** Duży tytuł ekranu (np. nagłówek taba) */
   screenTitle: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '700',
   },
   /** Tytuł w top-barze (np. iOS-style centered) */
@@ -26,7 +26,7 @@ export const typography = {
   },
   /** Podtytuł pod tytułem ekranu */
   subtitle: {
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 2,
   },
   /** Nagłówek sekcji (uppercase, muted) */

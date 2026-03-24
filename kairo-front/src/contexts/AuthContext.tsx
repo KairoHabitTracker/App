@@ -2,6 +2,7 @@
 import {router} from 'expo-router';
 import React, {createContext, useContext, useEffect, useState} from 'react';
 
+
 // Api
 import {apiFetch, loginRequest, logoutAllRequest, logoutRequest} from '@/src/lib/api';
 
@@ -31,7 +32,7 @@ export function useAuth() {
   return context;
 }
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({children}: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser({id: userId, username, avatarUrl, streak, coins});
     } catch (error: unknown) {
       // If 401, clear token and redirect to login
-      if (typeof error === 'object' && error !== null && 'status' in error && (error as { status?: number }).status === 401) {
+      if (typeof error === 'object' && error !== null && 'status' in error && (error as {
+        status?: number
+      }).status === 401) {
         await deleteItemAsync('authToken');
         setToken(null);
         setUser(null);
@@ -70,6 +73,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (token) {
           try {
             await fetchProfile();
+
+            // Check onboarding status
+            const onboardingCompleted = await getItemAsync('onboardingCompleted');
+            if (mounted) {
+              if (onboardingCompleted === 'true') {
+                router.replace('/(tabs)/home' as any);
+              } else {
+                router.replace('/(onboarding)/welcome' as any);
+              }
+            }
           } catch {
             // Already handled inside fetchProfile
           }
@@ -79,21 +92,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     })();
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   async function login(email: string, password: string, device_name = 'mobile') {
     setLoading(true);
     try {
-  const response = await loginRequest(email, password, device_name);
-  const tokenFromServer = response?.token ?? response?.data?.token;
+      const response = await loginRequest(email, password, device_name);
+      const tokenFromServer = response?.token ?? response?.data?.token;
       if (!tokenFromServer) throw new Error('No token in response');
       await setItemAsync('authToken', tokenFromServer);
       setToken(tokenFromServer);
       // Fetch profile after saving token
       await fetchProfile();
-      // After successful login/profile fetch, navigate to the home tab.
-      router.replace('/home');
+
+      // Check if onboarding is completed from storage or backend
+      // TODO: Check if onboarding is completed from backend (user?.onboarding_completed)
+      const storedOnboarding = await getItemAsync('onboardingCompleted');
+      const onboardingCompleted = storedOnboarding === 'false';
+
+      // Navigate to onboarding or home based on completion status
+      if (onboardingCompleted) {
+        router.replace('/(tabs)/home' as any);
+      } else {
+        router.push('/(onboarding)/welcome' as any);
+      }
     } finally {
       setLoading(false);
     }
@@ -106,7 +131,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(tokenFromServer);
       // Fetch profile after saving token
       await fetchProfile();
-      router.replace((redirect ?? '/home') as any);
+
+      // Check if onboarding is completed from storage or backend
+      // TODO: Check if onboarding is completed from backend (user?.onboarding_completed)
+      const storedOnboarding = await getItemAsync('onboardingCompleted');
+      const onboardingCompleted = storedOnboarding === 'true';
+
+      // Navigate to onboarding or redirect based on completion status
+      if (onboardingCompleted) {
+        router.replace((redirect ?? '/(tabs)/home') as any);
+      } else {
+        router.push('/(onboarding)/welcome' as any);
+      }
     } finally {
       setLoading(false);
     }

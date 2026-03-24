@@ -1,12 +1,4 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  ReactNode,
-} from 'react';
+import React, {createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState,} from 'react';
 import {Appearance, Platform, StatusBar} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -42,7 +34,7 @@ const lightColors: ThemeColors = {
   subtleText: '#6B7280',
   border: '#E5E7EB',
   accent: '#3B82F6',
-  mutedAccent: '#E0E7FF',
+  mutedAccent: '#d3dcfc',
   warning: '#F97316',
   warningBackground: '#FFF7ED',
   chipBackground: '#F3F4F6',
