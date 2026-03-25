@@ -86,6 +86,10 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
           } catch {
             // Already handled inside fetchProfile
           }
+        } else {
+          if (mounted) {
+            router.replace('/login');
+          }
         }
       } finally {
         if (mounted) setLoading(false);
