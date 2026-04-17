@@ -1,17 +1,12 @@
 import {Platform} from 'react-native';
 import * as Device from 'expo-device';
-import type {
-  ApiError,
-  ApiProfileResponse,
-  LoginResponse,
-  RegisterResponse,
-} from '@/src/types/apiTypes';
+import type {ApiError, ApiProfileResponse, LoginResponse, RegisterResponse,} from '@/src/types/apiTypes';
 import type {UserAchievementsResponse} from '@/src/types/achievements';
 import {getItemAsync} from './secureStore';
 
-export const API_BASE = 'http://localhost:8000'; // https://calycine-dominga-unpoisonously.ngrok-free.dev
+export const API_BASE = 'https://kairo.yuri.rocks';
 
-type FetchOptions = RequestInit & {skipAuth?: boolean};
+type FetchOptions = RequestInit & { skipAuth?: boolean };
 
 function mergeHeaders(custom?: HeadersInit): Record<string, string> {
   const base: Record<string, string> = {
@@ -208,13 +203,13 @@ export async function logoutAllRequest() {
 }
 
 // Email verification helpers
-export async function sendVerificationNotification(): Promise<{message?: string} | null> {
+export async function sendVerificationNotification(): Promise<{ message?: string } | null> {
   return apiFetch('/api/email/verification-notification', {
     method: 'POST',
   });
 }
 
-export async function verifyEmail(id: string, hash: string): Promise<{message?: string} | null> {
+export async function verifyEmail(id: string, hash: string): Promise<{ message?: string } | null> {
   const path = `/api/email/verify/${encodeURIComponent(id)}/${encodeURIComponent(hash)}`;
   return apiFetch(path, {
     method: 'GET',
