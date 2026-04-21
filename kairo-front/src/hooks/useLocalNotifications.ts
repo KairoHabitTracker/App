@@ -104,6 +104,7 @@ export const useLocalNotifications = () => {
               minute: minute,
               weekday: expoDay,
               repeats: true,
+              channelId: 'habit-reminders'
             }
             : {
               type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
