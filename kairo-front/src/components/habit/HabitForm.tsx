@@ -153,12 +153,15 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
 
         <View style={styles.reminderHeader}>
           <Text style={styles.label}>Reminders & Dates</Text>
-          <Switch
-            value={enableNotifications}
-            onValueChange={setEnableNotifications}
-            trackColor={{false: colors.border, true: habitColor + '80'}}
-            thumbColor={enableNotifications ? habitColor : colors.card}
-          />
+          <View style={styles.switchWrapper}>
+            <Switch
+              value={enableNotifications}
+              onValueChange={setEnableNotifications}
+              trackColor={{false: colors.border, true: habitColor + '80'}}
+              thumbColor={enableNotifications ? habitColor : colors.card}
+              style={styles.switch}
+            />
+          </View>
         </View>
 
         {enableNotifications && (
@@ -201,6 +204,7 @@ const createHabitFormStyles = (colors: ThemeColors) => ({
     borderWidth: 1,
     borderColor: colors.border,
     gap: 12,
+    overflow: 'visible',
   },
   reminderHeader: {
     flexDirection: 'row',
@@ -208,14 +212,25 @@ const createHabitFormStyles = (colors: ThemeColors) => ({
     alignItems: 'center',
     marginBottom: 10,
     paddingTop: 10,
+    paddingBottom: 10,
     borderTopWidth: 1,
     borderTopColor: colors.border,
     marginTop: 10,
+    minHeight: 56,
+    overflow: 'visible',
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
     color: colors.text,
+  },
+  switchWrapper: {
+    height: 32,
+    justifyContent: 'center',
+    overflow: 'visible',
+  },
+  switch: {
+    height: 32,
   },
   remindersContainer: {
     marginBottom: 20,
