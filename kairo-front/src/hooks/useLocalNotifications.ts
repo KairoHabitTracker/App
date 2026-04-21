@@ -98,14 +98,20 @@ export const useLocalNotifications = () => {
               priority: 'high',
             }),
           },
-          trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
-            weekday: expoDay,
-            hour: hour,
-            minute: minute,
-            repeats: true,
-          },
+          trigger: Platform.OS === 'android'
+            ? {
+              hour: hour,
+              minute: minute,
+              weekday: expoDay,
+              repeats: true,
             }
+            : {
+              type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
+              hour: hour,
+              minute: minute,
+              weekday: expoDay,
+              repeats: true,
+            },
         });
       }
     }
