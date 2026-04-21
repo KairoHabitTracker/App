@@ -2,16 +2,7 @@ import React, {useMemo, useState} from 'react';
 import {Modal, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {useAuth} from '@/src/contexts/AuthContext';
-import {
-  Activity,
-  Bell,
-  ChevronRight,
-  HelpCircle,
-  LogOut,
-  Moon,
-  Shield,
-  Smartphone,
-} from '@tamagui/lucide-icons';
+import {Activity, Bell, ChevronRight, HelpCircle, LogOut, Moon, Shield, Smartphone,} from '@tamagui/lucide-icons';
 import ProfileAvatar from '@/src/components/ProfileAvatar';
 import {ThemeColors, useThemeMode} from '@/src/contexts/ThemeContext';
 import {useScreenStyles} from '@/src/styles/screenStyles';
@@ -34,17 +25,17 @@ export default function SettingsScreen() {
   const s = useScreenStyles();
   const styles = useMemo(() => createStyles(colors), [colors]);
 
-  const SectionHeader = ({title}: {title: string}) => <Text style={s.sectionTitle}>{title}</Text>;
+  const SectionHeader = ({title}: { title: string }) => <Text style={s.sectionTitle}>{title}</Text>;
 
   const SettingsRow = ({
-    icon: Icon,
-    label,
-    value,
-    onPress,
-    isDestructive = false,
-    showChevron = true,
-    color = '#6B7280',
-  }: SettingsRowProps) => (
+                         icon: Icon,
+                         label,
+                         value,
+                         onPress,
+                         isDestructive = false,
+                         showChevron = true,
+                         color = '#6B7280',
+                       }: SettingsRowProps) => (
     <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.rowLeft}>
         <View
@@ -52,13 +43,13 @@ export default function SettingsScreen() {
             s.iconBadge,
             {backgroundColor: isDestructive ? 'rgba(239,68,68,0.15)' : colors.surface},
           ]}>
-          <Icon size={20} color={isDestructive ? '#EF4444' : color} />
+          <Icon size={20} color={isDestructive ? '#EF4444' : color}/>
         </View>
         <Text style={[s.itemTitle, isDestructive && {color: '#EF4444'}]}>{label}</Text>
       </View>
       <View style={styles.rowRight}>
         {value && <Text style={s.itemSubtext}>{value}</Text>}
-        {showChevron && <ChevronRight size={20} color={colors.subtleText as any} />}
+        {showChevron && <ChevronRight size={20} color={colors.subtleText as any}/>}
       </View>
     </TouchableOpacity>
   );
@@ -77,7 +68,7 @@ export default function SettingsScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View
           style={[s.card, {flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 24}]}>
-          <ProfileAvatar username={user?.username} avatarUrl={user?.avatarUrl} size={54} />
+          <ProfileAvatar username={user?.username} avatarUrl={user?.avatarUrl} size={54}/>
           <View style={{flex: 1}}>
             <Text style={s.itemTitle}>{user ? user.username : 'Guest'}</Text>
             <Text style={s.itemSubtext}>
@@ -93,7 +84,7 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        <SectionHeader title="INTEGRATIONS" />
+        <SectionHeader title="INTEGRATIONS"/>
         <View style={s.cardGroup}>
           <SettingsRow
             icon={Activity}
@@ -111,7 +102,7 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        <SectionHeader title="PREFERENCES" />
+        <SectionHeader title="PREFERENCES"/>
         <View style={s.cardGroup}>
           <SettingsRow
             icon={Bell}
@@ -119,25 +110,25 @@ export default function SettingsScreen() {
             onPress={() => router.push('../settings/notifications')}
             color="#F59E0B"
           />
-          <View style={s.dividerIndented} />
+          <View style={s.dividerIndented}/>
 
           <View style={styles.row}>
             <View style={styles.rowLeft}>
               <View style={[s.iconBadge, {backgroundColor: colors.surface}]}>
-                <Moon size={20} color={isDarkMode ? '#FCD34D' : '#6366F1'} />
+                <Moon size={20} color={isDarkMode ? '#FCD34D' : '#6366F1'}/>
               </View>
               <Text style={s.itemTitle}>Dark Mode</Text>
             </View>
             <Switch
               value={isDarkMode}
               onValueChange={value => setTheme(value ? 'dark' : 'light')}
-              trackColor={{false: colors.border, true: colors.accent}}
-              thumbColor={isDarkMode ? '#FFFFFF' : '#F4F4F5'}
+              trackColor={{false: colors.subtleText, true: colors.accent}}
+              thumbColor={isDarkMode ? '#FFFFFF' : colors.surface}
             />
           </View>
         </View>
 
-        <SectionHeader title="SECURITY" />
+        <SectionHeader title="SECURITY"/>
         <View style={s.cardGroup}>
           <SettingsRow
             icon={Shield}
@@ -147,7 +138,7 @@ export default function SettingsScreen() {
           />
         </View>
 
-        <SectionHeader title="SUPPORT" />
+        <SectionHeader title="SUPPORT"/>
         <View style={s.cardGroup}>
           <SettingsRow
             icon={HelpCircle}
@@ -158,7 +149,7 @@ export default function SettingsScreen() {
           />
         </View>
 
-        <SectionHeader title="ACCOUNT ACTIONS" />
+        <SectionHeader title="ACCOUNT ACTIONS"/>
         <View style={s.cardGroup}>
           <SettingsRow
             icon={LogOut}
@@ -167,7 +158,7 @@ export default function SettingsScreen() {
             isDestructive
             showChevron={false}
           />
-          <View style={s.dividerIndented} />
+          <View style={s.dividerIndented}/>
           <SettingsRow
             icon={Smartphone}
             label="Log Out All Devices"

@@ -21,7 +21,15 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.kairofront"
+      "package": "com.anonymous.kairofront",
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.INTERNET",
+        "android.permission.VIBRATE",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.WAKE_LOCK",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ]
     },
     "web": {
       "output": "static",

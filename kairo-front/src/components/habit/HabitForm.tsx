@@ -1,13 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ActivityIndicator, Alert, ScrollView, Switch, Text, TouchableOpacity, View,} from 'react-native';
 import {useRouter} from 'expo-router';
 import {useHabits} from '@/src/contexts/HabitsContext';
 import HabitCard from '@/src/components/habit/HabitCard';
@@ -65,7 +57,8 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
     } else {
       setLoadingInitialData(false);
     }
-  }, [mode, userHabitDetails, predefinedHabit, pickerState.initialize, pickerState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, userHabitDetails, predefinedHabit]);
 
   const toggleDay = (day: string) => {
     if (selectedDays.includes(day)) {
@@ -130,7 +123,7 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
   if (loadingInitialData) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator color={habitColor} size="large" />
+        <ActivityIndicator color={habitColor} size="large"/>
         <Text style={styles.loadingSubtitle}>Loading habit details...</Text>
       </View>
     );
@@ -148,7 +141,7 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <HabitCard habit={habitToDisplay} />
+      <HabitCard habit={habitToDisplay}/>
 
       <View style={styles.formSection}>
         <DaySelector
@@ -160,12 +153,18 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
 
         <View style={styles.reminderHeader}>
           <Text style={styles.label}>Reminders & Dates</Text>
-          <Switch
-            value={enableNotifications}
-            onValueChange={setEnableNotifications}
-            trackColor={{false: colors.border, true: habitColor + '80'}}
-            thumbColor={enableNotifications ? habitColor : colors.card}
-          />
+          <View style={styles.switchWrapper}>
+            <Switch
+              value={enableNotifications}
+              onValueChange={setEnableNotifications}
+              trackColor={{
+                false: colors.subtleText,
+                true: habitColor,
+              }}
+              thumbColor={enableNotifications ? '#FFFFFF' : colors.surface}
+              style={styles.switch}
+            />
+          </View>
         </View>
 
         {enableNotifications && (
@@ -183,7 +182,7 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
           onPress={handleSubmit}
           disabled={submitting}>
           {submitting ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#fff"/>
           ) : (
             <Text style={styles.submitText}>{buttonText}</Text>
           )}
@@ -208,6 +207,7 @@ const createHabitFormStyles = (colors: ThemeColors) => ({
     borderWidth: 1,
     borderColor: colors.border,
     gap: 12,
+    overflow: 'visible',
   },
   reminderHeader: {
     flexDirection: 'row',
@@ -215,14 +215,25 @@ const createHabitFormStyles = (colors: ThemeColors) => ({
     alignItems: 'center',
     marginBottom: 10,
     paddingTop: 10,
+    paddingBottom: 10,
     borderTopWidth: 1,
     borderTopColor: colors.border,
     marginTop: 10,
+    minHeight: 56,
+    overflow: 'visible',
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
     color: colors.text,
+  },
+  switchWrapper: {
+    height: 32,
+    justifyContent: 'center',
+    overflow: 'visible',
+  },
+  switch: {
+    height: 32,
   },
   remindersContainer: {
     marginBottom: 20,
