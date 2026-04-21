@@ -1,13 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ActivityIndicator, Alert, ScrollView, Switch, Text, TouchableOpacity, View,} from 'react-native';
 import {useRouter} from 'expo-router';
 import {useHabits} from '@/src/contexts/HabitsContext';
 import HabitCard from '@/src/components/habit/HabitCard';
@@ -65,7 +57,8 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
     } else {
       setLoadingInitialData(false);
     }
-  }, [mode, userHabitDetails, predefinedHabit, pickerState.initialize, pickerState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, userHabitDetails, predefinedHabit]);
 
   const toggleDay = (day: string) => {
     if (selectedDays.includes(day)) {
@@ -130,7 +123,7 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
   if (loadingInitialData) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator color={habitColor} size="large" />
+        <ActivityIndicator color={habitColor} size="large"/>
         <Text style={styles.loadingSubtitle}>Loading habit details...</Text>
       </View>
     );
@@ -148,7 +141,7 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <HabitCard habit={habitToDisplay} />
+      <HabitCard habit={habitToDisplay}/>
 
       <View style={styles.formSection}>
         <DaySelector
@@ -183,7 +176,7 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
           onPress={handleSubmit}
           disabled={submitting}>
           {submitting ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#fff"/>
           ) : (
             <Text style={styles.submitText}>{buttonText}</Text>
           )}

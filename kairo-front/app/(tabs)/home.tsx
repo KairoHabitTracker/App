@@ -1,5 +1,8 @@
 import {Text, View} from 'react-native';
+import {useState} from 'react';
 import HabitList from '@/src/components/habit/HabitList';
+import HabitMonthlyView from '@/src/components/habit/HabitMonthlyView';
+import ViewToggle from '@/src/components/habit/ViewToggle';
 import {useRouter} from 'expo-router';
 import {useAuth} from '@/src/contexts/AuthContext';
 import {Flame} from '@tamagui/lucide-icons';
@@ -11,18 +14,24 @@ export default function Home() {
   const {user} = useAuth();
   const {colors} = useThemeMode();
   const s = useScreenStyles();
+  const [isDailyView, setIsDailyView] = useState(true);
 
   return (
     <View style={[s.screen, {paddingTop: 64}]}>
       <View style={s.headerRow}>
         <View>
-          <Text style={s.headerTitle}>Today</Text>
+          <Text style={s.headerTitle}>{isDailyView ? 'Today' : 'Calendar'}</Text>
           <Text style={[s.headerSubtitle, {fontSize: 16, fontWeight: '500'}]}>
-            {new Date().toLocaleDateString('en-US', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-            })}
+            {isDailyView
+              ? new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+              })
+              : new Date().toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric',
+              })}
           </Text>
         </View>
 
@@ -31,19 +40,37 @@ export default function Home() {
             s.badge,
             {backgroundColor: colors.warningBackground, borderColor: colors.warning},
           ]}>
-          <Flame size={18} color={colors.warning} fill={colors.warning} />
+          <Flame size={18} color={colors.warning} fill={colors.warning}/>
           <Text style={{fontSize: 15, fontWeight: '700', color: colors.warning}}>
             {user?.streak ?? 0}
           </Text>
         </View>
       </View>
-      <HabitList
-        onAdd={() => router.push('/habit/add')}
-        onEditHabit={(userHabitId: number) => {
-          console.log(userHabitId);
-          router.push(`/habit/edit/${userHabitId}`);
-        }}
-      />
+
+      <View style={{paddingHorizontal: 16, paddingBottom: 12}}>
+        <ViewToggle
+          dailyActive={isDailyView}
+          onToggle={setIsDailyView}
+        />
+      </View>
+
+      {isDailyView ? (
+        <HabitList
+          onAdd={() => router.push('/habit/add')}
+          onEditHabit={(userHabitId: number) => {
+            console.log(userHabitId);
+            router.push(`/habit/edit/${userHabitId}`);
+          }}
+        />
+      ) : (
+        <HabitMonthlyView
+          onAdd={() => router.push('/habit/add')}
+          onEditHabit={(userHabitId: number) => {
+            console.log(userHabitId);
+            router.push(`/habit/edit/${userHabitId}`);
+          }}
+        />
+      )}
     </View>
   );
 }
