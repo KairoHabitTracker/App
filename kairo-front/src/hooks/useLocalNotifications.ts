@@ -105,6 +105,7 @@ export const useLocalNotifications = () => {
             minute: minute,
             repeats: true,
           },
+            }
         });
       }
     }
