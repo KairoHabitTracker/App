@@ -157,8 +157,11 @@ export default function HabitForm({mode, habitId, userHabitId}: HabitFormProps) 
             <Switch
               value={enableNotifications}
               onValueChange={setEnableNotifications}
-              trackColor={{false: colors.border, true: habitColor + '80'}}
-              thumbColor={enableNotifications ? habitColor : colors.card}
+              trackColor={{
+                false: colors.subtleText,
+                true: habitColor,
+              }}
+              thumbColor={enableNotifications ? '#FFFFFF' : colors.surface}
               style={styles.switch}
             />
           </View>
