@@ -1,4 +1,9 @@
 import { apiFetch } from '@/src/lib/api';
+import {
+  getMockHabitCompletions,
+  getMockHabits,
+  isAnalyticsMockEnabled,
+} from './devAnalyticsMock';
 
 export type Habit = {
   id: string | number;
@@ -17,6 +22,10 @@ export type Completion = {
 
 // Data Fetchers
 export async function fetchAllUserHabits(): Promise<Habit[]> {
+  if (isAnalyticsMockEnabled()) {
+    return getMockHabits() as Habit[];
+  }
+
   try {
     const defaultHabits: { data: Habit[] } = await apiFetch('/api/habits/user');
     const customHabits: { data: Habit[] } = await apiFetch('/api/habits/custom');
@@ -28,6 +37,10 @@ export async function fetchAllUserHabits(): Promise<Habit[]> {
 }
 
 export async function fetchHabitCompletions(habitId: string | number): Promise<Completion[]> {
+  if (isAnalyticsMockEnabled()) {
+    return getMockHabitCompletions(habitId) as Completion[];
+  }
+
   try {
     const res: { data: Completion[] } = await apiFetch(`/api/habits/user/${habitId}/completions`);
     return res.data || [];
@@ -62,7 +75,7 @@ export function computeWeeklyCompletionRate(completions: Completion[]): number {
   
   // Get unique days
   const uniqueDays = new Set(recentCompletions.map(c => new Date(c.completed_at).toDateString()));
-  return Math.round((uniqueDays.size / 7) * 100);
+  return Math.min(100, Math.round((uniqueDays.size / 7) * 100));
 }
 
 /**

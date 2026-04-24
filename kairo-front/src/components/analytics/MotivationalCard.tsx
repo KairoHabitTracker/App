@@ -1,55 +1,40 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { Sparkles } from '@tamagui/lucide-icons';
-import { useThemedStyles } from '@/src/hooks/useThemedStyles';
-import { ThemeColors } from '@/src/contexts/ThemeContext';
+import { useThemeMode } from '@/src/contexts/ThemeContext';
 
 interface Props {
   message: string;
 }
 
 export default function MotivationalCard({ message }: Props) {
-  const styles = useThemedStyles(createStyles);
+  const { colors } = useThemeMode();
 
   return (
-    <View style={styles.card}>
-      <View style={styles.iconContainer}>
-        <Sparkles size={24} color="#F59E0B" />
-      </View>
-      <Text style={styles.text}>{message}</Text>
-    </View>
-  );
-}
-
-const createStyles = (colors: ThemeColors) =>
-  StyleSheet.create({
-    card: {
+    <View style={{
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.card,
       padding: 16,
       borderRadius: 16,
       marginVertical: 12,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 2,
-    },
-    iconContainer: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: 'rgba(245, 158, 11, 0.1)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 16,
-    },
-    text: {
-      flex: 1,
-      fontSize: 15,
-      fontWeight: '600',
-      color: colors.text,
-      lineHeight: 22,
-    },
-  });
+      borderWidth: 1,
+      borderColor: colors.accent,
+    }}>
+      <View style={{
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: colors.accent + '20',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+      }}>
+        <Sparkles size={24} color={colors.accent} />
+      </View>
+      <Text style={{ flex: 1, fontSize: 15, fontWeight: '600', color: colors.text, lineHeight: 22 }}>
+        {message}
+      </Text>
+    </View>
+  );
+}
