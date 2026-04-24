@@ -59,7 +59,8 @@
     "react-native-worklets": "0.5.1",
     "reanimated-color-picker": "^4.1.1",
     "tailwindcss": "^3.4.18",
-    "tamagui": "^1.135.3"
+    "tamagui": "^1.135.3",
+    "victory-native": "^36.6.11"
   },
   "devDependencies": {
     "@tamagui/babel-plugin": "^1.135.4",

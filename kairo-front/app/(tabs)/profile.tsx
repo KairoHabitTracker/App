@@ -179,15 +179,22 @@ export default function Profile() {
 
         <Text style={s.sectionTitlePadded}>Insights</Text>
 
-        <View style={styles.comingSoonCard}>
-          <View style={styles.comingSoonIcon}>
-            <TrendingUp size={24} color="white" />
+        <TouchableOpacity 
+          style={styles.analyticsCard} 
+          onPress={() => router.push('/profile/analytics')}
+          activeOpacity={0.8}
+        >
+          <View style={styles.analyticsLeft}>
+            <View style={styles.analyticsIconWrapper}>
+              <TrendingUp size={24} color="white" />
+            </View>
+            <View>
+              <Text style={styles.analyticsTitle}>Analytics Dashboard</Text>
+              <Text style={styles.analyticsSubtext}>View trends and consistency</Text>
+            </View>
           </View>
-          <View>
-            <Text style={styles.comingSoonText}>Advanced Analytics</Text>
-            <Text style={styles.comingSoonSubtext}>Charts and calendar coming soon!</Text>
-          </View>
-        </View>
+          <ChevronRight size={24} color="white" />
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -239,16 +246,21 @@ const createProfileStyles = (colors: ThemeColors) =>
       alignItems: 'center',
       gap: 12,
     },
-    comingSoonCard: {
+    analyticsCard: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'space-between',
       backgroundColor: colors.accent,
       marginHorizontal: 20,
       borderRadius: 16,
       padding: 20,
+    },
+    analyticsLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 16,
     },
-    comingSoonIcon: {
+    analyticsIconWrapper: {
       width: 40,
       height: 40,
       borderRadius: 20,
@@ -256,12 +268,12 @@ const createProfileStyles = (colors: ThemeColors) =>
       justifyContent: 'center',
       alignItems: 'center',
     },
-    comingSoonText: {
+    analyticsTitle: {
       fontSize: 16,
       fontWeight: '700',
       color: 'white',
     },
-    comingSoonSubtext: {
+    analyticsSubtext: {
       fontSize: 13,
       color: 'rgba(255,255,255,0.8)',
     },
