@@ -8,12 +8,12 @@ module.exports = function (api) {
         {
           config: './tamagui.config.ts',
           components: ['tamagui', '@tamagui/core', '@tamagui/web'],
-          logTimings: true,
-          disableExtraction: false
+          logTimings: false,
+          disableExtraction: process.env.NODE_ENV === 'test',
         },
-        'react-native-worklets/plugin',
-        'react-native-reanimated/plugin',
-      ]
-    ]
+      ],
+    ],
   }
 }
+
+
