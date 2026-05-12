@@ -1,7 +1,5 @@
-describe('src/contexts/HabitsContext', () => {
-  it('works', () => {
-    expect(1 + 1).toEqual(2);
-  });
+describe('HabitsContext', () => {
+  it('placeholder', () => expect(true).toBe(true));
 });
 
 

@@ -1,6 +1,6 @@
-describe('src/contexts/AuthContext', () => {
-  it('works', () => {
-    expect(1 + 1).toEqual(2);
+describe('AuthContext', () => {
+  it('placeholder - full test in integration suite', () => {
+    expect(true).toBe(true);
   });
 });
 

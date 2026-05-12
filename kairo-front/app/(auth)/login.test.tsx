@@ -1,6 +1,6 @@
-describe('app/(auth)/login', () => {
-  it('works', () => {
-    expect(1 + 1).toEqual(2);
+describe('LoginScreen', () => {
+  it('test placeholder - requires providerów', () => {
+    expect(true).toBe(true);
   });
 });
 

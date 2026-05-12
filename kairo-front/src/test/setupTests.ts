@@ -83,6 +83,90 @@ jest.mock('@/src/hooks/useLocalNotifications', () => ({
   }),
 }));
 
+// ===== Mock custom hooks (ekrany zależą) =====
+jest.mock('@/src/hooks/useThemedStyles', () => ({
+  useThemedStyles: jest.fn(() => ({})),
+  useScreenStyles: jest.fn(() => ({
+    screen: {},
+    headerRow: {},
+    headerTitle: {},
+    headerSubtitle: {},
+    badge: {},
+    content: {},
+  })),
+}));
+
+jest.mock('@/src/hooks/useFriends', () => ({
+  useFriends: jest.fn(() => ({
+    friends: [],
+    invitations: [],
+    isLoading: false,
+    isSending: false,
+    invite: '',
+    setInvite: jest.fn(),
+    loadData: jest.fn(),
+    sendInvitation: jest.fn(),
+    acceptInvitation: jest.fn(),
+    rejectInvitation: jest.fn(),
+  })),
+}));
+
+jest.mock('@/src/hooks/useAchievements', () => ({
+  useAchievements: jest.fn(() => ({
+    achievements: [],
+    totalAchievements: 0,
+    loading: false,
+    error: null,
+  })),
+}));
+
+// ===== Mock expo-safe-area-context =====
+jest.mock('react-native-safe-area-context', () => ({
+  useSafeAreaInsets: () => ({
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+  }),
+  SafeAreaProvider: ({ children }: any) => children ?? null,
+  SafeAreaView: ({ children }: any) => children ?? null,
+}));
+
+// ===== Mock expo-clipboard =====
+jest.mock('expo-clipboard', () => ({
+  setStringAsync: jest.fn(async () => {}),
+  getStringAsync: jest.fn(async () => ''),
+}));
+
+// ===== Mock expo-device =====
+jest.mock('expo-device', () => ({
+  deviceName: 'Test Device',
+}));
+
+// ===== Mock @react-native-async-storage/async-storage styles =====
+jest.mock('@/src/styles/authStyles', () => ({
+  useAuthStyles: () => ({
+    screen: {},
+    content: {},
+    title: {},
+    input: {},
+    primaryButton: {},
+    primaryButtonText: {},
+    error: {},
+    link: {},
+  }),
+}));
+
+jest.mock('@/src/styles/screenStyles', () => ({
+  useScreenStyles: () => ({
+    screen: {},
+    headerRow: {},
+    headerTitle: {},
+    headerSubtitle: {},
+    badge: {},
+  }),
+}));
+
 
 
 

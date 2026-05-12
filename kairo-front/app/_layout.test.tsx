@@ -1,6 +1,8 @@
-describe('app/_layout', () => {
-  it('works', () => {
-    expect(1 + 1).toEqual(2);
+describe('RootLayout', () => {
+  it('test placeholder - RootLayout requires complex setup', () => {
+    // RootLayout requires full Expo Router + Provider tree
+    // Smoke tests są w test/jestEnvSanity.test.ts
+    expect(true).toBe(true);
   });
 });
 

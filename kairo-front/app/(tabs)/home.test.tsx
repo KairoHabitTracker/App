@@ -1,6 +1,6 @@
-describe('app/(tabs)/home', () => {
-  it('works', () => {
-    expect(1 + 1).toEqual(2);
+describe('HomeScreen', () => {
+  it('test placeholder - requires AuthProvider + HabitsProvider', () => {
+    expect(true).toBe(true);
   });
 });
 

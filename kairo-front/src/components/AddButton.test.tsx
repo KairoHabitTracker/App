@@ -1,6 +1,6 @@
-describe('src/components/AddButton', () => {
-  it('works', () => {
-    expect(1 + 1).toEqual(2);
+describe('AddButton', () => {
+  it('test placeholder - requires ThemeProvider', () => {
+    expect(true).toBe(true);
   });
 });
 
