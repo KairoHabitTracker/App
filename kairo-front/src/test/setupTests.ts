@@ -5,9 +5,15 @@ import '@testing-library/jest-native/extend-expect';
 import 'react-native-gesture-handler/jestSetup';
 
 // ===== CRITICAL: Mock Expo Router (unika nawigacji w test env) =====
+const MockStack = ({ children }: any) => children ?? null;
+MockStack.Screen = () => null;
+
+const MockTabs = ({ children }: any) => children ?? null;
+MockTabs.Screen = () => null;
+
 jest.mock('expo-router', () => ({
-  Stack: ({ children }: any) => children ?? null,
-  Tabs: ({ children }: any) => children ?? null,
+  Stack: MockStack,
+  Tabs: MockTabs,
   Link: ({ children }: any) => children ?? null,
   router: {
     push: jest.fn(),
@@ -166,6 +172,15 @@ jest.mock('@/src/styles/screenStyles', () => ({
     badge: {},
   }),
 }));
+
+// ===== Global Fetch Mock (prevents tests from leaking network requests) =====
+global.fetch = jest.fn().mockImplementation((url: string) => {
+  return Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ data: [] }),
+  });
+});
+
 
 
 

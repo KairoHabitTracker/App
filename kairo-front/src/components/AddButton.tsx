@@ -13,6 +13,7 @@ export default function AddButton({ onPress }: AddButtonProps) {
         <TouchableOpacity
             onPress={onPress}
             activeOpacity={1}
+            testID="add-button"
         >
             <View
                 style={[

@@ -64,11 +64,13 @@ export const PendingInvitations = ({
 
               <View style={styles.actionButtons}>
                 <TouchableOpacity
+                  testID={`accept-btn-${invitation.id}`}
                   style={[styles.iconBtn, {backgroundColor: colors.successBackground}]}
                   onPress={() => onAccept(invitation.id)}>
                   <Check size={18} color={colors.success} />
                 </TouchableOpacity>
                 <TouchableOpacity
+                  testID={`reject-btn-${invitation.id}`}
                   style={[
                     styles.iconBtn,
                     {backgroundColor: colors.dangerBackground, marginLeft: 8},

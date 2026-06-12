@@ -1,6 +1,8 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { TamaguiProvider } from '@tamagui/core';
+import { config } from '@/tamagui.config';
 
 import { ThemeProvider } from '@/src/contexts/ThemeContext';
 import { AuthProvider } from '@/src/contexts/AuthContext';
@@ -10,9 +12,11 @@ function Providers({ children }: { children: React.ReactNode }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider>
-        <AuthProvider>
-          <HabitsProvider>{children}</HabitsProvider>
-        </AuthProvider>
+        <TamaguiProvider config={config}>
+          <AuthProvider>
+            <HabitsProvider>{children}</HabitsProvider>
+          </AuthProvider>
+        </TamaguiProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
   );
